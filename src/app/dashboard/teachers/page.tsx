@@ -20,6 +20,9 @@ type Teacher = {
   lineId: string;
   rate: number;
   videoUrl?: string;
+  isActive: boolean;
+  isFeatured: boolean;
+  updatedAt: string;
   createdAt: string;
 };
 
@@ -33,14 +36,40 @@ export default function TeachersDashboardPage() {
     setTeachers(data);
   };
 
+  function formatTimestamp(timestamp: string) {
+    const date = new Date(timestamp);
+    return isNaN(date.getTime())
+      ? 'N/A'
+      : date.toLocaleString('en-US', {
+          timeZone: 'Asia/Bangkok', // GMT+7
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+  }
+
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this teacher?')) return;
 
-    const res = await fetch(`/api/teachers/${id}`, { method: 'DELETE' });
-    if (res.ok) {
-      fetchTeachers();
-    } else {
-      alert('Failed to delete teacher.');
+    try {
+      const res = await fetch(`/api/teachers/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (res.ok) {
+        fetchTeachers();
+      } else {
+        const error = await res.json();
+        alert(error.error || 'Failed to delete teacher.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Network error while deleting teacher.');
     }
   };
 
@@ -63,11 +92,15 @@ export default function TeachersDashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {teachers.map((teacher) => (
-          <Card key={teacher.id}>
+          <Card
+            key={teacher.id}
+            className={teacher.isActive ? '' : 'border-red-200'}
+          >
             <CardHeader>
               <CardTitle className="text-lg">{teacher.name}</CardTitle>
               <p className="text-sm mb-4">
-                <strong>createdAt:</strong> {teacher.createdAt.split('T')[0]}{' '}
+                Updated At:{' '}
+                {teacher.updatedAt ? formatTimestamp(teacher.updatedAt) : 'N/A'}
               </p>
             </CardHeader>
             <CardContent>
@@ -99,6 +132,20 @@ export default function TeachersDashboardPage() {
               <p className="text-sm mb-4">
                 <strong>VideoURL:</strong> {teacher.videoUrl}
               </p>
+
+              <p className="text-sm mb-4">
+                <strong>Featured:</strong>
+                {teacher.isFeatured ? ' Yes' : ' No'}
+              </p>
+
+              <p
+                className={`text-sm mb-4 p-2 rounded ${
+                  teacher.isActive ? 'bg-green-100' : 'bg-red-100'
+                } text-gray-800`}
+              >
+                {teacher.isActive ? 'Active' : 'Inactive'}
+              </p>
+
               <div className="flex gap-2">
                 <Button
                   variant="secondary"

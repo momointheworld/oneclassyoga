@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
+import { uploadTeacherImage } from '@/lib/supabaseUtils';
 
 type Props = {
   slug: string;
@@ -36,20 +36,15 @@ export default function ImageUpload({
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const filePath = `${folder}/${slug}/${file.name}`;
 
-      const { error } = await supabase.storage
-        .from('teachers')
-        .upload(filePath, file, { cacheControl: '3600', upsert: true });
-
-      if (error) {
-        console.error('Upload error:', error.message);
+      try {
+        const url = await uploadTeacherImage(file, folder, slug);
+        uploadedUrls.push(url);
+      } catch (err) {
+        console.error('Upload failed:', err);
         setUploading(false);
         return;
       }
-
-      const { data } = supabase.storage.from('teachers').getPublicUrl(filePath);
-      uploadedUrls.push(data.publicUrl);
     }
 
     setUploading(false);
@@ -70,7 +65,7 @@ export default function ImageUpload({
         onClick={handleUpload}
         disabled={!files || uploading}
         variant="default"
-        className="w-fit "
+        className="w-fit bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {uploading ? (
           <>

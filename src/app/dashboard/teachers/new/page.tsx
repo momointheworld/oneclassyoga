@@ -6,25 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import ImageUpload from '@/components/ImageUpload';
-
-const levelOptions = ['Beginner', 'Intermediate', 'Advanced'];
-
-const styleOptions = [
-  'Ashtanga',
-  'Hatha',
-  'Iyengar',
-  'Yin',
-  'Restorative',
-  'Kundalini',
-  'Vinyasa',
-  'Bikram',
-  'Power',
-  'Aerial',
-  'Anusara ',
-  'Karma',
-  'Sivananda',
-  'Anusaranga',
-];
+import { styleOptions, levelOptions } from '@/lib/constants';
+import { Loader2 } from 'lucide-react';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function NewTeacherPage() {
   const [name, setName] = useState('');
@@ -38,35 +22,39 @@ export default function NewTeacherPage() {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [lineId, setLineId] = useState('');
+  const [buttonLoading, setButtonLoading] = useState(false);
   const router = useRouter();
+  const [isActive, setIsActive] = useState(true);
+  const [isFeatured, setIsFeatured] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setButtonLoading(true);
 
-    // const slug = name.toLowerCase().replace(/\s+/g, '-');
-
-    const res = await fetch('/api/teachers', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name,
-        bio,
-        styles,
-        levels,
-        rate,
-        videoUrl,
-        photo: profilePhoto,
-        gallery: galleryUrls,
-        email,
-        phone,
-        lineId,
-      }),
+    const { error } = await supabase.from('teachers').insert({
+      name,
+      bio,
+      styles,
+      levels,
+      rate,
+      isActive,
+      isFeatured,
+      videoUrl,
+      photo: profilePhoto,
+      gallery: galleryUrls,
+      email,
+      phone,
+      lineId,
+      slug: name.toLowerCase().replace(/\s+/g, '-'), // add slug here
     });
 
-    if (res.ok) {
-      router.push('/dashboard/teachers');
-    } else {
+    setButtonLoading(false);
+
+    if (error) {
+      console.error('Insert failed:', error.message);
       alert('Failed to create teacher.');
+    } else {
+      router.push('/dashboard/teachers');
     }
   };
 
@@ -107,7 +95,10 @@ export default function NewTeacherPage() {
           type="number"
           placeholder="Rate (THB)"
           value={rate.toString()}
-          onChange={(e) => setRate(parseFloat(e.target.value))}
+          onChange={(e) => {
+            const value = Number(e.target.value);
+            setRate(Number.isNaN(value) ? 0 : value);
+          }}
         />
 
         <Input
@@ -115,6 +106,39 @@ export default function NewTeacherPage() {
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
         />
+
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="is-active"
+            checked={isActive}
+            onChange={(e) => setIsActive(e.target.checked)}
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <label
+            htmlFor="is-active"
+            className="ml-2 block text-sm text-gray-900"
+          >
+            Is Active
+          </label>
+        </div>
+
+        {/* featured check */}
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="is-featured"
+            checked={isFeatured}
+            onChange={(e) => setIsFeatured(e.target.checked)}
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <label
+            htmlFor="is-featured"
+            className="ml-2 block text-sm text-gray-900"
+          >
+            Is Featured
+          </label>
+        </div>
 
         {/* Levels Checkboxes */}
         <div>
@@ -182,9 +206,17 @@ export default function NewTeacherPage() {
         <Button
           variant="default"
           type="submit"
+          disabled={buttonLoading}
           className="bg-blue-500 mt-4 w-full text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Save Teacher
+          {buttonLoading ? (
+            <div className="flex items-center justify-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Saving...</span>
+            </div>
+          ) : (
+            'Save Teacher'
+          )}
         </Button>
       </form>
     </main>

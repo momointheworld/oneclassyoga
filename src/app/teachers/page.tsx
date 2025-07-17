@@ -1,6 +1,6 @@
 import React from 'react';
-import { prisma } from '@/lib/prisma';
 import TeacherCard from '@/components/TeacherCard';
+import { supabase } from '@/lib/supabaseClient';
 
 type Teacher = {
   id: number;
@@ -13,29 +13,19 @@ type Teacher = {
   bio: string | null;
   gallery: string[] | null;
   videoUrl: string | null;
-  email: string | null;
-  phone: string | null;
-  lineId: string | null;
 };
 
 export default async function TeachersPage() {
-  const teachers = await prisma.teacher.findMany({
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      photo: true,
-      styles: true,
-      levels: true,
-      rate: true,
-      bio: true,
-      gallery: true,
-      videoUrl: true,
-      email: true,
-      phone: true,
-      lineId: true,
-    },
-  });
+  const { data: teachers, error } = await supabase
+    .from('teachers')
+    .select(
+      'id, name, slug, photo, styles, levels, rate, bio, gallery, videoUrl'
+    )
+    .eq('isActive', true);
+
+  if (error) {
+    throw new Error(error.message);
+  }
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
@@ -55,9 +45,6 @@ export default async function TeachersPage() {
               bio: teacher.bio || '',
               gallery: teacher.gallery || [],
               videoUrl: teacher.videoUrl || '',
-              email: teacher.email || '',
-              phone: teacher.phone || '',
-              lineId: teacher.lineId || '',
               styles: teacher.styles,
               levels: teacher.levels,
               rate: teacher.rate,

@@ -20,9 +20,8 @@ interface Teacher {
   gallery?: string[];
   videoUrl?: string;
   rate: number;
-  email?: string;
-  phone?: string;
-  lineId?: string;
+  isActive?: boolean;
+  isFeatured?: boolean;
 }
 
 export default function TeacherCard({ teacher }: { teacher: Teacher }) {

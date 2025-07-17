@@ -1,25 +1,29 @@
-import { prisma } from '@/lib/prisma';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import TeacherGallery from '@/components/TeacherGallery';
-
-interface TeacherProfilePageProps {
-  params: { slug: string };
-}
+import { supabase } from '@/lib/supabaseClient';
 
 export default async function TeacherProfilePage({
   params,
-}: TeacherProfilePageProps) {
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
 
-  const teacher = await prisma.teacher.findUnique({
-    where: { slug },
-  });
-  const galleryImages = teacher?.gallery || [];
+  // Fetch teacher data
+  const { data: teacher, error } = await supabase
+    .from('teachers')
+    .select('*')
+    .eq('slug', slug)
+    .single();
 
-  if (!teacher) return notFound();
+  if (error || !teacher) {
+    return notFound();
+  }
+
+  const galleryImages = teacher.gallery || [];
 
   return (
     <main className="max-w-3xl mx-auto p-6 space-y-8">
@@ -43,7 +47,7 @@ export default async function TeacherProfilePage({
               <p>
                 <span className="font-semibold text-gray-700">Styles:</span>{' '}
                 <span className="flex flex-wrap gap-2 mt-2 ">
-                  {teacher.styles.map((style) => (
+                  {teacher.styles.map((style: string) => (
                     <Badge
                       key={style}
                       variant="secondary"
@@ -66,7 +70,7 @@ export default async function TeacherProfilePage({
               <p>
                 <span className="font-semibold text-gray-700">Level:</span>{' '}
                 <span className="flex flex-wrap gap-2 mt-2">
-                  {teacher.levels.map((level) => (
+                  {teacher.levels.map((level: string) => (
                     <Badge
                       key={level}
                       variant="secondary"
