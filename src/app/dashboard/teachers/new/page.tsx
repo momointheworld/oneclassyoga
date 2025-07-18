@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { SetStateAction, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import ImageUpload from '@/components/ImageUpload';
 import { styleOptions, levelOptions } from '@/lib/constants';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
+import TeacherBioEditor from '@/components/TeacherBioEditor';
 
 export default function NewTeacherPage() {
   const [name, setName] = useState('');
@@ -69,10 +70,14 @@ export default function NewTeacherPage() {
           onChange={(e) => setName(e.target.value)}
           required
         />
-        <Textarea
+        {/* <Textarea
           placeholder="Bio"
           value={bio}
           onChange={(e) => setBio(e.target.value)}
+        /> */}
+        <TeacherBioEditor
+          initialContent={bio}
+          onChange={(html: SetStateAction<string>) => setBio(html)}
         />
 
         <Input
@@ -90,7 +95,6 @@ export default function NewTeacherPage() {
           value={lineId}
           onChange={(e) => setLineId(e.target.value)}
         />
-
         <Input
           type="number"
           placeholder="Rate (THB)"
@@ -100,13 +104,11 @@ export default function NewTeacherPage() {
             setRate(Number.isNaN(value) ? 0 : value);
           }}
         />
-
         <Input
           placeholder="Optional YouTube Video URL"
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
         />
-
         <div className="flex items-center space-x-2">
           <input
             type="checkbox"
@@ -122,7 +124,6 @@ export default function NewTeacherPage() {
             Is Active
           </label>
         </div>
-
         {/* featured check */}
         <div className="flex items-center space-x-2">
           <input
@@ -139,7 +140,6 @@ export default function NewTeacherPage() {
             Is Featured
           </label>
         </div>
-
         {/* Levels Checkboxes */}
         <div>
           <p className="font-semibold mb-2">Levels</p>
@@ -160,7 +160,6 @@ export default function NewTeacherPage() {
             ))}
           </div>
         </div>
-
         {/* Styles Checkboxes */}
         <div>
           <p className="font-semibold mb-2">Styles</p>
@@ -181,7 +180,6 @@ export default function NewTeacherPage() {
             ))}
           </div>
         </div>
-
         {/* Profile Photo Upload */}
         <div>
           <p className="font-semibold mb-2">Profile Photo</p>
@@ -191,7 +189,6 @@ export default function NewTeacherPage() {
             onUpload={(urls) => setProfilePhoto(urls[0])}
           />
         </div>
-
         {/* Gallery Upload */}
         <div>
           <p className="font-semibold mb-2">Gallery Photos</p>
@@ -202,7 +199,6 @@ export default function NewTeacherPage() {
             onUpload={setGalleryUrls}
           />
         </div>
-
         <Button
           variant="default"
           type="submit"

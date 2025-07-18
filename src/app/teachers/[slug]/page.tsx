@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import TeacherGallery from '@/components/TeacherGallery';
 import { supabase } from '@/lib/supabaseClient';
+import parse from 'html-react-parser';
 
 export default async function TeacherProfilePage({
   params,
@@ -39,9 +40,9 @@ export default async function TeacherProfilePage({
           <h1 className="text-3xl font-bold text-gray-900 mb-3">
             {teacher.name}
           </h1>
-          <p className="text-gray-700 text-base leading-relaxed mb-4">
-            {teacher.bio}
-          </p>
+
+          <div className="tiptap prose max-w-none">{parse(teacher.bio)}</div>
+
           <div className="grid grid-cols-2 gap-4 text-sm text-gray-800">
             <div>
               <p>

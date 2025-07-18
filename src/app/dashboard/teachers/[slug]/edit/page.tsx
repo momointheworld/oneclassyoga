@@ -1,10 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { levelOptions, styleOptions } from '@/lib/constants';
 import { deleteTeacherImage } from '@/lib/supabaseUtils';
@@ -12,6 +11,7 @@ import ImageUpload from '@/components/ImageUpload';
 import { Label } from '@radix-ui/react-label';
 import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
+import TeacherBioEditor from '@/components/TeacherBioEditor';
 
 export default function EditTeacherProfilePage() {
   const router = useRouter();
@@ -130,10 +130,9 @@ export default function EditTeacherProfilePage() {
           disabled
         />
 
-        <Textarea
-          placeholder="Bio"
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
+        <TeacherBioEditor
+          initialContent={bio}
+          onChange={(html: SetStateAction<string>) => setBio(html)}
         />
 
         <Input

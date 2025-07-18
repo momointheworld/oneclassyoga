@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
+import parse from 'html-react-parser';
 
 type Teacher = {
   id: number;
@@ -113,9 +114,9 @@ export default function TeachersDashboardPage() {
                   className="rounded-xl object-cover w-full h-52"
                 />
               </div>
-              <p className="text-sm mb-2">
-                <strong>Bio:</strong> {teacher.bio || 'No bio available'}
-              </p>
+              <div className="tiptap prose max-w-none">
+                {parse(teacher.bio)}
+              </div>
               <p className="text-sm mb-2">
                 <strong>Styles:</strong> {teacher.styles.join(', ')}
               </p>

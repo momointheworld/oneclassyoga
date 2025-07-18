@@ -8,6 +8,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import parse from 'html-react-parser';
 
 interface Teacher {
   id: string | number;
@@ -26,7 +27,7 @@ interface Teacher {
 
 export default function TeacherCard({ teacher }: { teacher: Teacher }) {
   return (
-    <Card className="w-full max-w-sm rounded-3xl">
+    <Card className="w-full max-w-sm rounded-3xl border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
       <CardHeader className="p-5 overflow-hidden rounded-t-3xl">
         <CardTitle className="text-xl font-bold mb-2 text-gray-900">
           {teacher.name}
@@ -41,7 +42,9 @@ export default function TeacherCard({ teacher }: { teacher: Teacher }) {
       </CardHeader>
 
       <CardContent className="p-5">
-        <p className="text-sm text-gray-600 mb-4 line-clamp-3">{teacher.bio}</p>
+        <div className="text-sm text-gray-600 mb-4 line-clamp-3">
+          {parse(teacher.bio)}
+        </div>
 
         <div className="text-sm text-gray-800 space-y-1">
           <p>
@@ -79,7 +82,7 @@ export default function TeacherCard({ teacher }: { teacher: Teacher }) {
           href={`/booking/${teacher.slug}`}
           className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition"
         >
-          Book
+          Book a Session
         </Link>
       </CardFooter>
     </Card>
