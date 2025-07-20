@@ -9,7 +9,6 @@ type Teacher = {
   styles: string[];
   levels: string[];
   slug: string;
-  rate: number;
   bio: string | null;
   gallery: string[] | null;
   videoUrl: string | null;
@@ -18,9 +17,7 @@ type Teacher = {
 export default async function TeachersPage() {
   const { data: teachers, error } = await supabase
     .from('teachers')
-    .select(
-      'id, name, slug, photo, styles, levels, rate, bio, gallery, videoUrl'
-    )
+    .select('id, name, slug, photo, styles, levels, bio, gallery, videoUrl')
     .eq('isActive', true);
 
   if (error) {
@@ -47,7 +44,6 @@ export default async function TeachersPage() {
               videoUrl: teacher.videoUrl || '',
               styles: teacher.styles,
               levels: teacher.levels,
-              rate: teacher.rate,
             }}
           />
         ))}

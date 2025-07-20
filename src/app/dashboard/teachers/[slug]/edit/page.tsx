@@ -19,10 +19,6 @@ export default function EditTeacherProfilePage() {
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [lineId, setLineId] = useState('');
-  const [rate, setRate] = useState(0);
   const [videoUrl, setVideoUrl] = useState('');
   const [levels, setLevels] = useState<string[]>([]);
   const [styles, setStyles] = useState<string[]>([]);
@@ -49,10 +45,6 @@ export default function EditTeacherProfilePage() {
         setTeacherId(data.id);
         setName(data.name || '');
         setBio(data.bio || '');
-        setEmail(data.email || '');
-        setPhone(data.phone || '');
-        setLineId(data.lineId || '');
-        setRate(data.rate || 0);
         setVideoUrl(data.videoUrl || '');
         setLevels(data.levels || []);
         setStyles(data.styles || []);
@@ -92,10 +84,6 @@ export default function EditTeacherProfilePage() {
         name,
         bio,
         slug: params.slug,
-        email,
-        phone,
-        lineId,
-        rate,
         videoUrl,
         levels,
         isActive,
@@ -135,36 +123,6 @@ export default function EditTeacherProfilePage() {
           onChange={(html: SetStateAction<string>) => setBio(html)}
         />
 
-        <Input
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <Label className="block mb-2">
-          Phone
-          <Input
-            placeholder="Phone"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-        </Label>
-        <Label className="block mb-2">
-          Line ID
-          <Input
-            placeholder="LINE ID"
-            value={lineId}
-            onChange={(e) => setLineId(e.target.value)}
-          />
-        </Label>
-        <Label className="block mb-2">
-          Rate
-          <Input
-            type="number"
-            placeholder="Rate (THB)"
-            value={rate.toString()}
-            onChange={(e) => setRate(parseFloat(e.target.value))}
-          />
-        </Label>
         <Label className="block mb-2">
           Video URL
           <Input

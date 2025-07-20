@@ -60,13 +60,7 @@ export default async function TeacherProfilePage({
                 </span>
               </p>
             </div>
-            <div className="mt-6 text-lg text-gray-800 flex justify-end items-center">
-              <span className="font-semibold text-gray-700">Rate:</span>
 
-              <Badge variant="secondary" className="text-blue-600 text-md ml-2">
-                {teacher.rate.toLocaleString()} THB / Hour
-              </Badge>
-            </div>
             <div>
               <p>
                 <span className="font-semibold text-gray-700">Level:</span>{' '}

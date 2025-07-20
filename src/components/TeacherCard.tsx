@@ -9,6 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import parse from 'html-react-parser';
+import { Button } from './ui/button';
 
 interface Teacher {
   id: string | number;
@@ -20,12 +21,19 @@ interface Teacher {
   levels: string[];
   gallery?: string[];
   videoUrl?: string;
-  rate: number;
   isActive?: boolean;
   isFeatured?: boolean;
 }
 
 export default function TeacherCard({ teacher }: { teacher: Teacher }) {
+  const price_id = process.env.NEXT_STRIPE_SINGLE_PRICE_ID;
+  // const priceId =
+  // selectedPlan === 'single'
+  //   ? process.env.NEXT_STRIPE_SINGLE_PRICE_ID
+  //   : selectedPlan === 'bundle5'
+  //   ? process.env.NEXT_STRIPE_BUNDLE5_PRICE_ID
+  //   : process.env.NEXT_STRIPE_BUNDLE10_PRICE_ID;
+
   return (
     <Card className="w-full max-w-sm rounded-3xl border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
       <CardHeader className="p-5 overflow-hidden rounded-t-3xl">
@@ -49,7 +57,7 @@ export default function TeacherCard({ teacher }: { teacher: Teacher }) {
         <div className="text-sm text-gray-800 space-y-1">
           <p>
             <span className="font-semibold text-gray-700">Styles:</span>{' '}
-            <span className="flex flex-wrap gap-2 mt-2 ">
+            <span className="flex flex-wrap gap-2 mt-2">
               {teacher.styles.slice(0, 3).map((style) => (
                 <Badge
                   key={style}
@@ -61,13 +69,6 @@ export default function TeacherCard({ teacher }: { teacher: Teacher }) {
               ))}
             </span>
           </p>
-
-          <div className="flex justify-start items-center mt-5">
-            <span className="font-semibold text-gray-700">Rate:</span>
-            <Badge variant="secondary" className="text-blue-600 text-md ml-2">
-              {teacher.rate.toLocaleString()} THB / Hour
-            </Badge>
-          </div>
         </div>
       </CardContent>
 
@@ -78,12 +79,19 @@ export default function TeacherCard({ teacher }: { teacher: Teacher }) {
         >
           View Profile
         </Link>
-        <Link
-          href={`/booking/${teacher.slug}`}
+
+        <Button
+          asChild
           className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition"
         >
-          Book a Session
-        </Link>
+          <Link href={`/booking?teacher=${teacher.slug}&price=${price_id}`}>
+            Book a Session
+          </Link>
+        </Button>
+        <Button
+          asChild
+          className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition"
+        ></Button>
       </CardFooter>
     </Card>
   );

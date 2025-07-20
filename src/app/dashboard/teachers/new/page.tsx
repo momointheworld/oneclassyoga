@@ -4,7 +4,6 @@ import { SetStateAction, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import ImageUpload from '@/components/ImageUpload';
 import { styleOptions, levelOptions } from '@/lib/constants';
 import { Loader2 } from 'lucide-react';
@@ -16,13 +15,9 @@ export default function NewTeacherPage() {
   const [bio, setBio] = useState('');
   const [styles, setStyles] = useState<string[]>([]);
   const [levels, setLevels] = useState<string[]>([]);
-  const [rate, setRate] = useState<number>(0);
   const [videoUrl, setVideoUrl] = useState('');
   const [profilePhoto, setProfilePhoto] = useState('');
   const [galleryUrls, setGalleryUrls] = useState<string[]>([]);
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [lineId, setLineId] = useState('');
   const [buttonLoading, setButtonLoading] = useState(false);
   const router = useRouter();
   const [isActive, setIsActive] = useState(true);
@@ -37,15 +32,11 @@ export default function NewTeacherPage() {
       bio,
       styles,
       levels,
-      rate,
       isActive,
       isFeatured,
       videoUrl,
       photo: profilePhoto,
       gallery: galleryUrls,
-      email,
-      phone,
-      lineId,
       slug: name.toLowerCase().replace(/\s+/g, '-'), // add slug here
     });
 
@@ -70,39 +61,9 @@ export default function NewTeacherPage() {
           onChange={(e) => setName(e.target.value)}
           required
         />
-        {/* <Textarea
-          placeholder="Bio"
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-        /> */}
         <TeacherBioEditor
           initialContent={bio}
           onChange={(html: SetStateAction<string>) => setBio(html)}
-        />
-
-        <Input
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <Input
-          placeholder="Phone"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
-        <Input
-          placeholder="LINE ID"
-          value={lineId}
-          onChange={(e) => setLineId(e.target.value)}
-        />
-        <Input
-          type="number"
-          placeholder="Rate (THB)"
-          value={rate.toString()}
-          onChange={(e) => {
-            const value = Number(e.target.value);
-            setRate(Number.isNaN(value) ? 0 : value);
-          }}
         />
         <Input
           placeholder="Optional YouTube Video URL"

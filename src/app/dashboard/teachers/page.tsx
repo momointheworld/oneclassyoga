@@ -16,10 +16,6 @@ type Teacher = {
   styles: string[];
   levels: string[];
   gallery?: string[];
-  phone: string;
-  email: string;
-  lineId: string;
-  rate: number;
   videoUrl?: string;
   isActive: boolean;
   isFeatured: boolean;
@@ -120,16 +116,11 @@ export default function TeachersDashboardPage() {
               <p className="text-sm mb-2">
                 <strong>Styles:</strong> {teacher.styles.join(', ')}
               </p>
-              <p className="text-sm mb-2">
-                <strong>Contact:</strong> Phone: {teacher.phone} |{' '}
-                {teacher.email} | Line: {teacher.lineId}
-              </p>
+
               <p className="text-sm mb-2">
                 <strong>Levels:</strong> {teacher.levels.join(', ')}
               </p>
-              <p className="text-sm mb-4">
-                <strong>Rate:</strong> {teacher.rate.toLocaleString()} THB
-              </p>
+
               <p className="text-sm mb-4">
                 <strong>VideoURL:</strong> {teacher.videoUrl}
               </p>

@@ -53,11 +53,7 @@ export async function POST(req: NextRequest) {
         levels: data.levels,
         isActive: data.isActive ?? true,
         isFeatured: data.isFeatured ?? false,
-        rate: data.rate,
         photo: data.photo,
-        email: data.email,
-        phone: data.phone,
-        lineId: data.lineId,
       })
       .select()
       .single();
