@@ -8,6 +8,8 @@ export default function BookingPage() {
   const searchParams = useSearchParams();
   const teacherSlug = searchParams.get('teacher');
   const priceId = searchParams.get('price');
+  const date = searchParams.get('date');
+  const timeSlot = searchParams.get('timeSlot');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -27,6 +29,8 @@ export default function BookingPage() {
           body: JSON.stringify({
             priceId,
             selectedTeacherSlug: teacherSlug,
+            date,
+            timeSlot,
           }),
         });
 
@@ -46,7 +50,7 @@ export default function BookingPage() {
     }
 
     createCheckout();
-  }, [priceId, teacherSlug]);
+  }, [date, priceId, teacherSlug, timeSlot]);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-4">

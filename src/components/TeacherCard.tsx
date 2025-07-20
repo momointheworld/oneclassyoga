@@ -84,14 +84,10 @@ export default function TeacherCard({ teacher }: { teacher: Teacher }) {
           asChild
           className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition"
         >
-          <Link href={`/booking?teacher=${teacher.slug}&price=${price_id}`}>
-            Book a Session
+          <Link href={`/teachers/${teacher.slug}/#booking-calendar`}>
+            Check Availability
           </Link>
         </Button>
-        <Button
-          asChild
-          className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition"
-        ></Button>
       </CardFooter>
     </Card>
   );
