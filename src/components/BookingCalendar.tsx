@@ -6,8 +6,10 @@ import { TimeSlotPicker } from './TimeSlot';
 
 export default function BookingCalendar({
   onSelect,
+  timeSlots,
 }: {
   onSelect: (date: Date | null, timeSlot: string | null) => void;
+  timeSlots: string[];
 }) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [timeSlot, setTimeSlot] = useState<string>('');
@@ -21,7 +23,11 @@ export default function BookingCalendar({
   return (
     <div className=" p-4 mt-5 rounded-xl">
       <DatePicker selected={selectedDate} onSelect={setSelectedDate} />
-      <TimeSlotPicker selectedSlot={timeSlot} onSelect={setTimeSlot} />
+      <TimeSlotPicker
+        selectedSlot={timeSlot}
+        onSelect={setTimeSlot}
+        timeSlots={timeSlots}
+      />
       <div className="mt-4 flex flex-col items-start space-y-2">
         <div className="flex justify-between w-full">
           {' '}

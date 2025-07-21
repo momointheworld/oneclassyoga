@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import ImageUpload from '@/components/ImageUpload';
-import { styleOptions, levelOptions } from '@/lib/constants';
+import { styleOptions, levelOptions, timeSlotOptions } from '@/lib/constants';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import TeacherBioEditor from '@/components/TeacherBioEditor';
@@ -22,6 +22,7 @@ export default function NewTeacherPage() {
   const router = useRouter();
   const [isActive, setIsActive] = useState(true);
   const [isFeatured, setIsFeatured] = useState(false);
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +39,7 @@ export default function NewTeacherPage() {
       photo: profilePhoto,
       gallery: galleryUrls,
       slug: name.toLowerCase().replace(/\s+/g, '-'), // add slug here
+      timeSlots: timeSlots, // add time slots here
     });
 
     setButtonLoading(false);
@@ -137,6 +139,28 @@ export default function NewTeacherPage() {
                   }}
                 />
                 {style}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* TimeSlots Checkboxes */}
+        <div>
+          <p className="font-semibold mb-2">Styles</p>
+          <div className="grid grid-cols-2 gap-3">
+            {timeSlotOptions.map((timeSlot) => (
+              <label key={timeSlot} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  value={timeSlot}
+                  checked={timeSlots.includes(timeSlot)}
+                  onChange={(e) => {
+                    if (e.target.checked)
+                      setTimeSlots([...timeSlots, timeSlot]);
+                    else setTimeSlots(timeSlots.filter((s) => s !== timeSlot));
+                  }}
+                />
+                {timeSlot}
               </label>
             ))}
           </div>

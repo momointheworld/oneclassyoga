@@ -1,22 +1,13 @@
-const timeSlots = [
-  '08:00',
-  '09:30',
-  '11:00',
-  '13:00',
-  '15:00',
-  '17:00',
-  '19:00',
-  '20:30',
-];
-
 interface TimeSlotPickerProps {
   selectedSlot: string;
   onSelect: (slot: string) => void;
+  timeSlots: string[];
 }
 
 export function TimeSlotPicker({
   selectedSlot,
   onSelect,
+  timeSlots,
 }: TimeSlotPickerProps) {
   return (
     <div className="w-full mt-4">

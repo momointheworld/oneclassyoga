@@ -22,11 +22,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Teacher not found' }, { status: 404 });
     }
 
-    // Create checkout session
+    // Create Stripe Checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
       customer_email: email,
+      customer_creation: 'always',
       line_items: [
         {
           price: priceId,
@@ -35,8 +36,8 @@ export async function POST(req: Request) {
       ],
       metadata: {
         teacherSlug: teacher.slug,
-        date: body.date,
-        timeSlot: body.timeSlot,
+        date,
+        timeSlot,
       },
       custom_fields: [
         {
@@ -55,18 +56,6 @@ export async function POST(req: Request) {
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&teacher=${selectedTeacherSlug}&date=${date}&timeSlot=${timeSlot}`,
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/teachers/${selectedTeacherSlug}`,
     });
-
-    const { error: insertError } = await supabase
-      .from('checkout_sessions')
-      .insert({
-        session_id: session.id,
-        teacher_slug: teacher.slug,
-      });
-
-    if (insertError) {
-      console.error('[Supabase Insert Error]', insertError);
-      return NextResponse.json({ error: insertError.message }, { status: 500 });
-    }
 
     return NextResponse.json({ url: session.url });
   } catch (err: unknown) {

@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { levelOptions, styleOptions } from '@/lib/constants';
+import { levelOptions, styleOptions, timeSlotOptions } from '@/lib/constants';
 import { deleteTeacherImage } from '@/lib/supabaseUtils';
 import ImageUpload from '@/components/ImageUpload';
 import { Label } from '@radix-ui/react-label';
@@ -30,6 +30,7 @@ export default function EditTeacherProfilePage() {
   const [isActive, setIsActive] = useState(false);
   const [isFeatured, setIsFeatured] = useState(false);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchTeacher = async () => {
@@ -53,6 +54,7 @@ export default function EditTeacherProfilePage() {
         setIsActive(data.isActive ?? true); // Default to true if null
         setIsFeatured(data.isFeatured ?? false); // Default to false if null
         setUpdatedAt(data.updatedAt || null);
+        setTimeSlots(data.timeSlots || []); // Initialize time slots
       }
 
       setLoading(false);
@@ -92,6 +94,7 @@ export default function EditTeacherProfilePage() {
         photo: profilePhoto,
         gallery: galleryUrls,
         updatedAt: new Date().toISOString(),
+        timeSlots,
       })
       .eq('id', teacherId);
 
@@ -169,6 +172,28 @@ export default function EditTeacherProfilePage() {
                   }}
                 />
                 {style}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Styles Checkboxes */}
+        <div>
+          <p className="font-semibold mb-2">Styles</p>
+          <div className="grid grid-cols-2 gap-3">
+            {timeSlotOptions.map((timeSlot) => (
+              <label key={timeSlot} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  value={timeSlot}
+                  checked={timeSlots.includes(timeSlot)}
+                  onChange={(e) => {
+                    if (e.target.checked)
+                      setTimeSlots([...timeSlots, timeSlot]);
+                    else setTimeSlots(timeSlots.filter((s) => s !== timeSlot));
+                  }}
+                />
+                {timeSlot}
               </label>
             ))}
           </div>

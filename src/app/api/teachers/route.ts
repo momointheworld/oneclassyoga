@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
         isActive: data.isActive ?? true,
         isFeatured: data.isFeatured ?? false,
         photo: data.photo,
+        timeSlots: data.timeSlots || [],
       })
       .select()
       .single();
