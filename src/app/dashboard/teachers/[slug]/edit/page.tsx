@@ -51,10 +51,17 @@ export default function EditTeacherProfilePage() {
         setStyles(data.styles || []);
         setProfilePhoto(data.photo || '');
         setGalleryUrls(data.gallery || []);
-        setIsActive(data.isActive ?? true); // Default to true if null
-        setIsFeatured(data.isFeatured ?? false); // Default to false if null
+        setIsActive(data.isActive ?? true);
+        setIsFeatured(data.isFeatured ?? false);
         setUpdatedAt(data.updatedAt || null);
-        setTimeSlots(data.timeSlots || []); // Initialize time slots
+        if (data.timeSlots) {
+          const parsedTimeSlots =
+            typeof data.timeSlots === 'string'
+              ? JSON.parse(data.timeSlots)
+              : data.timeSlots;
+
+          setTimeSlots(parsedTimeSlots); // parse the timeSlots if it's a string
+        }
       }
 
       setLoading(false);
@@ -345,22 +352,32 @@ export default function EditTeacherProfilePage() {
             </label>
           </div>
         </div>
-
-        <Button
-          variant="default"
-          type="submit"
-          disabled={buttonLoading}
-          className="bg-blue-500 mt-4 w-full text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {buttonLoading ? (
-            <div className="flex items-center justify-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span>Saving...</span>
-            </div>
-          ) : (
-            'Save Teacher'
-          )}
-        </Button>
+        <div className="flex justify-between mt-6">
+          <Button
+            variant="default"
+            type="button"
+            disabled={buttonLoading}
+            onClick={() => router.push(`/dashboard/teachers/`)}
+            className="bg-gray-500 mt-4 text-white hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="default"
+            type="submit"
+            disabled={buttonLoading}
+            className="bg-blue-500 mt-4 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {buttonLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Saving...</span>
+              </div>
+            ) : (
+              'Save Teacher'
+            )}
+          </Button>
+        </div>
       </form>
     </main>
   );

@@ -26,14 +26,6 @@ interface Teacher {
 }
 
 export default function TeacherCard({ teacher }: { teacher: Teacher }) {
-  const price_id = process.env.NEXT_STRIPE_SINGLE_PRICE_ID;
-  // const priceId =
-  // selectedPlan === 'single'
-  //   ? process.env.NEXT_STRIPE_SINGLE_PRICE_ID
-  //   : selectedPlan === 'bundle5'
-  //   ? process.env.NEXT_STRIPE_BUNDLE5_PRICE_ID
-  //   : process.env.NEXT_STRIPE_BUNDLE10_PRICE_ID;
-
   return (
     <Card className="w-full max-w-sm rounded-3xl border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
       <CardHeader className="p-5 overflow-hidden rounded-t-3xl">

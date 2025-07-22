@@ -1,72 +1,92 @@
 'use client';
-
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export default function BookingPage() {
-  const searchParams = useSearchParams();
-  const teacherSlug = searchParams.get('teacher');
-  const priceId = searchParams.get('price');
-  const date = searchParams.get('date');
-  const timeSlot = searchParams.get('timeSlot');
-  const [loading, setLoading] = useState(true);
+  const [bookingId, setBookingId] = useState('');
+  const [booking, setBooking] = useState<null | {
+    id: string;
+    date: string;
+    time_slot: string;
+    teacher_slug: string;
+  }>(null);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  async function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
-  useEffect(() => {
-    async function createCheckout() {
-      if (!priceId || !teacherSlug) {
-        setError('Missing booking information');
-        setLoading(false);
-        return;
+    try {
+      const res = await fetch('/api/booking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bookingId: bookingId.trim(),
+        }),
+      });
+
+      if (!res.ok) {
+        const error = await res.text();
+        throw new Error(error || 'Failed to fetch booking');
       }
 
-      try {
-        const response = await fetch('/api/stripe', {
-          // Updated endpoint
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            priceId,
-            selectedTeacherSlug: teacherSlug,
-            date,
-            timeSlot,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to create checkout session');
-        }
-
-        const data = await response.json();
-        if (data.url) {
-          window.location.href = data.url;
-        }
-      } catch (err) {
-        console.error('Checkout error:', err);
-        setError('Failed to initiate booking. Please try again.');
-        setLoading(false);
-      }
+      const data = await res.json();
+      setBooking(data.booking);
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error ? err.message : 'An unexpected error occurred'
+      );
+    } finally {
+      setLoading(false);
     }
-
-    createCheckout();
-  }, [date, priceId, teacherSlug, timeSlot]);
+  }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen gap-4">
-      {loading && (
-        <>
-          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <p>Hang on, you are being redirected to the Stripe payment page...</p>
-        </>
-      )}
-      {error && (
-        <>
-          <p className="text-red-500">{error}</p>
-          <Link href="/teachers" className="text-blue-600 hover:underline">
-            Back to teachers
-          </Link>
-        </>
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8">
+      <h1 className="text-2xl font-semibold mb-6">Check Your Booking</h1>
+
+      <form onSubmit={handleSearch} className="w-full max-w-sm space-y-4">
+        <input
+          type="text"
+          placeholder="Enter Booking ID"
+          value={bookingId}
+          onChange={(e) => setBookingId(e.target.value)}
+          className="w-full px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+          disabled={loading}
+        >
+          {loading ? 'Searching...' : 'Search Booking'}
+        </button>
+      </form>
+
+      {error && <p className="text-red-500 mt-4">{error}</p>}
+
+      {booking && (
+        <div className="mt-8 bg-white p-6 rounded shadow w-full max-w-md text-left">
+          <h2 className="text-xl font-semibold mb-4">Booking Details</h2>
+          <p>
+            <span className="font-medium">Teacher:</span>{' '}
+            {booking.teacher_slug || 'Unspecified Teacher'}
+          </p>
+          <p>
+            <span className="font-medium">
+              Date:{' '}
+              {new Date(booking.date).toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              })}
+            </span>
+          </p>
+          <p>
+            <span className="font-medium">Time Slot:</span> {booking.time_slot}
+          </p>
+        </div>
       )}
     </div>
   );

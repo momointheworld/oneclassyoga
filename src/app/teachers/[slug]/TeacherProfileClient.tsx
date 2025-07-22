@@ -55,7 +55,9 @@ export default function TeacherProfileClient({
   };
 
   const galleryImages = teacher.gallery || [];
-  const timeSlots = teacher.timeSlots || [];
+  const timeSlots = Array.isArray(teacher.timeSlots)
+    ? teacher.timeSlots
+    : JSON.parse(teacher.timeSlots || '[]');
 
   return (
     <main className="max-w-3xl mx-auto p-6 space-y-8">
@@ -126,11 +128,7 @@ export default function TeacherProfileClient({
                 setSelectedDate(date);
                 setSelectedTimeSlot(timeSlot);
               }}
-              timeSlots={
-                typeof teacher.timeSlots === 'string'
-                  ? JSON.parse(teacher.timeSlots)
-                  : teacher.timeSlots
-              }
+              timeSlots={timeSlots}
             />
           </div>
 

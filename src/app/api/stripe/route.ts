@@ -22,6 +22,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Teacher not found' }, { status: 404 });
     }
 
+    const teacherName = teacher.slug
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, (char: string) => char.toUpperCase());
+
     // Create Stripe Checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -48,13 +52,13 @@ export async function POST(req: Request) {
           },
           type: 'text',
           text: {
-            default_value: `${teacher.slug} on ${date} at ${timeSlot}`,
+            default_value: `Yoga with ${teacherName} on ${date} at ${timeSlot}`,
           },
           optional: false,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&teacher=${selectedTeacherSlug}&date=${date}&timeSlot=${timeSlot}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/teachers/${selectedTeacherSlug}`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&teacher=${teacher.slug}&date=${date}&timeSlot=${timeSlot}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/teachers/${teacher.slug}`,
     });
 
     return NextResponse.json({ url: session.url });

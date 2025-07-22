@@ -28,7 +28,7 @@ export default function BookingCalendar({
         onSelect={setTimeSlot}
         timeSlots={timeSlots}
       />
-      <div className="mt-4 flex flex-col items-start space-y-2">
+      <div className="mt-8 flex flex-col items-start space-y-2">
         <div className="flex justify-between w-full">
           {' '}
           Selected Date:
@@ -37,7 +37,7 @@ export default function BookingCalendar({
               selectedDate ? 'font-semibold text-blue-600' : 'text-gray-600'
             }`}
           >
-            {selectedDate ? format(selectedDate, 'PPP') : ''}
+            {selectedDate ? format(selectedDate, 'PPP') : 'Not selected'}
           </p>
         </div>
         <div className="flex justify-between w-full">
@@ -47,7 +47,7 @@ export default function BookingCalendar({
               timeSlot ? 'font-semibold text-blue-600' : 'text-gray-600'
             }`}
           >
-            {timeSlot || ''}
+            {timeSlot || 'Not selected'}
           </p>
         </div>
       </div>
