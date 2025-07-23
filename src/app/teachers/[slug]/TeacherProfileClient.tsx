@@ -51,7 +51,7 @@ export default function TeacherProfileClient({
       timeSlot: selectedTimeSlot,
     }).toString();
 
-    router.push(`/booking?${query}`);
+    router.push(`/booking/checkout?${query}`);
   };
 
   const galleryImages = teacher.gallery || [];
@@ -102,7 +102,7 @@ export default function TeacherProfileClient({
                     <Badge
                       key={level}
                       variant="secondary"
-                      className="bg-green-200 dark:bg-green-600 text-sm"
+                      className="bg-emerald-200 dark:bg-emerald-600 text-sm"
                     >
                       {level}
                     </Badge>
@@ -142,7 +142,7 @@ export default function TeacherProfileClient({
 
             <Button
               onClick={handleBooking}
-              className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition"
+              className="bg-orange-600 text-white text-lg font-medium px-4 py-2 rounded-xl hover:bg-orange-700 transition"
             >
               Book Now
             </Button>

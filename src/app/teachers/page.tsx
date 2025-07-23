@@ -1,5 +1,6 @@
 import React from 'react';
 import TeacherCard from '@/components/TeacherCard';
+import { createClient } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabaseClient';
 
 type Teacher = {

@@ -1,7 +1,7 @@
 // app/teacher/[slug]/page.tsx (Server Component)
 import { notFound } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
 import TeacherProfileClient from './TeacherProfileClient';
+import { supabase } from '@/lib/supabaseClient';
 
 export default async function TeacherProfilePage({
   params,

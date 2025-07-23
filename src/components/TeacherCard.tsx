@@ -74,7 +74,7 @@ export default function TeacherCard({ teacher }: { teacher: Teacher }) {
 
         <Button
           asChild
-          className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition"
+          className="bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-emerald-700 transition"
         >
           <Link href={`/teachers/${teacher.slug}/#booking-calendar`}>
             Check Availability

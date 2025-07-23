@@ -1,10 +1,15 @@
+import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { supabase } from '@/lib/supabaseClient';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-04-10' as Stripe.LatestApiVersion,
 });
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY! // NOT the anon key
+);
 
 export async function POST(req: Request) {
   const sig = req.headers.get('stripe-signature')!;
@@ -36,18 +41,28 @@ export async function POST(req: Request) {
       )) as Stripe.Customer;
 
       // Get the metadata from the session
-      const { teacherSlug, date, timeSlot } = session.metadata || {};
+      const { teacher_slug, date, time_slot } = session.metadata || {};
 
-      if (!teacherSlug || !date || !timeSlot) {
+      if (!teacher_slug || !date || !time_slot) {
         throw new Error('Missing required metadata');
       }
+
+      console.log(
+        `Processing booking for teacher: ${teacher_slug}, date: ${date}, timeSlot: ${time_slot}`
+      );
+
+      console.log('teacher_slug from metadata:', teacher_slug);
+      console.log(session.metadata);
 
       // Fetch teacher info
       const { data: teacher, error: teacherError } = await supabase
         .from('teachers')
         .select('id, slug, name')
-        .eq('slug', teacherSlug)
+        .eq('slug', teacher_slug)
         .single();
+
+      console.log('teacherError', teacherError);
+      console.log('teacherSlug', teacher_slug);
 
       if (teacherError || !teacher) {
         throw new Error('Teacher not found');
@@ -61,7 +76,7 @@ export async function POST(req: Request) {
         customer_name: customer.name || '',
         customer_email: customer.email || session.customer_email || '',
         date,
-        time_slot: timeSlot,
+        time_slot: time_slot,
         payment_intent: session.payment_intent as string,
         amount_total: session.amount_total ? session.amount_total / 100 : 0,
       });

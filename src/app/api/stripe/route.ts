@@ -8,14 +8,14 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { email, priceId, selectedTeacherSlug, date, timeSlot } = body;
+  const { email, priceId, teacher_slug, date, time_slot } = body;
 
   try {
     // Fetch teacher info
     const { data: teacher, error: teacherError } = await supabase
       .from('teachers')
       .select('id, slug, name')
-      .eq('slug', selectedTeacherSlug)
+      .eq('slug', teacher_slug)
       .single();
 
     if (teacherError || !teacher) {
@@ -39,9 +39,9 @@ export async function POST(req: Request) {
         },
       ],
       metadata: {
-        teacherSlug: teacher.slug,
+        teacher_slug: teacher.slug,
         date,
-        timeSlot,
+        time_slot: time_slot,
       },
       custom_fields: [
         {
@@ -52,12 +52,12 @@ export async function POST(req: Request) {
           },
           type: 'text',
           text: {
-            default_value: `Yoga with ${teacherName} on ${date} at ${timeSlot}`,
+            default_value: `Yoga with ${teacherName} on ${date} at ${time_slot}`,
           },
           optional: false,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&teacher=${teacher.slug}&date=${date}&timeSlot=${timeSlot}`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&teacher=${teacher.slug}&date=${date}&timeSlot=${time_slot}`,
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/teachers/${teacher.slug}`,
     });
 

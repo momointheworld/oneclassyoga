@@ -12,38 +12,53 @@ export default function PricingPage() {
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-4xl">
-        <div className="border rounded-xl p-6 shadow text-center">
-          <h2 className="text-xl font-semibold mb-2">1 Session</h2>
-          <p className="text-2xl font-bold mb-2">฿1,250</p>
-          <p>Perfect for trying out a session or one-off bookings.</p>
-        </div>
-
-        <div className="border rounded-xl p-6 shadow text-center bg-blue-50">
-          <h2 className="text-xl font-semibold mb-2">5 Sessions</h2>
-          <p className="text-2xl font-bold mb-2">฿6,150</p>
-          <p>Great for short-term consistency. ฿1,230 per session.</p>
-        </div>
-
-        <div className="border rounded-xl p-6 shadow text-center">
-          <h2 className="text-xl font-semibold mb-2">10 Sessions</h2>
-          <p className="text-2xl font-bold mb-2">฿12,000</p>
-          <p>Best value. ฿1,200 per session for long-term commitment.</p>
-        </div>
+        {[
+          {
+            title: '1 Session',
+            price: '฿1,250',
+            desc: 'Perfect for trying out a session or one-off bookings.',
+          },
+          {
+            title: '5 Sessions',
+            price: '฿6,150',
+            desc: 'Great for short-term consistency. ฿1,230 per session.',
+            highlight: true,
+          },
+          {
+            title: '10 Sessions',
+            price: '฿12,000',
+            desc: 'Best value. ฿1,200 per session for long-term commitment.',
+          },
+        ].map(({ title, price, desc, highlight }, idx) => (
+          <div
+            key={idx}
+            className={`flex flex-col justify-between border rounded-xl p-6 shadow text-center ${
+              highlight ? 'bg-blue-50' : ''
+            }`}
+          >
+            <div>
+              <h2 className="text-xl font-semibold mb-2">{title}</h2>
+              <p className="text-2xl font-bold mb-2">{price}</p>
+              <p className="mb-6">{desc}</p>
+            </div>
+            <div className="flex justify-center">
+              <Link href="/teachers" passHref>
+                <Button
+                  variant="default"
+                  className="bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-emerald-700 transition"
+                >
+                  Pick a Teacher Now
+                </Button>
+              </Link>
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="mt-10 text-center">
-        <p className="text-md text-gray-700 mb-2">
+        <p className="text-md text-gray-700">
           Need a studio? An additional ฿250 per session will apply.
         </p>
-
-        <Link href="/teachers" passHref>
-          <Button
-            variant="outline"
-            className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition"
-          >
-            Find a Teacher to Book Now
-          </Button>
-        </Link>
       </div>
     </div>
   );

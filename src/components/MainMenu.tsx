@@ -40,7 +40,7 @@ export default function MainMenu() {
                 href={href}
                 className={clsx(
                   'text-md font-medium hover:underline',
-                  isActive && 'text-blue-600'
+                  isActive && 'text-emerald-600'
                 )}
               >
                 {label}
@@ -68,7 +68,7 @@ export default function MainMenu() {
                         href={href}
                         className={clsx(
                           'w-full px-4 py-2 text-left',
-                          isActive && 'text-blue-600 font-medium'
+                          isActive && 'text-emerald-600 font-medium'
                         )}
                       >
                         {label}
