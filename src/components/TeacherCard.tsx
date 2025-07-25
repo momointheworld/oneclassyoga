@@ -1,3 +1,4 @@
+'use client';
 import {
   Card,
   CardHeader,
@@ -10,22 +11,35 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import parse from 'html-react-parser';
 import { Button } from './ui/button';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Loader2Icon } from 'lucide-react';
 
-interface Teacher {
-  id: string | number;
-  name: string;
-  slug?: string;
-  photo?: string;
-  bio: string;
-  styles: string[];
-  levels: string[];
-  gallery?: string[];
-  videoUrl?: string;
-  isActive?: boolean;
-  isFeatured?: boolean;
+interface TeacherCardProps {
+  teacher: {
+    id: string | number;
+    name: string;
+    slug?: string;
+    photo?: string;
+    bio: string;
+    styles: string[];
+    levels: string[];
+    gallery?: string[];
+    videoUrl?: string;
+    isActive?: boolean;
+    isFeatured?: boolean;
+  };
 }
 
-export default function TeacherCard({ teacher }: { teacher: Teacher }) {
+export default function TeacherCard({ teacher }: TeacherCardProps) {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleCheckAvailability = async () => {
+    setLoading(true);
+    router.push(`/teachers/${teacher.slug}#booking-calendar`);
+    // No need to manually reset loading - component will unmount
+  };
   return (
     <Card className="w-full max-w-sm rounded-3xl border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
       <CardHeader className="p-5 overflow-hidden rounded-t-3xl">
@@ -73,12 +87,18 @@ export default function TeacherCard({ teacher }: { teacher: Teacher }) {
         </Link>
 
         <Button
-          asChild
-          className="bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-emerald-700 transition"
+          disabled={loading}
+          onClick={handleCheckAvailability}
+          className="bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-emerald-700 transition flex items-center gap-2"
         >
-          <Link href={`/teachers/${teacher.slug}/#booking-calendar`}>
-            Check Availability
-          </Link>
+          {loading ? (
+            <>
+              <Loader2Icon className="animate-spin" />
+              Check Availability
+            </>
+          ) : (
+            'Check Availability'
+          )}
         </Button>
       </CardFooter>
     </Card>

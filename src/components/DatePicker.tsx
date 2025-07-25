@@ -40,7 +40,10 @@ export function DatePicker({
 
   return (
     <div className={cn('flex flex-col gap-2 w-full max-w-sm', className)}>
-      <Label htmlFor="date-picker" className="text-md font-medium">
+      <Label
+        htmlFor="date-picker"
+        className="text-md font-medium text-gray-500"
+      >
         {label}
       </Label>
       <Popover open={open} onOpenChange={setOpen}>

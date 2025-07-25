@@ -9,6 +9,7 @@ export default function CheckoutPage() {
   const teacherSlug = searchParams.get('teacher');
   const priceId = searchParams.get('price');
   const timeSlot = searchParams.get('timeSlot');
+  const participants = searchParams.get('participants');
   const date = searchParams.get('date');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -37,6 +38,7 @@ export default function CheckoutPage() {
             teacher_slug: teacherSlug,
             time_slot: timeSlot,
             date,
+            participants: parseInt(participants || '1', 10), // Default to 1 if not provided
           }),
         });
 
@@ -56,7 +58,7 @@ export default function CheckoutPage() {
     }
 
     createCheckout();
-  }, [priceId, teacherSlug, timeSlot, date]); // More specific dependencies
+  }, [priceId, teacherSlug, timeSlot, date, participants]); // More specific dependencies
 
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-4">

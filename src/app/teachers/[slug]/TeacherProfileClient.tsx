@@ -7,7 +7,7 @@ import TeacherGallery from '@/components/TeacherGallery';
 import parse from 'html-react-parser';
 import BookingCalendar from '@/components/BookingCalendar';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function TeacherProfileClient({
@@ -26,11 +26,30 @@ export default function TeacherProfileClient({
     timeSlots: string[];
   };
   price_id: string;
+  participants?: number;
 }) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
+  const [participantsCount, setParticipantsCount] = useState(1);
+  const [includeStudio, setIncludeStudio] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+
+  useEffect(() => {
+    // Handle scroll to booking calendar if hash is present
+    if (window.location.hash === '#booking-calendar') {
+      const element = document.getElementById('booking-calendar');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+
+        // Optional: add visual highlight
+        element.classList.add('ring-2', 'ring-blue-500');
+        setTimeout(() => {
+          element.classList.remove('ring-2', 'ring-blue-500');
+        }, 2000);
+      }
+    }
+  }, []);
 
   const handleBooking = () => {
     if (!selectedDate || !selectedTimeSlot) {
@@ -42,13 +61,10 @@ export default function TeacherProfileClient({
     const query = new URLSearchParams({
       teacher: teacher.slug,
       price: price_id,
-      date: selectedDate.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      }),
-
+      date: selectedDate.toISOString(),
       timeSlot: selectedTimeSlot,
+      participants: participantsCount.toString(),
+      includeStudio: includeStudio.toString(),
     }).toString();
 
     router.push(`/booking/checkout?${query}`);
@@ -129,6 +145,9 @@ export default function TeacherProfileClient({
                 setSelectedTimeSlot(timeSlot);
               }}
               timeSlots={timeSlots}
+              onParticipantsChange={setParticipantsCount}
+              onStudioChange={setIncludeStudio}
+              initialParticipants={participantsCount}
             />
           </div>
 

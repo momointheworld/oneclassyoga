@@ -10,6 +10,7 @@ export default function SuccessPage() {
   const teacherSlug = searchParams.get('teacher');
   const date = searchParams.get('date');
   const time = searchParams.get('timeSlot');
+  const participants = searchParams.get('participants');
   const [copied, setCopied] = useState(false);
 
   const teacherName = teacherSlug
@@ -67,6 +68,12 @@ export default function SuccessPage() {
           {time && (
             <li>
               <span className="font-medium">Time:</span> {time}
+            </li>
+          )}
+          {participants && (
+            <li>
+              <span className="font-medium">Participants:</span> {participants}{' '}
+              persons
             </li>
           )}
         </ul>

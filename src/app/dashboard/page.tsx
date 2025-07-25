@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import LogoutButton from '@/components/LogoutButton';
+import Link from 'next/link';
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -18,7 +19,6 @@ export default function DashboardPage() {
       } = await supabase.auth.getUser();
 
       if (error || !user || user.email !== allowedEmail) {
-        // Not logged in or not authorized, redirect to login
         router.push('/dashboard/login');
       } else {
         setLoading(false);
@@ -28,13 +28,27 @@ export default function DashboardPage() {
     checkUser();
   }, [router, allowedEmail]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return <p className="mt-10 text-center text-gray-500">Loading...</p>;
 
   return (
-    <div>
-      <h1>Welcome to your Dashboard</h1>
+    <main className="max-w-xl mx-auto p-6">
+      <h1 className="text-2xl font-semibold mb-4">Welcome to your Dashboard</h1>
+
       <LogoutButton />
-      {/* Your dashboard content */}
-    </div>
+
+      <ul className="mt-6 space-y-2 list-disc list-inside text-blue-600">
+        <li>
+          <Link href="/dashboard/teachers" className="hover:underline">
+            Manage Teachers
+          </Link>
+        </li>
+        <li>
+          <Link href="/dashboard/bookings" className="hover:underline">
+            View Bookings
+          </Link>
+        </li>
+      </ul>
+    </main>
   );
 }

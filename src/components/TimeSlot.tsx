@@ -13,7 +13,7 @@ export function TimeSlotPicker({
 }: TimeSlotPickerProps) {
   return (
     <div className="w-full mt-4">
-      <p className="mb-2">Select a time</p>
+      <p className="mb-2 text-gray-500">Select a time</p>
       <div className="grid grid-cols-3 gap-2">
         {timeSlots.map((slot) => {
           const isBooked = bookedSlots.includes(slot);
@@ -27,7 +27,7 @@ export function TimeSlotPicker({
                 isBooked
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                   : selectedSlot === slot
-                  ? 'bg-blue-500 text-white'
+                  ? 'bg-emerald-500 text-white'
                   : 'bg-white'
               }`}
             >

@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { email, priceId, teacher_slug, date, time_slot } = body;
+  const { email, priceId, teacher_slug, date, time_slot, participants } = body;
 
   try {
     // Fetch teacher info
@@ -42,6 +42,7 @@ export async function POST(req: Request) {
         teacher_slug: teacher.slug,
         date,
         time_slot: time_slot,
+        participants: participants,
       },
       custom_fields: [
         {
@@ -57,7 +58,7 @@ export async function POST(req: Request) {
           optional: false,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&teacher=${teacher.slug}&date=${date}&timeSlot=${time_slot}`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&teacher=${teacher.slug}&date=${date}&timeSlot=${time_slot}&participants=${participants}`,
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/teachers/${teacher.slug}`,
     });
 

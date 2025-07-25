@@ -41,14 +41,15 @@ export async function POST(req: Request) {
       )) as Stripe.Customer;
 
       // Get the metadata from the session
-      const { teacher_slug, date, time_slot } = session.metadata || {};
+      const { teacher_slug, date, time_slot, participants } =
+        session.metadata || {};
 
       if (!teacher_slug || !date || !time_slot) {
         throw new Error('Missing required metadata');
       }
 
       console.log(
-        `Processing booking for teacher: ${teacher_slug}, date: ${date}, timeSlot: ${time_slot}`
+        `Processing booking for teacher: ${teacher_slug}, date: ${date}, timeSlot: ${time_slot}, participants: ${participants} `
       );
 
       console.log('teacher_slug from metadata:', teacher_slug);
@@ -77,6 +78,7 @@ export async function POST(req: Request) {
         customer_email: customer.email || session.customer_email || '',
         date,
         time_slot: time_slot,
+        participants: parseInt(participants || '1', 10), // Default to 1 if not provided
         payment_intent: session.payment_intent as string,
         amount_total: session.amount_total ? session.amount_total / 100 : 0,
       });
