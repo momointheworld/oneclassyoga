@@ -8,6 +8,7 @@ export async function GET(req: NextRequest) {
     const teacherSlug = searchParams.get('teacher');
     const date = searchParams.get('date');
     const timeSlot = searchParams.get('timeSlot');
+    const participants = searchParams.get('participants');
 
     if (!sessionId && !teacherSlug && !date && !timeSlot) {
       return NextResponse.json(
@@ -17,13 +18,14 @@ export async function GET(req: NextRequest) {
     }
 
     let query = supabase
-      .from('bookings')
-      .select('id, date, time_slot, teacher_slug, session_id');
+      .from('safe_bookings')
+      .select('id, date, time_slot, teacher_slug, session_id, participants');
 
     if (sessionId) query = query.eq('session_id', sessionId);
     if (teacherSlug) query = query.eq('teacher_slug', teacherSlug);
     if (date) query = query.eq('date', date);
     if (timeSlot) query = query.eq('time_slot', timeSlot);
+    if (participants) query = query.eq('participants', participants);
 
     const { data, error } = await query.maybeSingle();
 

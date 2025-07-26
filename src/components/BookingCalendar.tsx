@@ -30,9 +30,14 @@ export default function BookingCalendar({
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [timeSlot, setTimeSlot] = useState<string | null>(null);
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
-  const [rate, setRate] = useState('1250');
+  const [rate, setRate] = useState(() => {
+    const base = 1250 + (initialParticipants - 1) * 250;
+    const studioFee = 250; // since studio is selected by default
+    return `${base + studioFee} THB`;
+  });
+
   const [participants, setParticipants] = useState(initialParticipants);
-  const [includeStudio, setIncludeStudio] = useState(false);
+  const [includeStudio, setIncludeStudio] = useState(true);
 
   // 1. Immediate state update when selections change
   useEffect(() => {
@@ -70,16 +75,26 @@ export default function BookingCalendar({
     fetchBookedSlots();
   }, [selectedDate, timeSlot]);
 
+  useEffect(() => {
+    calculateRate(participants, includeStudio);
+  }, [includeStudio, participants]);
+
   const handleParticipantsChange = (value: number) => {
     setParticipants(value);
-    const price = 1250 + (value - 1) * 250;
-    setRate(`${price}`);
-    calculateRate(value, includeStudio);
 
-    // Notify parent about the change
-    if (onParticipantsChange) {
-      onParticipantsChange(value);
+    if (value >= 3 && !includeStudio) {
+      setIncludeStudio(true);
+      if (onStudioChange) onStudioChange(true);
     }
+
+    if (value < 3 && includeStudio) {
+      setIncludeStudio(true);
+      if (onStudioChange) onStudioChange(false);
+    }
+
+    calculateRate(value, value >= 3 || includeStudio);
+
+    if (onParticipantsChange) onParticipantsChange(value);
   };
 
   const handleStudioChange = (checked: boolean) => {
@@ -94,7 +109,7 @@ export default function BookingCalendar({
 
   const calculateRate = (participants: number, studio: boolean) => {
     const baseRate = 1250 + (participants - 1) * 250;
-    const studioFee = studio && participants < 3 ? 250 : 0;
+    const studioFee = studio ? 250 : 0;
     const total = baseRate + studioFee;
 
     setRate(`${total} THB`);
@@ -121,11 +136,12 @@ export default function BookingCalendar({
             type="checkbox"
             checked={includeStudio}
             onChange={(e) => handleStudioChange(e.target.checked)}
+            disabled={participants >= 3}
           />
           <span className="text-sm">
-            I need a Studio{' '}
+            I need a studio{' '}
             <span className="text-gray-500">
-              (FREE if 3 participants or above)
+              (required for 3 or more participants)
             </span>
           </span>
         </label>

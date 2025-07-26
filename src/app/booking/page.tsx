@@ -8,6 +8,7 @@ export default function BookingPage() {
     date: string;
     time_slot: string;
     teacher_slug: string;
+    participants: number;
   }>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -80,6 +81,11 @@ export default function BookingPage() {
           </p>
           <p>
             <span className="font-medium">Time Slot:</span> {booking.time_slot}
+          </p>
+          <p>
+            <span className="font-medium">Participants:</span>{' '}
+            {booking.participants}{' '}
+            {Number(booking.participants) === 1 ? 'person' : 'people'}
           </p>
         </div>
       )}

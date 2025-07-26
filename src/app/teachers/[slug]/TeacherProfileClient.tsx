@@ -31,7 +31,7 @@ export default function TeacherProfileClient({
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
   const [participantsCount, setParticipantsCount] = useState(1);
-  const [includeStudio, setIncludeStudio] = useState(false);
+  const [includeStudio, setIncludeStudio] = useState(true);
   const [error, setError] = useState('');
   const router = useRouter();
 

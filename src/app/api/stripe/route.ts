@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabaseClient';
+import { format } from 'date-fns';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
@@ -25,6 +26,8 @@ export async function POST(req: Request) {
     const teacherName = teacher.slug
       .replace(/-/g, ' ')
       .replace(/\b\w/g, (char: string) => char.toUpperCase());
+
+    const formattedDate = format(new Date(date), 'MMMM d, yyyy'); // → "July 22, 2025"
 
     // Create Stripe Checkout session
     const session = await stripe.checkout.sessions.create({
@@ -53,7 +56,7 @@ export async function POST(req: Request) {
           },
           type: 'text',
           text: {
-            default_value: `Yoga with ${teacherName} on ${date} at ${time_slot}`,
+            default_value: `Yoga with ${teacherName} on ${formattedDate} at ${time_slot}`,
           },
           optional: false,
         },

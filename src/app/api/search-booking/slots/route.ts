@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   }
 
   const { data, error } = await supabase
-    .from('bookings')
+    .from('safe_bookings')
     .select('time_slot')
     .eq('date', date);
 

@@ -65,7 +65,7 @@ export default function CheckoutPage() {
       {loading && !error && (
         <>
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <p>Preparing secure checkout...</p>
+          <p>Please hold on, we are directing you to our checkout page...</p>
         </>
       )}
       {error && (

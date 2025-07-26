@@ -73,7 +73,7 @@ export default function SuccessPage() {
           {participants && (
             <li>
               <span className="font-medium">Participants:</span> {participants}{' '}
-              persons
+              {Number(participants) === 1 ? 'person' : 'people'}
             </li>
           )}
         </ul>
