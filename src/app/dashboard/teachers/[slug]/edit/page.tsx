@@ -12,6 +12,7 @@ import { Label } from '@radix-ui/react-label';
 import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
 import TeacherBioEditor from '@/components/TeacherBioEditor';
+import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
 
 export default function EditTeacherProfilePage() {
   const router = useRouter();
@@ -117,6 +118,14 @@ export default function EditTeacherProfilePage() {
 
   return (
     <main className="max-w-3xl mx-auto p-6 space-y-8">
+      <BreadcrumbTrail
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Teachers', href: '/dashboard/teachers' },
+          { label: `${name}` }, // no href = current page
+        ]}
+      />
       <h1 className="text-3xl font-bold mb-4">Edit Teacher</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">

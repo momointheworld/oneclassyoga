@@ -38,7 +38,7 @@ export function BreadcrumbTrail({ items }: BreadcrumbTrailProps) {
               )}
             </BreadcrumbItem>
             {index < items.length - 1 && (
-              <BreadcrumbSeparator className={undefined}>
+              <BreadcrumbSeparator className={'ml-2'}>
                 {'>'}
               </BreadcrumbSeparator>
             )}

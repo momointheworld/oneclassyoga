@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
 import parse from 'html-react-parser';
+import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
 
 type Teacher = {
   id: number;
@@ -76,6 +77,13 @@ export default function TeachersDashboardPage() {
 
   return (
     <main className="max-w-6xl mx-auto p-6">
+      <BreadcrumbTrail
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Teachers' },
+        ]}
+      />
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Manage Teachers</h1>
         <Button

@@ -17,19 +17,11 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     async function createCheckout() {
-      // Validate all required parameters first
-      // const missingParams = [];
-      // if (!priceId) missingParams.push('price');
-      // if (!teacherSlug) missingParams.push('teacher');
-      // if (!timeSlot) missingParams.push('timeSlot');
-      // if (!date) missingParams.push('date');
-      // if (!booking_type) missingParams.push('booking_type');
-
-      // if (missingParams.length > 0) {
-      //   setError(`Missing: ${missingParams.join(', ')}`);
-      //   setLoading(false);
-      //   return;
-      // }
+      if (booking_type) {
+        setError(`Missing: a required field, contact support please`);
+        setLoading(false);
+        return;
+      }
 
       try {
         const response = await fetch('/api/stripe', {

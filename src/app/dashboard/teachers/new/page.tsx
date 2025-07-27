@@ -9,6 +9,7 @@ import { styleOptions, levelOptions, timeSlotOptions } from '@/lib/constants';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import TeacherBioEditor from '@/components/TeacherBioEditor';
+import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
 
 export default function NewTeacherPage() {
   const [name, setName] = useState('');
@@ -54,6 +55,14 @@ export default function NewTeacherPage() {
 
   return (
     <main className="max-w-3xl mx-auto p-6 space-y-8">
+      <BreadcrumbTrail
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Teachers', href: '/dashboard/teachers' },
+          { label: 'New' }, // no href = current page
+        ]}
+      />
       <h1 className="text-3xl font-bold mb-4">Create New Teacher</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
