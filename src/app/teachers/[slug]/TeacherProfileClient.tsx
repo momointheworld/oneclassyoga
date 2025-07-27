@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 export default function TeacherProfileClient({
   teacher,
   price_id,
+  booking_type,
 }: {
   teacher: {
     id: string;
@@ -27,6 +28,7 @@ export default function TeacherProfileClient({
   };
   price_id: string;
   participants?: number;
+  booking_type: string;
 }) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
@@ -60,11 +62,12 @@ export default function TeacherProfileClient({
     setError('');
     const query = new URLSearchParams({
       teacher: teacher.slug,
-      price: price_id,
+      priceId: price_id,
       date: selectedDate.toISOString(),
       timeSlot: selectedTimeSlot,
       participants: participantsCount.toString(),
       includeStudio: includeStudio.toString(),
+      booking_type: booking_type,
     }).toString();
 
     router.push(`/booking/checkout?${query}`);

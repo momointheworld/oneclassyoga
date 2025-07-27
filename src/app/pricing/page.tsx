@@ -48,7 +48,16 @@ export default function PricingPage() {
             </p>
           </div>
           <div className="flex justify-center">
-            <Link href="/booking/checkout" passHref>
+            <Link
+              href={{
+                pathname: '/booking/checkout',
+                query: {
+                  priceId: process.env.NEXT_STRIPE_BUNDLE5_PRICE_ID,
+                  booking_type: 'bundle',
+                },
+              }}
+              passHref
+            >
               <Button
                 variant="default"
                 className="bg-orange-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-orange-700 transition"
@@ -72,7 +81,16 @@ export default function PricingPage() {
             </p>
           </div>
           <div className="flex justify-center">
-            <Link href="/booking/checkout" passHref>
+            <Link
+              href={{
+                pathname: '/booking/checkout',
+                query: {
+                  priceId: process.env.NEXT_STRIPE_BUNDLE10_PRICE_ID,
+                  booking_type: 'bundle',
+                },
+              }}
+              passHref
+            >
               <Button
                 variant="default"
                 className="bg-orange-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-orange-700 transition"

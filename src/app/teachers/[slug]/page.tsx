@@ -22,5 +22,11 @@ export default async function TeacherProfilePage({
     return notFound();
   }
 
-  return <TeacherProfileClient teacher={teacher} price_id={priceId} />;
+  return (
+    <TeacherProfileClient
+      teacher={teacher}
+      price_id={priceId}
+      booking_type="single"
+    />
+  );
 }

@@ -9,61 +9,105 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { email, priceId, teacher_slug, date, time_slot, participants } = body;
+  const {
+    email,
+    priceId,
+    teacher_slug,
+    date,
+    time_slot,
+    participants,
+    booking_type, // Correct name
+  } = body;
+
+  if (!priceId || !booking_type) {
+    return NextResponse.json(
+      { error: 'Missing required fields' },
+      { status: 400 }
+    );
+  }
+
+  // Base session config
+  const sessionOptions: Stripe.Checkout.SessionCreateParams = {
+    payment_method_types: ['card'],
+    mode: 'payment',
+    customer_email: email,
+    customer_creation: 'always',
+    line_items: [
+      {
+        price: priceId,
+        quantity: 1,
+      },
+    ],
+    success_url: '',
+    cancel_url: '',
+  };
 
   try {
-    // Fetch teacher info
-    const { data: teacher, error: teacherError } = await supabase
-      .from('teachers')
-      .select('id, slug, name')
-      .eq('slug', teacher_slug)
-      .single();
+    if (booking_type === 'single') {
+      if (!teacher_slug || !date || !time_slot || !participants) {
+        return NextResponse.json(
+          { error: 'Missing single-session booking info' },
+          { status: 400 }
+        );
+      }
 
-    if (teacherError || !teacher) {
-      return NextResponse.json({ error: 'Teacher not found' }, { status: 404 });
-    }
+      // Fetch teacher
+      const { data: teacher, error: teacherError } = await supabase
+        .from('teachers')
+        .select('id, slug, name')
+        .eq('slug', teacher_slug)
+        .single();
 
-    const teacherName = teacher.slug
-      .replace(/-/g, ' ')
-      .replace(/\b\w/g, (char: string) => char.toUpperCase());
+      if (teacherError || !teacher) {
+        return NextResponse.json(
+          { error: 'Teacher not found' },
+          { status: 404 }
+        );
+      }
 
-    const formattedDate = format(new Date(date), 'MMMM d, yyyy'); // → "July 22, 2025"
+      const teacherName = teacher.slug
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, (char: string) => char.toUpperCase());
 
-    // Create Stripe Checkout session
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      mode: 'payment',
-      customer_email: email,
-      customer_creation: 'always',
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      metadata: {
-        teacher_slug: teacher.slug,
+      const formattedDate = format(new Date(date), 'MMMM d, yyyy');
+
+      sessionOptions.metadata = {
+        teacher_slug,
         date,
-        time_slot: time_slot,
-        participants: participants,
-      },
-      custom_fields: [
+        time_slot,
+        participants,
+        booking_type,
+      };
+
+      sessionOptions.custom_fields = [
         {
           key: 'appointment_date',
-          label: {
-            type: 'custom',
-            custom: 'Appointment Date',
-          },
+          label: { type: 'custom', custom: 'Appointment Date' },
           type: 'text',
           text: {
             default_value: `Yoga with ${teacherName} on ${formattedDate} at ${time_slot}`,
           },
           optional: false,
         },
-      ],
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&teacher=${teacher.slug}&date=${date}&timeSlot=${time_slot}&participants=${participants}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/teachers/${teacher.slug}`,
-    });
+      ];
+
+      sessionOptions.success_url = `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&teacher=${teacher.slug}&date=${date}&timeSlot=${time_slot}&participants=${participants}`;
+      sessionOptions.cancel_url = `${process.env.NEXT_PUBLIC_SITE_URL}/teachers/${teacher.slug}`;
+    } else if (booking_type === 'bundle') {
+      sessionOptions.metadata = {
+        booking_type,
+      };
+      sessionOptions.success_url = `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&bundle=true`;
+      sessionOptions.cancel_url = `${process.env.NEXT_PUBLIC_SITE_URL}/pricing`;
+    } else {
+      return NextResponse.json(
+        { error: 'Invalid booking_type' },
+        { status: 400 }
+      );
+    }
+
+    // Create the checkout session
+    const session = await stripe.checkout.sessions.create(sessionOptions);
 
     return NextResponse.json({ url: session.url });
   } catch (err: unknown) {

@@ -7,9 +7,10 @@ import { useEffect, useState } from 'react';
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
   const teacherSlug = searchParams.get('teacher');
-  const priceId = searchParams.get('price');
+  const priceId = searchParams.get('priceId');
   const timeSlot = searchParams.get('timeSlot');
   const participants = searchParams.get('participants');
+  const booking_type = searchParams.get('booking_type');
   const date = searchParams.get('date');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -17,17 +18,18 @@ export default function CheckoutPage() {
   useEffect(() => {
     async function createCheckout() {
       // Validate all required parameters first
-      const missingParams = [];
-      if (!priceId) missingParams.push('price');
-      if (!teacherSlug) missingParams.push('teacher');
-      if (!timeSlot) missingParams.push('timeSlot');
-      if (!date) missingParams.push('date');
+      // const missingParams = [];
+      // if (!priceId) missingParams.push('price');
+      // if (!teacherSlug) missingParams.push('teacher');
+      // if (!timeSlot) missingParams.push('timeSlot');
+      // if (!date) missingParams.push('date');
+      // if (!booking_type) missingParams.push('booking_type');
 
-      if (missingParams.length > 0) {
-        setError(`Missing: ${missingParams.join(', ')}`);
-        setLoading(false);
-        return;
-      }
+      // if (missingParams.length > 0) {
+      //   setError(`Missing: ${missingParams.join(', ')}`);
+      //   setLoading(false);
+      //   return;
+      // }
 
       try {
         const response = await fetch('/api/stripe', {
@@ -39,6 +41,7 @@ export default function CheckoutPage() {
             time_slot: timeSlot,
             date,
             participants: parseInt(participants || '1', 10), // Default to 1 if not provided
+            booking_type,
           }),
         });
 
@@ -58,7 +61,7 @@ export default function CheckoutPage() {
     }
 
     createCheckout();
-  }, [priceId, teacherSlug, timeSlot, date, participants]); // More specific dependencies
+  }, [priceId, teacherSlug, timeSlot, date, participants, booking_type]); // More specific dependencies
 
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-4">

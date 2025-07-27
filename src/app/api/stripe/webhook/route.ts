@@ -40,45 +40,45 @@ export async function POST(req: Request) {
         session.customer as string
       )) as Stripe.Customer;
 
-      // Get the metadata from the session
-      const { teacher_slug, date, time_slot, participants } =
-        session.metadata || {};
+      const metadata = session.metadata || {};
+      const booking_type = metadata.booking_type || 'single';
+      const teacher_slug = metadata.teacher_slug || null;
+      const date = metadata.date || null;
+      const time_slot = metadata.time_slot || null;
+      const participants = metadata.participants || null;
 
-      if (!teacher_slug || !date || !time_slot) {
-        throw new Error('Missing required metadata');
+      let teacherId = null;
+
+      if (booking_type === 'single') {
+        if (!teacher_slug || !date || !time_slot) {
+          throw new Error('Missing required metadata for single booking');
+        }
+
+        // Fetch teacher
+        const { data: teacher, error: teacherError } = await supabase
+          .from('teachers')
+          .select('id, slug')
+          .eq('slug', teacher_slug)
+          .single();
+
+        if (teacherError || !teacher) {
+          throw new Error('Teacher not found');
+        }
+
+        teacherId = teacher.id;
       }
 
-      console.log(
-        `Processing booking for teacher: ${teacher_slug}, date: ${date}, timeSlot: ${time_slot}, participants: ${participants} `
-      );
-
-      console.log('teacher_slug from metadata:', teacher_slug);
-      console.log(session.metadata);
-
-      // Fetch teacher info
-      const { data: teacher, error: teacherError } = await supabase
-        .from('teachers')
-        .select('id, slug, name')
-        .eq('slug', teacher_slug)
-        .single();
-
-      console.log('teacherError', teacherError);
-      console.log('teacherSlug', teacher_slug);
-
-      if (teacherError || !teacher) {
-        throw new Error('Teacher not found');
-      }
-
-      // Insert booking into Supabase
+      // Insert into bookings
       const { error: insertError } = await supabase.from('bookings').insert({
         session_id: session.id,
-        teacher_slug: teacher.slug,
-        teacher_id: teacher.id,
+        booking_type,
+        teacher_slug,
+        teacher_id: teacherId,
         customer_name: customer.name || '',
         customer_email: customer.email || session.customer_email || '',
         date,
-        time_slot: time_slot,
-        participants: parseInt(participants || '1', 10), // Default to 1 if not provided
+        time_slot,
+        participants: parseInt(participants || '1', 10),
         payment_intent: session.payment_intent as string,
         amount_total: session.amount_total ? session.amount_total / 100 : 0,
       });
