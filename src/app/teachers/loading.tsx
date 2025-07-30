@@ -3,8 +3,8 @@
 export default function TeachersLoading() {
   // Simple grid of skeleton cards matching your layout
   return (
-    <main className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">
+    <main className="max-w-6xl mx-auto px-4 py-16">
+      <h1 className="text-4xl font-bold mb-8 text-center">
         Loading teachers...
       </h1>
 
