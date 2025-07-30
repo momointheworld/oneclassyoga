@@ -1,41 +1,45 @@
-'use client';
+import { createServerClient } from '@supabase/ssr';
+import { Link } from 'lucide-react';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
-import LogoutButton from '@/components/LogoutButton';
-import Link from 'next/link';
+export default async function DashboardPage() {
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: async () => (await cookies()).getAll(),
+      },
+    }
+  );
 
-export default function DashboardPage() {
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-  const allowedEmail = process.env.NEXT_PUBLIC_DASHBOARD_EMAIL;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  useEffect(() => {
-    const checkUser = async () => {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser();
+  console.log('=== USER INFO ===');
+  console.log(user);
+  console.log('=== EXPECTED ADMIN EMAIL ===');
+  console.log(process.env.DASHBOARD_LOGIN_EMAIL);
 
-      if (error || !user || user.email !== allowedEmail) {
-        router.push('/dashboard/login');
-      } else {
-        setLoading(false);
-      }
-    };
+  const allowedEmail = process.env.DASHBOARD_LOGIN_EMAIL;
 
-    checkUser();
-  }, [router, allowedEmail]);
+  if (!user || user.email !== allowedEmail) {
+    console.log(
+      'Redirecting to /login because user is missing or not authorized'
+    );
 
-  if (loading)
-    return <p className="mt-10 text-center text-gray-500">Loading...</p>;
+    redirect('/login');
+  }
 
   return (
     <main className="max-w-xl mx-auto p-6">
-      <h1 className="text-2xl font-semibold mb-4">Welcome to your Dashboard</h1>
+      <h1 className="text-2xl font-semibold mb-4">
+        Welcome to your Dashboard, {user.email}
+      </h1>
 
-      <LogoutButton />
+      {/* <LogoutButton /> */}
 
       <ul className="mt-6 space-y-2 list-disc list-inside text-blue-600">
         <li>

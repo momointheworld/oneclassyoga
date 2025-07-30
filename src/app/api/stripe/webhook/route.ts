@@ -1,15 +1,15 @@
-import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { createClient } from '@supabase/supabase-js';
+
+export const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-04-10' as Stripe.LatestApiVersion,
 });
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // NOT the anon key
-);
 
 export async function POST(req: Request) {
   const sig = req.headers.get('stripe-signature')!;

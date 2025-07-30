@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
-import { uploadTeacherImage } from '@/lib/supabaseUtils';
+import { uploadTeacherImage } from '@/utils/supabase/supabaseUtils';
 
 type Props = {
   slug: string;

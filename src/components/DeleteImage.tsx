@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { deleteTeacherImage } from '@/lib/supabaseUtils';
+import { deleteTeacherImage } from '@/utils/supabase/supabaseUtils';
 
 interface DeleteImageProps {
   publicUrl: string;

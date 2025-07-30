@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@supabase/supabase-js';
+// here we use anon key since safe_booking is limited to view certain columns already
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export async function GET(req: NextRequest) {
   try {

@@ -2,11 +2,11 @@
 
 import { SetStateAction, useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/utils/supabase/supabaseClient';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { levelOptions, styleOptions, timeSlotOptions } from '@/lib/constants';
-import { deleteTeacherImage } from '@/lib/supabaseUtils';
+import { deleteTeacherImage } from '@/utils/supabase/supabaseUtils';
 import ImageUpload from '@/components/ImageUpload';
 import { Label } from '@radix-ui/react-label';
 import Image from 'next/image';

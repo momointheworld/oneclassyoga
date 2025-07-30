@@ -1,14 +1,30 @@
 'use client';
-import { supabase } from '@/lib/supabaseClient';
+import { useState } from 'react';
+import { supabase } from '@/utils/supabase/supabaseClient';
 
 export default function DashboardLoginPage() {
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
   const handleLogin = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'github',
-      options: {
-        redirectTo: 'http://localhost:3000/dashboard',
-      },
-    });
+    setLoading(true);
+    setErrorMsg('');
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'message' in error) {
+        setErrorMsg((error as { message: string }).message);
+      } else {
+        setErrorMsg('An unknown error occurred.');
+      }
+      setLoading(false);
+    }
   };
 
   return (
@@ -16,10 +32,12 @@ export default function DashboardLoginPage() {
       <h1 className="text-2xl mb-4">Admin Login</h1>
       <button
         onClick={handleLogin}
-        className="bg-black text-white py-2 px-4 rounded"
+        disabled={loading}
+        className="bg-black text-white py-2 px-4 rounded disabled:opacity-50"
       >
-        Sign in with GitHub
+        {loading ? 'Redirecting...' : 'Sign in with GitHub'}
       </button>
+      {errorMsg && <p className="text-red-500 mt-2">{errorMsg}</p>}
     </div>
   );
 }

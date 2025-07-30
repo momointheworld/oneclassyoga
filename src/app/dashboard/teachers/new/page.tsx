@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import ImageUpload from '@/components/ImageUpload';
 import { styleOptions, levelOptions, timeSlotOptions } from '@/lib/constants';
 import { Loader2 } from 'lucide-react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/utils/supabase/supabaseClient';
 import TeacherBioEditor from '@/components/TeacherBioEditor';
 import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
 
