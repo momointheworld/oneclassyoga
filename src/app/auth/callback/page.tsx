@@ -3,10 +3,11 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/utils/supabase/supabaseClient';
+import { createClient } from '@/utils/supabase/supabaseClient';
 
 export default function AuthCallbackPage() {
   const router = useRouter();
+  const supabase = createClient();
 
   useEffect(() => {
     const handleAuth = async () => {
@@ -19,9 +20,17 @@ export default function AuthCallbackPage() {
         await supabase.auth.signOut();
         return router.replace('/login?error=session');
       }
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-      const email = session.user.email;
-      if (email === process.env.NEXT_PUBLIC_DASHBOARD_LOGIN_EMAIL) {
+      const githubIdentity = user?.identities?.find(
+        (id) => id.provider === 'github'
+      );
+      const githubUserId = githubIdentity?.id;
+      const allowedGithubId = process.env.NEXT_PUBLIC_GITHUB_ALLOWED_ID;
+
+      if (githubUserId === allowedGithubId) {
         router.replace('/dashboard');
       } else {
         await supabase.auth.signOut();
@@ -30,7 +39,7 @@ export default function AuthCallbackPage() {
     };
 
     handleAuth();
-  }, [router]);
+  }, [router, supabase.auth]);
 
   return <p>Logging you in...</p>;
 }

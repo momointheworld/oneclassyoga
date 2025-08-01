@@ -1,8 +1,9 @@
 'use client';
 import { useState } from 'react';
-import { supabase } from '@/utils/supabase/supabaseClient';
+import { createClient } from '@/utils/supabase/supabaseClient';
 
 export default function DashboardLoginPage() {
+  const supabase = createClient();
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 

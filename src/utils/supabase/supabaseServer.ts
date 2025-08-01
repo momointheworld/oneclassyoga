@@ -1,31 +1,29 @@
-// server side props for cookies/session based for users in the forum
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
-import { type GetServerSidePropsContext } from 'next';
-import { createServerClient, serializeCookieHeader } from '@supabase/ssr';
+export async function createClient() {
+  const cookieStore = await cookies();
 
-export function createClient({ req, res }: GetServerSidePropsContext) {
-  const supabase = createServerClient(
+  return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {
-          return Object.keys(req.cookies).map((name) => ({
-            name,
-            value: req.cookies[name] || '',
-          }));
+          return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
-          res.setHeader(
-            'Set-Cookie',
-            cookiesToSet.map(({ name, value, options }) =>
-              serializeCookieHeader(name, value, options)
-            )
-          );
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            );
+          } catch {
+            // The `setAll` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
         },
       },
     }
   );
-
-  return supabase;
 }

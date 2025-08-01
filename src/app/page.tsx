@@ -9,7 +9,7 @@ import { PageContainer } from '@/components/PageContainer';
 export default function HomePage() {
   return (
     <PageContainer>
-      <main className="px-4 md:px-8 lg:px-16 space-y-24">
+      <div className="px-4 space-y-24">
         {/* Hero Section */}
         <section className="text-center space-y-6">
           <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
@@ -162,7 +162,7 @@ export default function HomePage() {
             </Button>
           </Link>
         </section>
-      </main>
+      </div>
     </PageContainer>
   );
 }

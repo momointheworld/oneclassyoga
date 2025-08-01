@@ -16,9 +16,17 @@ export async function middleware(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const allowedEmail = process.env.DASHBOARD_LOGIN_EMAIL;
+  const githubIdentity = user?.identities?.find(
+    (id) => id.provider === 'github'
+  );
+  const githubUserId = githubIdentity?.id;
+  const allowedGithubId = process.env.GITHUB_ALLOWED_ID;
 
-  if (!user || user.email !== allowedEmail) {
+  console.log('User:', user);
+  console.log('GitHub ID:', githubUserId);
+  console.log('Allowed ID:', allowedGithubId);
+
+  if (!user || githubUserId !== allowedGithubId) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 

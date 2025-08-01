@@ -1,35 +1,30 @@
-import { createServerClient } from '@supabase/ssr';
-import { Link } from 'lucide-react';
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { createClient } from '@/utils/supabase/supabaseServer';
+import { LogOut } from 'lucide-react'; // example icon for logout
+
+// A simple logout function as server action (optional)
+async function logout() {
+  'use server';
+  const supabase = createClient();
+  await (await supabase).auth.signOut();
+  redirect('/login');
+}
 
 export default async function DashboardPage() {
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: async () => (await cookies()).getAll(),
-      },
-    }
-  );
+  const supabase = createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await (await supabase).auth.getUser();
 
-  console.log('=== USER INFO ===');
-  console.log(user);
-  console.log('=== EXPECTED ADMIN EMAIL ===');
-  console.log(process.env.DASHBOARD_LOGIN_EMAIL);
+  // Redirect if no user or unauthorized GitHub user
+  const githubIdentity = user?.identities?.find(
+    (id) => id.provider === 'github'
+  );
+  const githubUserId = githubIdentity?.id;
+  const allowedGithubId = process.env.NEXT_PUBLIC_GITHUB_ALLOWED_ID;
 
-  const allowedEmail = process.env.DASHBOARD_LOGIN_EMAIL;
-
-  if (!user || user.email !== allowedEmail) {
-    console.log(
-      'Redirecting to /login because user is missing or not authorized'
-    );
-
+  if (!user || githubUserId !== allowedGithubId) {
     redirect('/login');
   }
 
@@ -39,18 +34,27 @@ export default async function DashboardPage() {
         Welcome to your Dashboard, {user.email}
       </h1>
 
-      {/* <LogoutButton /> */}
+      {/* Logout button */}
+      <form action={logout} className="mb-6">
+        <button
+          type="submit"
+          className="flex items-center gap-2 px-4 py-2 border rounded bg-orange-600 text-white hover:bg-orange-700"
+        >
+          <LogOut size={18} />
+          Log out
+        </button>
+      </form>
 
       <ul className="mt-6 space-y-2 list-disc list-inside text-blue-600">
         <li>
-          <Link href="/dashboard/teachers" className="hover:underline">
+          <a href="/dashboard/teachers" className="hover:underline">
             Manage Teachers
-          </Link>
+          </a>
         </li>
         <li>
-          <Link href="/dashboard/bookings" className="hover:underline">
+          <a href="/dashboard/bookings" className="hover:underline">
             View Bookings
-          </Link>
+          </a>
         </li>
       </ul>
     </main>
