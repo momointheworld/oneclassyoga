@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import ImageUpload from '@/components/ImageUpload';
 import { styleOptions, levelOptions, timeSlotOptions } from '@/lib/constants';
 import { Loader2 } from 'lucide-react';
-import { supabase } from '@/utils/supabase/supabaseClient';
+import { createClient } from '@/utils/supabase/supabaseClient';
 import TeacherBioEditor from '@/components/TeacherBioEditor';
 import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
 
@@ -24,6 +24,7 @@ export default function NewTeacherPage() {
   const [isActive, setIsActive] = useState(true);
   const [isFeatured, setIsFeatured] = useState(false);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
+  const supabase = createClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

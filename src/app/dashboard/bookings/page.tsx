@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/utils/supabase/supabaseClient';
+import { createClient } from '@/utils/supabase/supabaseClient';
 import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
 
 type Booking = {
@@ -20,6 +20,7 @@ export default function ViewBookingPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const supabase = createClient();
 
   const ITEMS_PER_PAGE = 20;
 

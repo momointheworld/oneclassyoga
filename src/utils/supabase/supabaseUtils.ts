@@ -1,4 +1,11 @@
-import { supabase } from '@/utils/supabase/supabaseClient';
+import { createBrowserClient } from '@supabase/ssr';
+
+export function createClient() {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 export async function uploadTeacherImage(
   file: File,
@@ -9,6 +16,7 @@ export async function uploadTeacherImage(
   const fileName = `${slug}-${Date.now()}.${fileExt}`; // Consistent naming for both
 
   const filePath = `/${folder}/${slug}/${fileName}`;
+  const supabase = createClient();
 
   // For profile pics, first remove any existing files
   if (folder === 'profile-pics') {
@@ -49,6 +57,7 @@ export async function deleteTeacherImage(publicUrl: string) {
   const bucket = 'teachers';
   // Remove query parameters if they exist
   const cleanUrl = publicUrl.split('?')[0];
+  const supabase = createClient();
 
   // More robust path extraction
   const pathParts = cleanUrl.split(`/storage/v1/object/public/${bucket}/`);

@@ -22,10 +22,6 @@ export async function middleware(req: NextRequest) {
   const githubUserId = githubIdentity?.id;
   const allowedGithubId = process.env.GITHUB_ALLOWED_ID;
 
-  console.log('User:', user);
-  console.log('GitHub ID:', githubUserId);
-  console.log('Allowed ID:', allowedGithubId);
-
   if (!user || githubUserId !== allowedGithubId) {
     return NextResponse.redirect(new URL('/login', req.url));
   }

@@ -1,7 +1,7 @@
 // app/teacher/[slug]/page.tsx (Server Component)
 import { notFound } from 'next/navigation';
 import TeacherProfileClient from './TeacherProfileClient';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/supabaseServer';
 
 export default async function TeacherProfilePage({
   params,
@@ -10,9 +10,10 @@ export default async function TeacherProfilePage({
 }) {
   const { slug } = await params;
   const priceId = process.env.NEXT_STRIPE_SINGLE_PRICE_ID || '';
+  const supabase = createClient();
 
   // Fetch teacher data
-  const { data: teacher, error } = await supabase
+  const { data: teacher, error } = await (await supabase)
     .from('teachers')
     .select('*')
     .eq('slug', slug)

@@ -2,11 +2,10 @@
 
 import { SetStateAction, useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { supabase } from '@/utils/supabase/supabaseClient';
+import { createClient } from '@/utils/supabase/supabaseClient';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { levelOptions, styleOptions, timeSlotOptions } from '@/lib/constants';
-import { deleteTeacherImage } from '@/utils/supabase/supabaseUtils';
 import ImageUpload from '@/components/ImageUpload';
 import { Label } from '@radix-ui/react-label';
 import Image from 'next/image';
@@ -17,6 +16,7 @@ import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
 export default function EditTeacherProfilePage() {
   const router = useRouter();
   const params = useParams() as { slug: string };
+  const supabase = createClient();
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
@@ -69,7 +69,7 @@ export default function EditTeacherProfilePage() {
     };
 
     fetchTeacher();
-  }, [params.slug]);
+  }, [params.slug, supabase]);
 
   function formatToBangkokTime(utcTimestamp: string) {
     const date = new Date(utcTimestamp);
@@ -235,7 +235,12 @@ export default function EditTeacherProfilePage() {
                   size="sm"
                   className="absolute top-1 right-1 text-xs bg-red-600 text-white hover:bg-red-700 rounded-md"
                   onClick={async () => {
-                    await deleteTeacherImage(profilePhoto);
+                    await fetch('/api/delete-image', {
+                      method: 'POST',
+                      body: JSON.stringify({ publicUrl: profilePhoto }),
+                      headers: { 'Content-Type': 'application/json' },
+                    });
+
                     setProfilePhoto('');
                     await supabase
                       .from('teachers')
@@ -252,22 +257,21 @@ export default function EditTeacherProfilePage() {
               slug={params.slug}
               folder="profile-pics"
               multiple={false}
-              onUpload={async ([url]) => {
-                // If there was an existing photo, delete it first to avoid orphan files
+              onUpload={async ([publicUrl]) => {
                 if (profilePhoto) {
-                  await deleteTeacherImage(profilePhoto);
+                  await fetch('/api/delete-image', {
+                    method: 'POST',
+                    body: JSON.stringify({ publicUrl: profilePhoto }),
+                    headers: { 'Content-Type': 'application/json' },
+                  });
                 }
-                await supabase
-                  .from('teachers')
-                  .update({ photo: url })
-                  .eq('id', teacherId);
-
-                setProfilePhoto(url);
 
                 await supabase
                   .from('teachers')
-                  .update({ photo: url })
+                  .update({ photo: publicUrl })
                   .eq('id', teacherId);
+
+                setProfilePhoto(publicUrl);
               }}
             />
           </div>
@@ -278,9 +282,9 @@ export default function EditTeacherProfilePage() {
           <p className="font-semibold mb-2">Gallery Photos</p>
 
           <div className="flex flex-wrap gap-4 mb-2">
-            {galleryUrls.map((url) => (
+            {galleryUrls.map((url, idx) => (
               <div
-                key={url}
+                key={`${url}-${idx}`}
                 className="relative w-28 h-28 rounded overflow-hidden"
               >
                 <Image
@@ -296,7 +300,12 @@ export default function EditTeacherProfilePage() {
                   size="sm"
                   className="absolute top-1 right-1 text-xs bg-red-600 text-white hover:bg-red-700 rounded-md"
                   onClick={async () => {
-                    await deleteTeacherImage(url);
+                    await fetch('/api/delete-image', {
+                      method: 'POST',
+                      body: JSON.stringify({ publicUrl: url }),
+                      headers: { 'Content-Type': 'application/json' },
+                    });
+
                     const updated = galleryUrls.filter((img) => img !== url);
                     setGalleryUrls(updated);
                     await supabase
@@ -315,9 +324,10 @@ export default function EditTeacherProfilePage() {
             slug={params.slug}
             folder="gallery"
             multiple={true}
-            onUpload={async (newUrls) => {
-              const updated = [...galleryUrls, ...newUrls];
+            onUpload={async (uploadedUrls) => {
+              const updated = [...galleryUrls, ...uploadedUrls];
               setGalleryUrls(updated);
+
               await supabase
                 .from('teachers')
                 .update({ gallery: updated })

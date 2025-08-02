@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
-import { uploadTeacherImage } from '@/utils/supabase/supabaseUtils';
 
 type Props = {
   slug: string;
@@ -29,27 +28,35 @@ export default function ImageUpload({
   };
 
   const handleUpload = async () => {
-    if (!files) return;
+    if (!files || files.length === 0) return;
 
     setUploading(true);
     const uploadedUrls: string[] = [];
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+    try {
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append('file', file, file.name);
+        formData.append('folder', folder); // e.g., 'profile-pics' or 'gallery'
+        formData.append('slug', slug); // e.g., 'teacher-name'
 
-      try {
-        const url = await uploadTeacherImage(file, folder, slug);
-        uploadedUrls.push(url);
-      } catch (err) {
-        console.error('Upload failed:', err);
-        setUploading(false);
-        return;
+        const res = await fetch('/api/upload-image', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Upload failed');
+        uploadedUrls.push(data.publicUrl);
       }
-    }
 
-    setUploading(false);
-    setPreviews(uploadedUrls);
-    onUpload(uploadedUrls);
+      setPreviews(uploadedUrls);
+      onUpload(uploadedUrls);
+    } catch (err) {
+      console.error('Upload failed:', err);
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
