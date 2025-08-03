@@ -9,7 +9,6 @@ export default async function TeacherProfilePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const priceId = process.env.NEXT_STRIPE_SINGLE_PRICE_ID || '';
   const supabase = createClient();
 
   // Fetch teacher data
@@ -23,11 +22,5 @@ export default async function TeacherProfilePage({
     return notFound();
   }
 
-  return (
-    <TeacherProfileClient
-      teacher={teacher}
-      price_id={priceId}
-      booking_type="single"
-    />
-  );
+  return <TeacherProfileClient teacher={teacher} booking_type="single" />;
 }

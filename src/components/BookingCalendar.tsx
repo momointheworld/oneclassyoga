@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { format } from 'date-fns';
 import { DatePicker } from './DatePicker';
 import { TimeSlotPicker } from './TimeSlot';
@@ -15,9 +15,10 @@ interface BookingCalendarProps {
     participants: number,
     includeStudio: boolean
   ) => void;
-  initialParticipants?: number; // Add this
-  onParticipantsChange?: (count: number) => void; // Add this
-  onStudioChange?: (include: boolean) => void; // Add this
+  initialParticipants?: number;
+  onParticipantsChange?: (count: number) => void;
+  onStudioChange?: (include: boolean) => void;
+  onRateChange?: (rate: number) => void;
 }
 
 export default function BookingCalendar({
@@ -25,35 +26,46 @@ export default function BookingCalendar({
   timeSlots,
   teacherSlug,
   onReadyForCheckout,
-  initialParticipants = 1, // Default value
+  initialParticipants = 1,
   onParticipantsChange,
   onStudioChange,
+  onRateChange,
 }: BookingCalendarProps) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [timeSlot, setTimeSlot] = useState<string | null>(null);
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
-  const [rate, setRate] = useState(() => {
-    const base = 1250 + (initialParticipants - 1) * 250;
-    const studioFee = 250; // since studio is selected by default
-    return `${base + studioFee} THB`;
-  });
-
   const [participants, setParticipants] = useState(initialParticipants);
   const [includeStudio, setIncludeStudio] = useState(true);
+  const [rate, setRate] = useState<number | null>(null);
 
-  // 1. Immediate state update when selections change
+  // calculateRate wrapped in useCallback for stable reference
+  const calculateRate = useCallback(
+    (participantsCount: number, studio: boolean) => {
+      const baseRate = 1250 + (participantsCount - 1) * 250;
+      const studioFee = studio ? 250 : 0;
+      const total = baseRate + studioFee;
+
+      setRate(total);
+      if (onRateChange) {
+        onRateChange(total);
+      }
+    },
+    [onRateChange]
+  );
+
+  // Call onSelect when date or timeSlot changes
   useEffect(() => {
     onSelect(selectedDate || null, timeSlot);
   }, [onSelect, selectedDate, timeSlot]);
 
-  // 2. New effect to handle checkout readiness
+  // Call onReadyForCheckout when selections and participants/studio change
   useEffect(() => {
     if (selectedDate && timeSlot && onReadyForCheckout) {
       onReadyForCheckout(selectedDate, timeSlot, participants, includeStudio);
     }
   }, [selectedDate, timeSlot, onReadyForCheckout, participants, includeStudio]);
 
-  // 3. Fetch booked slots
+  // Fetch booked slots when selectedDate, teacherSlug, or timeSlot changes
   useEffect(() => {
     if (!selectedDate) {
       setBookedSlots([]);
@@ -77,21 +89,22 @@ export default function BookingCalendar({
     fetchBookedSlots();
   }, [selectedDate, teacherSlug, timeSlot]);
 
+  // Update rate when participants or studio changes
   useEffect(() => {
     calculateRate(participants, includeStudio);
-  }, [includeStudio, participants]);
+  }, [participants, includeStudio, calculateRate]);
 
   const handleParticipantsChange = (value: number) => {
     setParticipants(value);
 
+    // Automatically require studio for 3+ participants
     if (value >= 3 && !includeStudio) {
       setIncludeStudio(true);
       if (onStudioChange) onStudioChange(true);
     }
 
+    // If participants < 3, allow disabling studio
     if (value < 3 && includeStudio) {
-      setIncludeStudio(true);
-      if (onStudioChange) onStudioChange(false);
     }
 
     calculateRate(value, value >= 3 || includeStudio);
@@ -100,21 +113,15 @@ export default function BookingCalendar({
   };
 
   const handleStudioChange = (checked: boolean) => {
+    // Prevent disabling studio if participants >= 3
+    if (participants >= 3 && !checked) return;
+
     setIncludeStudio(checked);
     calculateRate(participants, checked);
 
-    // Notify parent about the change
     if (onStudioChange) {
       onStudioChange(checked);
     }
-  };
-
-  const calculateRate = (participants: number, studio: boolean) => {
-    const baseRate = 1250 + (participants - 1) * 250;
-    const studioFee = studio ? 250 : 0;
-    const total = baseRate + studioFee;
-
-    setRate(`${total} THB`);
   };
 
   return (
@@ -148,6 +155,7 @@ export default function BookingCalendar({
           </span>
         </label>
       </div>
+
       <div className="mt-8 flex flex-col space-y-4">
         <div className="flex flex-col sm:flex-row sm:justify-between w-full">
           <span className="text-sm text-gray-500">Selected Date:</span>
@@ -170,14 +178,15 @@ export default function BookingCalendar({
             {timeSlot || 'Not selected'}
           </p>
         </div>
+
         <div className="flex flex-col sm:flex-row sm:justify-between w-full">
-          <span className="text-sm text-gray-500">Rates:</span>
+          <span className="text-sm text-gray-500">Rate:</span>
           <p
             className={`text-sm mt-1 sm:mt-0 ${
-              participants ? 'font-semibold text-blue-600' : 'text-gray-600'
+              rate !== null ? 'font-semibold text-blue-600' : 'text-gray-600'
             }`}
           >
-            {`${rate} THB` || 'Not selected'}
+            {rate !== null ? `${rate} THB` : 'Not selected'}
           </p>
         </div>
       </div>

@@ -1,5 +1,5 @@
-// app/teacher/[slug]/TeacherProfileClient.tsx (Client Component)
 'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +12,6 @@ import { useRouter } from 'next/navigation';
 
 export default function TeacherProfileClient({
   teacher,
-  price_id,
   booking_type,
 }: {
   teacher: {
@@ -26,25 +25,31 @@ export default function TeacherProfileClient({
     slug: string;
     timeSlots: string[];
   };
-  price_id: string;
-  participants?: number;
   booking_type: string;
 }) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
   const [participantsCount, setParticipantsCount] = useState(1);
+  const [rate, setRate] = useState<number | null>(null);
+  const [selectedPriceId, setSelectedPriceId] = useState<string | null>(null);
   const [includeStudio, setIncludeStudio] = useState(true);
   const [error, setError] = useState('');
   const router = useRouter();
 
+  // Map rates to Stripe price IDs, fallback to empty string if env vars missing
+  const rateToPriceIdMap: Record<number, string> = {
+    1250: process.env.NEXT_PUBLIC_STRIPE_SINGLE_PRICE_1250 || '',
+    1500: process.env.NEXT_PUBLIC_STRIPE_SINGLE_PRICE_1500 || '',
+    1750: process.env.NEXT_PUBLIC_STRIPE_SINGLE_PRICE_1750 || '',
+    2000: process.env.NEXT_PUBLIC_STRIPE_SINGLE_PRICE_2000 || '',
+    2250: process.env.NEXT_PUBLIC_STRIPE_SINGLE_PRICE_2250 || '',
+  };
+
   useEffect(() => {
-    // Handle scroll to booking calendar if hash is present
     if (window.location.hash === '#booking-calendar') {
       const element = document.getElementById('booking-calendar');
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
-
-        // Optional: add visual highlight
         element.classList.add('ring-2', 'ring-blue-500');
         setTimeout(() => {
           element.classList.remove('ring-2', 'ring-blue-500');
@@ -59,18 +64,29 @@ export default function TeacherProfileClient({
       return;
     }
 
+    if (!selectedPriceId) {
+      setError('Could not determine price for selected options.');
+      return;
+    }
+
     setError('');
     const query = new URLSearchParams({
       teacher: teacher.slug,
-      priceId: price_id,
+      priceId: selectedPriceId,
       date: selectedDate.toISOString(),
       timeSlot: selectedTimeSlot,
       participants: participantsCount.toString(),
       includeStudio: includeStudio.toString(),
-      booking_type: booking_type,
+      booking_type,
     }).toString();
 
     router.push(`/booking/checkout?${query}`);
+  };
+
+  const handleRateChange = (newRate: number) => {
+    setRate(newRate);
+    const priceId = rateToPriceIdMap[newRate];
+    setSelectedPriceId(priceId || null);
   };
 
   const galleryImages = teacher.gallery || [];
@@ -95,12 +111,12 @@ export default function TeacherProfileClient({
 
           <div className="tiptap prose max-w-none">{parse(teacher.bio)}</div>
 
-          <div className="grid grid-cols-2 gap-4 text-sm text-gray-800">
+          <div className="grid grid-cols-2 gap-4 text-sm text-gray-800 mt-4">
             <div>
               <p>
                 <span className="font-semibold text-gray-700">Styles:</span>{' '}
-                <span className="flex flex-wrap gap-2 mt-2 ">
-                  {teacher.styles.map((style: string) => (
+                <span className="flex flex-wrap gap-2 mt-2">
+                  {teacher.styles.map((style) => (
                     <Badge
                       key={style}
                       variant="secondary"
@@ -117,7 +133,7 @@ export default function TeacherProfileClient({
               <p>
                 <span className="font-semibold text-gray-700">Level:</span>{' '}
                 <span className="flex flex-wrap gap-2 mt-2">
-                  {teacher.levels.map((level: string) => (
+                  {teacher.levels.map((level) => (
                     <Badge
                       key={level}
                       variant="secondary"
@@ -130,14 +146,14 @@ export default function TeacherProfileClient({
               </p>
             </div>
           </div>
-          <div>
-            {galleryImages.length > 0 && (
-              <TeacherGallery galleryImages={galleryImages} />
-            )}
-          </div>
+
+          {galleryImages.length > 0 && (
+            <TeacherGallery galleryImages={galleryImages} />
+          )}
+
           <div
             id="booking-calendar"
-            className="mt-8 bg-grey-100 p-6 rounded-3xl shadow border border-blue-200"
+            className="mt-8 bg-gray-100 p-6 rounded-3xl shadow border border-blue-200"
           >
             <h2 className="text-xl font-semibold mb-4 text-center">
               Choose Your Date & Time
@@ -152,6 +168,7 @@ export default function TeacherProfileClient({
               onParticipantsChange={setParticipantsCount}
               onStudioChange={setIncludeStudio}
               initialParticipants={participantsCount}
+              onRateChange={handleRateChange}
             />
           </div>
 
@@ -170,6 +187,7 @@ export default function TeacherProfileClient({
               Book Now
             </Button>
           </div>
+
           {error && (
             <p className="text-red-600 text-sm mt-2 text-right">{error}</p>
           )}
