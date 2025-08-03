@@ -10,7 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { format } from 'date-fns';
+import { format, getDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { addDays, startOfDay } from 'date-fns';
 
@@ -21,6 +21,7 @@ interface DatePickerProps {
   className?: string;
   fromDate?: Date;
   toDate?: Date;
+  availableDays?: string[];
 }
 
 export function DatePicker({
@@ -28,6 +29,7 @@ export function DatePicker({
   onSelect,
   label = 'Choose a date',
   className = '',
+  availableDays,
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
   const [internalDate, setInternalDate] = React.useState<Date | undefined>(
@@ -72,9 +74,20 @@ export function DatePicker({
               onSelect?.(date);
               setOpen(false);
             }}
-            disabled={{
-              before: from,
-              after: to,
+            disabled={(date) => {
+              const isOutsideRange = date < from || date > to;
+              const dayIndex = getDay(date); // 0 = Sunday, 1 = Monday, ...
+              const dayShort = [
+                'sun',
+                'mon',
+                'tue',
+                'wed',
+                'thu',
+                'fri',
+                'sat',
+              ][dayIndex];
+              const isUnavailable = !availableDays?.includes(dayShort);
+              return isOutsideRange || isUnavailable;
             }}
             weekStartsOn={1} // Start on Monday if you prefer
             startMonth={from}

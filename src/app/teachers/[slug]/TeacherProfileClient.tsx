@@ -24,6 +24,7 @@ export default function TeacherProfileClient({
     gallery: string[];
     slug: string;
     timeSlots: string[];
+    available_days: string[];
   };
   booking_type: string;
 }) {
@@ -93,6 +94,10 @@ export default function TeacherProfileClient({
   const timeSlots = Array.isArray(teacher.timeSlots)
     ? teacher.timeSlots
     : JSON.parse(teacher.timeSlots || '[]');
+
+  const availableDays = Array.isArray(teacher.available_days)
+    ? teacher.timeSlots
+    : JSON.parse(teacher.available_days || '[]');
 
   return (
     <main className="max-w-3xl mx-auto p-6 space-y-8">
@@ -169,6 +174,7 @@ export default function TeacherProfileClient({
               onStudioChange={setIncludeStudio}
               initialParticipants={participantsCount}
               onRateChange={handleRateChange}
+              availableDays={availableDays}
             />
           </div>
 

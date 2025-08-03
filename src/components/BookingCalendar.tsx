@@ -8,6 +8,7 @@ import ParticipantsCount from './ParticipantsCount';
 interface BookingCalendarProps {
   onSelect: (date: Date | null, timeSlot: string | null) => void;
   timeSlots: string[];
+  availableDays: string[];
   teacherSlug: string;
   onReadyForCheckout?: (
     date: Date | undefined,
@@ -24,6 +25,7 @@ interface BookingCalendarProps {
 export default function BookingCalendar({
   onSelect,
   timeSlots,
+  availableDays,
   teacherSlug,
   onReadyForCheckout,
   initialParticipants = 1,
@@ -126,7 +128,11 @@ export default function BookingCalendar({
 
   return (
     <div className="p-4 mt-5 rounded-xl">
-      <DatePicker selected={selectedDate} onSelect={setSelectedDate} />
+      <DatePicker
+        selected={selectedDate}
+        onSelect={setSelectedDate}
+        availableDays={availableDays}
+      />
       <TimeSlotPicker
         selectedSlot={timeSlot || ''}
         onSelect={setTimeSlot}
