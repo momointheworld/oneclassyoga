@@ -153,7 +153,7 @@ export default function TeacherProfileClient({
 
           <div
             id="booking-calendar"
-            className="mt-8 bg-gray-100 p-6 rounded-3xl shadow border border-blue-200"
+            className="mt-8 p-6 rounded-3xl shadow border border-blue-200"
           >
             <h2 className="text-xl font-semibold mb-4 text-center">
               Choose Your Date & Time
