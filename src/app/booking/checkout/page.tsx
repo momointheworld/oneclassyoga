@@ -17,7 +17,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     async function createCheckout() {
-      if (booking_type) {
+      if (!booking_type) {
         setError(`Missing: a required field, contact support please`);
         setLoading(false);
         return;

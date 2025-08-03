@@ -147,6 +147,7 @@ export default function TeacherProfileClient({
                 setSelectedDate(date);
                 setSelectedTimeSlot(timeSlot);
               }}
+              teacherSlug={teacher.slug}
               timeSlots={timeSlots}
               onParticipantsChange={setParticipantsCount}
               onStudioChange={setIncludeStudio}

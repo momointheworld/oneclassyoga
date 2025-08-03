@@ -8,6 +8,7 @@ import ParticipantsCount from './ParticipantsCount';
 interface BookingCalendarProps {
   onSelect: (date: Date | null, timeSlot: string | null) => void;
   timeSlots: string[];
+  teacherSlug: string;
   onReadyForCheckout?: (
     date: Date | undefined,
     timeSlot: string | null,
@@ -22,6 +23,7 @@ interface BookingCalendarProps {
 export default function BookingCalendar({
   onSelect,
   timeSlots,
+  teacherSlug,
   onReadyForCheckout,
   initialParticipants = 1, // Default value
   onParticipantsChange,
@@ -62,7 +64,7 @@ export default function BookingCalendar({
       try {
         const dateStr = format(selectedDate, 'yyyy-MM-dd');
         const res = await fetch(
-          `/api/search-booking/slots?date=${dateStr}&timeSlot=${timeSlot || ''}`
+          `/api/search-booking/slots?date=${dateStr}&timeSlot=${timeSlot || ''}&teacherSlug=${teacherSlug}`
         );
         const data = await res.json();
         setBookedSlots(data?.bookedTimeSlots || []);
@@ -73,7 +75,7 @@ export default function BookingCalendar({
     };
 
     fetchBookedSlots();
-  }, [selectedDate, timeSlot]);
+  }, [selectedDate, teacherSlug, timeSlot]);
 
   useEffect(() => {
     calculateRate(participants, includeStudio);
