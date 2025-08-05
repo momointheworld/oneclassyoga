@@ -9,6 +9,7 @@ import BookingCalendar from '@/components/BookingCalendar';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ToBangkokDateOnly } from '@/components/BkkTimeConverter';
 
 export default function TeacherProfileClient({
   teacher,
@@ -74,7 +75,7 @@ export default function TeacherProfileClient({
     const query = new URLSearchParams({
       teacher: teacher.slug,
       priceId: selectedPriceId,
-      date: selectedDate.toISOString(),
+      date: ToBangkokDateOnly(selectedDate),
       timeSlot: selectedTimeSlot,
       participants: participantsCount.toString(),
       includeStudio: includeStudio.toString(),
@@ -96,8 +97,8 @@ export default function TeacherProfileClient({
     : JSON.parse(teacher.timeSlots || '[]');
 
   const availableDays = Array.isArray(teacher.available_days)
-    ? teacher.timeSlots
-    : JSON.parse(teacher.available_days || '[]');
+    ? teacher.available_days
+    : [];
 
   return (
     <main className="max-w-3xl mx-auto p-6 space-y-8">

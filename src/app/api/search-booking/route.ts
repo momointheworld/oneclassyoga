@@ -1,49 +1,69 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-// here we use anon key since safe_booking is limited to view certain columns already
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Define TypeScript interfaces
+interface Booking {
+  time_slot: string;
+}
 
-export async function GET(req: NextRequest) {
+interface SupabaseResponse {
+  data: Booking[] | null;
+  error: unknown;
+}
+
+// Initialize Supabase client with proper typing
+const supabaseUrl: string = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+const serviceRoleKey: string = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
+
+if (!supabaseUrl || !serviceRoleKey) {
+  throw new Error('Supabase environment variables are not properly configured');
+}
+
+const supabase = createClient(supabaseUrl, serviceRoleKey);
+
+export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(req.url);
-    const sessionId = searchParams.get('session_id');
-    const teacherSlug = searchParams.get('teacher');
-    const date = searchParams.get('date');
-    const timeSlot = searchParams.get('timeSlot');
-    const participants = searchParams.get('participants');
+    const teacherSlug: string | null = searchParams.get('teacherSlug');
+    const dateStr: string | null = searchParams.get('date');
 
-    if (!sessionId && !teacherSlug && !date && !timeSlot) {
+    // Validate required parameters
+    if (!teacherSlug || !dateStr) {
       return NextResponse.json(
-        { error: 'At least one search parameter is required' },
+        { error: 'Both teacherSlug and date parameters are required' },
         { status: 400 }
       );
     }
 
-    let query = supabase
-      .from('safe_bookings')
-      .select('id, date, time_slot, teacher_slug, session_id, participants');
+    // Query Supabase with typed response
+    const { data, error }: SupabaseResponse = await supabase
+      .from('bookings')
+      .select('time_slot')
+      .eq('teacher_slug', teacherSlug)
+      .eq('date', dateStr);
 
-    if (sessionId) query = query.eq('session_id', sessionId);
-    if (teacherSlug) query = query.eq('teacher_slug', teacherSlug);
-    if (date) query = query.eq('date', date);
-    if (timeSlot) query = query.eq('time_slot', timeSlot);
-    if (participants) query = query.eq('participants', participants);
+    if (error) {
+      console.error('Supabase query error:', error);
+      throw error;
+    }
 
-    const { data, error } = await query.maybeSingle();
+    // Type the response
+    const responseData: { bookedTimeSlots: string[] } = {
+      bookedTimeSlots: data?.map((entry: Booking) => entry.time_slot) || [],
+    };
 
-    if (error) throw error;
-    if (!data)
-      return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+    return NextResponse.json(responseData);
+  } catch (error: unknown) {
+    console.error('API route error:', error);
+    const errorMessage: string =
+      error instanceof Error ? error.message : 'Unknown error occurred';
 
-    return NextResponse.json({ booking: data });
-  } catch (err) {
-    console.error('API error:', err);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      {
+        error: 'Internal server error',
+        message: errorMessage,
+        bookedTimeSlots: [],
+      },
       { status: 500 }
     );
   }

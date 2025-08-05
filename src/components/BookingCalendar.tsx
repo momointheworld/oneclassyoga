@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { DatePicker } from './DatePicker';
 import { TimeSlotPicker } from './TimeSlot';
 import ParticipantsCount from './ParticipantsCount';
+import { ToBangkokDateOnly } from './BkkTimeConverter';
 
 interface BookingCalendarProps {
   onSelect: (date: Date | null, timeSlot: string | null) => void;
@@ -68,19 +69,22 @@ export default function BookingCalendar({
   }, [selectedDate, timeSlot, onReadyForCheckout, participants, includeStudio]);
 
   // Fetch booked slots when selectedDate, teacherSlug, or timeSlot changes
+
   useEffect(() => {
-    if (!selectedDate) {
+    if (!selectedDate || !teacherSlug) {
       setBookedSlots([]);
       return;
     }
 
+    const bkkDate = ToBangkokDateOnly(selectedDate);
+
     const fetchBookedSlots = async () => {
       try {
-        const dateStr = format(selectedDate, 'yyyy-MM-dd');
-        const res = await fetch(
-          `/api/search-booking/slots?date=${dateStr}&timeSlot=${timeSlot || ''}&teacherSlug=${teacherSlug}`
-        );
+        const url = `/api/search-booking?date=${bkkDate}&teacherSlug=${teacherSlug}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
+        // Update both bookings and time slots if needed
         setBookedSlots(data?.bookedTimeSlots || []);
       } catch (err) {
         console.error('Failed to fetch bookings', err);
@@ -89,7 +93,7 @@ export default function BookingCalendar({
     };
 
     fetchBookedSlots();
-  }, [selectedDate, teacherSlug, timeSlot]);
+  }, [selectedDate, teacherSlug]);
 
   // Update rate when participants or studio changes
   useEffect(() => {

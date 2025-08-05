@@ -81,6 +81,7 @@ export async function POST(req: Request) {
         participants: parseInt(participants || '1', 10),
         payment_intent: session.payment_intent as string,
         amount_total: session.amount_total ? session.amount_total / 100 : 0,
+        createdAt: new Date().toISOString(),
       });
 
       if (insertError) {

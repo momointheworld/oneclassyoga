@@ -89,7 +89,7 @@ export function DatePicker({
               const isUnavailable = !availableDays?.includes(dayShort);
               return isOutsideRange || isUnavailable;
             }}
-            weekStartsOn={1} // Start on Monday if you prefer
+            weekStartsOn={0}
             startMonth={from}
             endMonth={to}
             captionLayout="dropdown"

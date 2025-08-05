@@ -48,7 +48,7 @@ export default function ViewBookingPage() {
     };
 
     fetchBookings();
-  }, [page]);
+  }, [page, supabase]);
 
   const nextPage = () => {
     if (page < totalPages) setPage((prev) => prev + 1);
@@ -91,14 +91,18 @@ export default function ViewBookingPage() {
               {bookings.map((b) => (
                 <tr key={b.id} className="border-t hover:bg-gray-50">
                   <td className="px-3 py-2 border">
-                    {new Date(b.createdAt).toLocaleString()}
+                    {new Date(b.createdAt).toLocaleString('en-TH', {
+                      timeZone: 'Asia/Bangkok',
+                    })}
                   </td>
                   <td className="px-3 py-2 border">{b.customer_name}</td>
                   <td className="px-3 py-2 border">{b.customer_email}</td>
                   <td className="px-3 py-2 border">{b.teacher_slug}</td>
                   <td className="px-3 py-2 border">{b.participants}</td>
                   <td className="px-3 py-2 border">
-                    {new Date(b.date).toLocaleDateString()}
+                    {new Date(b.date).toLocaleDateString('en-TH', {
+                      timeZone: 'Asia/Bangkok',
+                    })}
                   </td>
                   <td className="px-3 py-2 border">{b.time_slot}</td>
                   <td className="px-3 py-2 border">
