@@ -60,6 +60,7 @@ export async function POST(req: NextRequest) {
         isFeatured: data.isFeatured ?? false,
         photo: data.photo,
         timeSlots: data.timeSlots || [],
+        available_days: data.available_days || [],
       })
       .select()
       .single();

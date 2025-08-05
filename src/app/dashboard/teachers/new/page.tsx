@@ -5,7 +5,12 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import ImageUpload from '@/components/ImageUpload';
-import { styleOptions, levelOptions, timeSlotOptions } from '@/lib/constants';
+import {
+  styleOptions,
+  levelOptions,
+  timeSlotOptions,
+  availableDaysOptions,
+} from '@/lib/constants';
 import { Loader2 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/supabaseClient';
 import TeacherBioEditor from '@/components/TeacherBioEditor';
@@ -24,6 +29,7 @@ export default function NewTeacherPage() {
   const [isActive, setIsActive] = useState(true);
   const [isFeatured, setIsFeatured] = useState(false);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
+  const [availableDays, setAvailbleDays] = useState<string[]>([]);
   const supabase = createClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,6 +48,7 @@ export default function NewTeacherPage() {
       gallery: galleryUrls,
       slug: name.toLowerCase().replace(/\s+/g, '-'), // add slug here
       timeSlots: timeSlots, // add time slots here
+      available_days: availableDays,
     });
 
     setButtonLoading(false);
@@ -154,9 +161,35 @@ export default function NewTeacherPage() {
           </div>
         </div>
 
+        {/* available days checker */}
+
+        <div>
+          <p className="font-semibold mb-2">Days Available</p>
+          <div className="grid grid-cols-2 gap-3">
+            {availableDaysOptions.map((availDay) => (
+              <label key={availDay} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  value={availDay}
+                  checked={availableDays.includes(availDay)}
+                  onChange={(e) => {
+                    if (e.target.checked)
+                      setAvailbleDays([...availableDays, availDay]);
+                    else
+                      setAvailbleDays(
+                        availableDays.filter((s) => s !== availDay)
+                      );
+                  }}
+                />
+                {availDay}
+              </label>
+            ))}
+          </div>
+        </div>
+
         {/* TimeSlots Checkboxes */}
         <div>
-          <p className="font-semibold mb-2">Styles</p>
+          <p className="font-semibold mb-2">Time Slots</p>
           <div className="grid grid-cols-2 gap-3">
             {timeSlotOptions.map((timeSlot) => (
               <label key={timeSlot} className="flex items-center gap-2">
@@ -175,6 +208,7 @@ export default function NewTeacherPage() {
             ))}
           </div>
         </div>
+
         {/* Profile Photo Upload */}
         <div>
           <p className="font-semibold mb-2">Profile Photo</p>

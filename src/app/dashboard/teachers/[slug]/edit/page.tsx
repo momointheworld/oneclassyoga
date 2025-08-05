@@ -5,7 +5,12 @@ import { useRouter, useParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/supabaseClient';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { levelOptions, styleOptions, timeSlotOptions } from '@/lib/constants';
+import {
+  availableDaysOptions,
+  levelOptions,
+  styleOptions,
+  timeSlotOptions,
+} from '@/lib/constants';
 import ImageUpload from '@/components/ImageUpload';
 import { Label } from '@radix-ui/react-label';
 import Image from 'next/image';
@@ -32,6 +37,7 @@ export default function EditTeacherProfilePage() {
   const [isFeatured, setIsFeatured] = useState(false);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
+  const [availableDays, setAvailbleDays] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchTeacher = async () => {
@@ -60,9 +66,15 @@ export default function EditTeacherProfilePage() {
             typeof data.timeSlots === 'string'
               ? JSON.parse(data.timeSlots)
               : data.timeSlots;
-
           setTimeSlots(parsedTimeSlots); // parse the timeSlots if it's a string
         }
+      }
+      if (data.available_days) {
+        const parsedAvailableDays =
+          typeof data.available_days === 'string'
+            ? JSON.parse(data.available_days)
+            : data.available_days;
+        setAvailbleDays(parsedAvailableDays); // parse the timeSlots if it's a string
       }
 
       setLoading(false);
@@ -103,6 +115,7 @@ export default function EditTeacherProfilePage() {
         gallery: galleryUrls,
         updatedAt: new Date().toISOString(),
         timeSlots,
+        available_days: availableDays,
       })
       .eq('id', teacherId);
 
@@ -193,7 +206,32 @@ export default function EditTeacherProfilePage() {
           </div>
         </div>
 
-        {/* Styles Checkboxes */}
+        {/* available days Checkboxes */}
+        <div>
+          <p className="font-semibold mb-2">Days Available</p>
+          <div className="grid grid-cols-2 gap-3">
+            {availableDaysOptions.map((availDay) => (
+              <label key={availDay} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  value={availDay}
+                  checked={availableDays.includes(availDay)}
+                  onChange={(e) => {
+                    if (e.target.checked)
+                      setAvailbleDays([...availableDays, availDay]);
+                    else
+                      setAvailbleDays(
+                        availableDays.filter((s) => s !== availDay)
+                      );
+                  }}
+                />
+                {availDay}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* timeslot Checkboxes */}
         <div>
           <p className="font-semibold mb-2">Styles</p>
           <div className="grid grid-cols-2 gap-3">

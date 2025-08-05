@@ -28,3 +28,13 @@ export const timeSlotOptions = [
   '15:00 - 16:00',
   '16:00 - 17:00',
 ];
+
+export const availableDaysOptions = [
+  'Sun',
+  'Mon',
+  'Tue',
+  'Wed',
+  'Thu',
+  'Fri',
+  'Sat',
+];

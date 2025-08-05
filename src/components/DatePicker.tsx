@@ -13,6 +13,7 @@ import {
 import { format, getDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { addDays, startOfDay } from 'date-fns';
+import { availableDaysOptions } from '@/lib/constants';
 
 interface DatePickerProps {
   selected?: Date;
@@ -76,16 +77,7 @@ export function DatePicker({
             }}
             disabled={(date) => {
               const isOutsideRange = date < from || date > to;
-              const dayIndex = getDay(date); // 0 = Sunday, 1 = Monday, ...
-              const dayShort = [
-                'sun',
-                'mon',
-                'tue',
-                'wed',
-                'thu',
-                'fri',
-                'sat',
-              ][dayIndex];
+              const dayShort = availableDaysOptions[getDay(date)];
               const isUnavailable = !availableDays?.includes(dayShort);
               return isOutsideRange || isUnavailable;
             }}
