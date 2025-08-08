@@ -17,7 +17,7 @@ const links = [
   { label: 'Teachers', href: '/teachers' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Contact', href: '/contact' },
-  { label: 'About', href: '/about' },
+  { label: 'Community', href: '/community' },
 ];
 
 export default function MainMenu() {

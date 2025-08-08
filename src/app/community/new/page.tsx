@@ -1,20 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import slugify from 'slugify';
-import { supabase } from '@/utils/supabase/supabaseClient';
+import { createClient } from '@/utils/supabase/supabaseClient';
+import AuthModal from '@/components/AuthModal';
+import type { User } from '@supabase/supabase-js';
+
+const supabase = createClient();
 
 export default function NewPostPage() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
-  // Generate a slug and ensure uniqueness
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user || null);
+    });
+  }, []);
+
   async function generateUniqueSlug(
     baseSlug: string,
-    count = 0
+    count: number = 0
   ): Promise<string> {
     const slugToCheck = count === 0 ? baseSlug : `${baseSlug}-${count}`;
 
@@ -26,29 +37,22 @@ export default function NewPostPage() {
       .single();
 
     if (data) {
-      // Slug exists, try next count
       return generateUniqueSlug(baseSlug, count + 1);
     }
     return slugToCheck;
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    setLoading(true);
 
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      alert('You must be logged in to post.');
-      setLoading(false);
+    if (!user) {
+      setShowAuthModal(true);
       return;
     }
 
-    const baseSlug = slugify(title, { lower: true, strict: true });
+    setLoading(true);
 
+    const baseSlug = slugify(title, { lower: true, strict: true });
     const uniqueSlug = await generateUniqueSlug(baseSlug);
 
     const { error } = await supabase.from('posts').insert({
@@ -96,6 +100,17 @@ export default function NewPostPage() {
           {loading ? 'Posting...' : 'Post'}
         </button>
       </form>
+
+      {showAuthModal && (
+        <AuthModal
+          onClose={() => setShowAuthModal(false)}
+          onAuthSuccess={async () => {
+            const { data } = await supabase.auth.getUser();
+            setUser(data.user || null);
+            setShowAuthModal(false);
+          }}
+        />
+      )}
     </main>
   );
 }

@@ -1,5 +1,7 @@
-import { supabase } from '@/utils/supabase/supabaseClient';
+import { createClient } from '@/utils/supabase/supabaseServer';
 import { notFound } from 'next/navigation';
+
+const supabase = createClient();
 
 export default async function PostPage({
   params,
@@ -9,7 +11,7 @@ export default async function PostPage({
   const { slug } = await params;
 
   // Fetch post by slug
-  const { data: post, error: postError } = await supabase
+  const { data: post, error: postError } = await (await supabase)
     .from('posts')
     .select('id, title, content')
     .eq('slug', slug)
@@ -20,7 +22,7 @@ export default async function PostPage({
   }
 
   // Fetch comments by post.id
-  const { data: comments, error: commentsError } = await supabase
+  const { data: comments, error: commentsError } = await (await supabase)
     .from('comments')
     .select('id, content')
     .eq('post_id', post.id)
