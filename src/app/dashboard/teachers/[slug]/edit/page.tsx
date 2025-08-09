@@ -15,7 +15,7 @@ import ImageUpload from '@/components/ImageUpload';
 import { Label } from '@radix-ui/react-label';
 import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
-import TeacherBioEditor from '@/components/TeacherBioEditor';
+import TipTapEditor from '@/components/TipTapEditor';
 import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
 
 export default function EditTeacherProfilePage() {
@@ -150,7 +150,7 @@ export default function EditTeacherProfilePage() {
           disabled
         />
 
-        <TeacherBioEditor
+        <TipTapEditor
           initialContent={bio}
           onChange={(html: SetStateAction<string>) => setBio(html)}
         />

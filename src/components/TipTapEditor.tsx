@@ -4,15 +4,15 @@ import React, { useEffect, useState } from 'react';
 import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
-interface TeacherBioEditorProps {
+interface TipTapEditorProps {
   initialContent?: string;
   onChange: (html: string) => void;
 }
 
-export default function TeacherBioEditor({
+export default function TipTapEditor({
   initialContent = '',
   onChange,
-}: TeacherBioEditorProps) {
+}: TipTapEditorProps) {
   const [isMounted, setIsMounted] = useState(false);
 
   const editor = useEditor({

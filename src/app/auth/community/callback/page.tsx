@@ -4,9 +4,8 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/supabaseClient';
 
-const supabase = createClient();
-
 export default function AuthCallbackPage() {
+  const supabase = createClient();
   const router = useRouter();
 
   useEffect(() => {

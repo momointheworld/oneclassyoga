@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/supabaseServer';
 import { notFound } from 'next/navigation';
-
-const supabase = createClient();
+import parse from 'html-react-parser';
+import { PageContainer } from '@/components/PageContainer';
 
 export default async function PostPage({
   params,
@@ -9,11 +9,12 @@ export default async function PostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const supabase = createClient();
 
   // Fetch post by slug
   const { data: post, error: postError } = await (await supabase)
     .from('posts')
-    .select('id, title, content')
+    .select('id, title, content, user_name')
     .eq('slug', slug)
     .single();
 
@@ -29,11 +30,12 @@ export default async function PostPage({
     .order('created_at', { ascending: true });
 
   if (commentsError) throw new Error(commentsError.message);
+  console.log('Post content:', post.content);
 
   return (
-    <main className="max-w-4xl mx-auto p-6">
+    <PageContainer>
       <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
-      <p className="mb-8 whitespace-pre-wrap">{post.content}</p>
+      <div className="mb-8 tiptap prose max-w-none"> {parse(post.content)}</div>
 
       <section>
         <h2 className="text-2xl font-semibold mb-4">Comments</h2>
@@ -49,6 +51,6 @@ export default async function PostPage({
           <p>No comments yet.</p>
         )}
       </section>
-    </main>
+    </PageContainer>
   );
 }

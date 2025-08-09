@@ -13,7 +13,7 @@ import {
 } from '@/lib/constants';
 import { Loader2 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/supabaseClient';
-import TeacherBioEditor from '@/components/TeacherBioEditor';
+import TipTapEditor from '@/components/TipTapEditor';
 import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
 
 export default function NewTeacherPage() {
@@ -80,7 +80,7 @@ export default function NewTeacherPage() {
           onChange={(e) => setName(e.target.value)}
           required
         />
-        <TeacherBioEditor
+        <TipTapEditor
           initialContent={bio}
           onChange={(html: SetStateAction<string>) => setBio(html)}
         />
