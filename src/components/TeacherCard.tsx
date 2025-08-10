@@ -14,6 +14,7 @@ import { Button } from './ui/button';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2Icon } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 interface TeacherCardProps {
   teacher: {
@@ -42,10 +43,20 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
   };
   return (
     <Card className="w-full max-w-sm rounded-3xl border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <CardHeader className="p-5 overflow-hidden rounded-t-3xl">
-        <CardTitle className="text-xl font-bold mb-2 text-gray-900">
-          {teacher.name}
+      <CardHeader className="p-5 overflow-hidden rounded-t-3xl relative">
+        <CardTitle className="text-xl font-bold mb-2 text-gray-900 flex justify-between items-center">
+          <span>{teacher.name}</span>
+          {teacher.isFeatured && (
+            <div
+              className="text-orange-500  px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1"
+              title="Featured Teacher"
+            >
+              <Star className="h-4 w-4 text-white-00" />
+              Most Popular
+            </div>
+          )}
         </CardTitle>
+
         <Image
           src={teacher.photo || '/placeholder.png'}
           alt={teacher.name}

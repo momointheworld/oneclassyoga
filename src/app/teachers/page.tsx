@@ -17,17 +17,24 @@ type Teacher = {
   bio: string | null;
   gallery: string[] | null;
   videoUrl: string | null;
+  isFeatured: boolean;
 };
 
 export default async function TeachersPage() {
   const { data: teachers, error } = await supabase
     .from('teachers')
-    .select('id, name, slug, photo, styles, levels, bio, gallery, videoUrl')
+    .select(
+      'id, name, slug, photo, styles, levels, bio, gallery, videoUrl, isFeatured'
+    )
     .eq('isActive', true);
 
   if (error) {
     throw new Error(error.message);
   }
+
+  const sortedTeachers = teachers.slice().sort((a, b) => {
+    return (b.isFeatured === true ? 1 : 0) - (a.isFeatured === true ? 1 : 0);
+  });
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-16 flex-grow">
@@ -36,7 +43,7 @@ export default async function TeachersPage() {
       </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {teachers.map((teacher: Teacher) => (
+        {sortedTeachers.map((teacher: Teacher) => (
           <TeacherCard
             key={teacher.id}
             teacher={{
@@ -49,6 +56,7 @@ export default async function TeachersPage() {
               videoUrl: teacher.videoUrl || '',
               styles: teacher.styles,
               levels: teacher.levels,
+              isFeatured: teacher.isFeatured,
             }}
           />
         ))}
