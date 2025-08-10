@@ -30,7 +30,7 @@ export default async function TeachersPage() {
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-16">
+    <main className="max-w-6xl mx-auto px-4 py-16 flex-grow">
       <h1 className="text-3xl font-bold mb-8 text-center">
         Available Yoga Teachers in Chiang Mai
       </h1>

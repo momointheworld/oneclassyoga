@@ -8,10 +8,12 @@ export function PageContainer({
   className = '',
 }: PageContainerProps) {
   return (
-    <main
-      className={`max-w-4xl mx-auto px-8 sm:px-6 md:px-4 py-24 sm:py-20 md:py-16 ${className}`}
-    >
-      {children}
-    </main>
+    <div className="flex flex-col min-h-screen">
+      <main
+        className={`max-w-4xl mx-auto px-8 sm:px-6 md:px-4 py-24 sm:py-20 md:py-16 ${className}`}
+      >
+        {children}
+      </main>
+    </div>
   );
 }

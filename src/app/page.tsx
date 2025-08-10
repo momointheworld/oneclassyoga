@@ -1,12 +1,22 @@
-'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button'; // assuming shadcn/ui
 import { ArrowRight } from 'lucide-react';
 import { PageContainer } from '@/components/PageContainer';
+import { createClient } from '@/utils/supabase/supabaseServer';
 
-export default function HomePage() {
+export default async function HomePage() {
+  const supabase = createClient();
+
+  const { data: teachers, error } = await (await supabase)
+    .from('teachers')
+    .select('slug, name, photo, bio')
+    .limit(6);
+
+  if (error) {
+    console.error(error);
+  }
+
   return (
     <PageContainer>
       <div className="px-4 space-y-24">
@@ -67,25 +77,26 @@ export default function HomePage() {
             Meet Some of Our Teachers
           </h2>
           <div className="grid gap-6 md:grid-cols-3">
-            {/* Replace with dynamic data */}
-            {['lim', 'noi', 'jane'].map((slug) => (
+            {teachers?.slice(0, 3).map((teacher) => (
               <div
-                key={slug}
+                key={teacher.slug}
                 className="bg-white rounded-2xl p-6 shadow border border-gray-100 text-center"
               >
                 <Image
-                  src="/placeholder.png"
+                  src={teacher.photo}
                   alt="Teacher profile"
                   width={96}
                   height={96}
                   className="w-24 h-24 mx-auto rounded-full object-cover mb-4"
                 />
 
-                <h3 className="text-xl font-medium capitalize">{slug}</h3>
-                <p className="text-gray-600 text-sm mb-4">
+                <h3 className="text-xl font-medium capitalize">
+                  {teacher.name}
+                </h3>
+                <div className="text-gray-600 text-sm mb-4  ">
                   Certified Yoga Teacher
-                </p>
-                <Link href={`/teachers/${slug}`}>
+                </div>
+                <Link href={`/teachers/${teacher.slug}`}>
                   <Button
                     variant="outline"
                     className=" text-sm font-medium px-4 py-2 rounded-xl hover:bg-gray-200 transition"
@@ -95,6 +106,15 @@ export default function HomePage() {
                 </Link>
               </div>
             ))}
+          </div>
+
+          {/* See All Teachers button */}
+          <div className="mt-8 flex justify-center">
+            <Link href="/teachers">
+              <Button className="bg-emerald-600 text-white text-sm font-medium px-6 py-3 rounded-xl hover:bg-emerald-700 transition">
+                See All Teachers
+              </Button>
+            </Link>
           </div>
         </section>
 
