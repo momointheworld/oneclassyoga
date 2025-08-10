@@ -7,7 +7,6 @@ import { createClient } from '@/utils/supabase/supabaseClient';
 import AuthModal from '@/components/AuthModal'; // adjust path as needed
 import { Button } from '@/components/ui/button';
 import { PageContainer } from '@/components/PageContainer';
-import parse from 'html-react-parser';
 
 type Post = {
   id: number;
@@ -78,12 +77,6 @@ export default function CommunityPageClient({ user, posts }: Props) {
         {currentUser ? (
           <div className="flex flex-row items-center space-x-3">
             <div className="flex flex-row">
-              {/* <span> Hello, </span>
-              <span className="font-semibold">
-                {currentUser.user_metadata?.full_name ||
-                  currentUser.email ||
-                  'there'}
-              </span> */}
               <UserGreeting user={currentUser} />
             </div>
             <Button
@@ -151,7 +144,6 @@ export default function CommunityPageClient({ user, posts }: Props) {
                     : 'Invalid date'}
               </p>
             </div>
-            {/* <div className="text-gray-600 mt-2">{parse(post.content)}</div> */}
           </li>
         ))}
       </ul>
