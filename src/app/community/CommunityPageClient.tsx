@@ -137,11 +137,7 @@ export default function CommunityPageClient({ user, posts }: Props) {
               </div>
               <p className="text-gray-400 text-sm">
                 {/* by {post.user_name || 'Anonymous'} |{' '} */}
-                {typeof post.created_at === 'string'
-                  ? new Date(post.created_at).toLocaleDateString()
-                  : post.created_at instanceof Date
-                    ? post.created_at.toLocaleDateString()
-                    : 'Invalid date'}
+                {new Date(post.created_at).toLocaleDateString()}
               </p>
             </div>
           </li>
