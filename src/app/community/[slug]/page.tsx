@@ -30,7 +30,6 @@ export default async function PostPage({
     .order('created_at', { ascending: true });
 
   if (commentsError) throw new Error(commentsError.message);
-  console.log('Post content:', post.content);
 
   return (
     <PageContainer>

@@ -15,7 +15,9 @@ export default async function CommunityPage() {
   // Get posts (server side)
   const { data: posts, error } = await (await supabase)
     .from('posts')
-    .select('id, title, content, slug, user_name, user_id, created_at')
+    .select(
+      'id, title, content, slug, user_name, user_id, created_at, category'
+    )
     .order('created_at', { ascending: false });
 
   if (error) throw new Error(error.message);

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { createClient } from '@/utils/supabase/supabaseClient';
 import AuthModal from '@/components/AuthModal'; // adjust path as needed
@@ -17,6 +17,7 @@ type Post = {
   user_id: string;
   user_name: string;
   created_at: Date;
+  category: string;
 };
 
 type Props = {
@@ -42,6 +43,28 @@ export default function CommunityPageClient({ user, posts }: Props) {
     setShowAuthModal(false);
   }
 
+  interface UserGreetingProps {
+    user: User | null;
+  }
+
+  function UserGreeting({ user }: UserGreetingProps) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+      setMounted(true);
+    }, []);
+
+    if (!mounted) return null;
+
+    return (
+      <div className="flex flex-row">
+        {user
+          ? `👋 Hello, ${user.user_metadata?.user_name || user.email}`
+          : 'Welcome!'}
+      </div>
+    );
+  }
+
   return (
     <PageContainer>
       {/* Page title */}
@@ -55,12 +78,13 @@ export default function CommunityPageClient({ user, posts }: Props) {
         {currentUser ? (
           <div className="flex flex-row items-center space-x-3">
             <div className="flex flex-row">
-              <span>👋 Hello, </span>
+              {/* <span> Hello, </span>
               <span className="font-semibold">
                 {currentUser.user_metadata?.full_name ||
                   currentUser.email ||
                   'there'}
-              </span>
+              </span> */}
+              <UserGreeting user={currentUser} />
             </div>
             <Button
               onClick={signOut}
@@ -100,28 +124,34 @@ export default function CommunityPageClient({ user, posts }: Props) {
       )}
 
       {/* Posts list */}
-      <ul className="space-y-6">
+      <ul className="space-y-3">
         {posts.map((post) => (
-          <li
-            key={post.id}
-            className="p-6 rounded-lg shadow-sm hover:shadow-md transition"
-          >
-            <Link
-              href={`/community/${post.slug}`}
-              className="text-2xl font-semibold text-gray-900 hover:text-gray-600"
-            >
-              {post.title}
-            </Link>
-            <p className="text-gray-400">
-              by {post.user_name || 'Anonymous'} |{' '}
-              {typeof post.created_at === 'string'
-                ? new Date(post.created_at).toLocaleDateString()
-                : post.created_at instanceof Date
-                  ? post.created_at.toLocaleDateString()
-                  : 'Invalid date'}
-            </p>
-
-            <div className="text-gray-600 mt-2">{parse(post.content)}</div>
+          <li key={post.id} className="p-2 rounded-lg transition">
+            <div className="flex justify-between sm:p-2">
+              <div className="flex flex-col space-x-3 sm:flex-row sm:justify-start">
+                <Link
+                  href={`/community/${post.category}`}
+                  className="text-md font-semibold text-gray-400 hover:text-gray-600"
+                >
+                  {`${post.category} ` || 'Uncategorized'}
+                </Link>{' '}
+                <Link
+                  href={`/community/${post.slug}`}
+                  className="text-md font-semibold text-gray-700 hover:text-gray-500"
+                >
+                  {post.title}
+                </Link>
+              </div>
+              <p className="text-gray-400 text-sm">
+                {/* by {post.user_name || 'Anonymous'} |{' '} */}
+                {typeof post.created_at === 'string'
+                  ? new Date(post.created_at).toLocaleDateString()
+                  : post.created_at instanceof Date
+                    ? post.created_at.toLocaleDateString()
+                    : 'Invalid date'}
+              </p>
+            </div>
+            {/* <div className="text-gray-600 mt-2">{parse(post.content)}</div> */}
           </li>
         ))}
       </ul>
