@@ -2,6 +2,7 @@
 import { notFound } from 'next/navigation';
 import TeacherProfileClient from './TeacherProfileClient';
 import { createClient } from '@/utils/supabase/supabaseServer';
+import { PageContainer } from '@/components/PageContainer';
 
 export default async function TeacherProfilePage({
   params,
