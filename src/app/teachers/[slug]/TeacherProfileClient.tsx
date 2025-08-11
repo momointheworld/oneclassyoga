@@ -23,6 +23,7 @@ export default function TeacherProfileClient({
     styles: string[];
     levels: string[];
     gallery: string[];
+    videoUrl: string;
     slug: string;
     timeSlots: string[];
     available_days: string[];
@@ -156,7 +157,30 @@ export default function TeacherProfileClient({
           {galleryImages.length > 0 && (
             <TeacherGallery galleryImages={galleryImages} />
           )}
-
+          {/* VIDEO PREVIEW */}
+          {teacher.videoUrl && (
+            <section className="mt-6">
+              <h2 className="font-semibold my-5 text-xl text-center">
+                More About {teacher.name}
+              </h2>
+              <div className="aspect-[16/9]">
+                <iframe
+                  src={
+                    teacher.videoUrl.includes('youtube.com') ||
+                    teacher.videoUrl.includes('youtu.be')
+                      ? teacher.videoUrl
+                          .replace('watch?v=', 'embed/')
+                          .replace('youtu.be/', 'youtube.com/embed/')
+                      : teacher.videoUrl
+                  }
+                  title={`${teacher.name} Video`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full rounded-md border"
+                ></iframe>
+              </div>
+            </section>
+          )}
           <div
             id="booking-calendar"
             className="mt-8 p-6 rounded-3xl shadow border border-blue-200"

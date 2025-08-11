@@ -13,10 +13,14 @@ import TipTapEditor from '@/components/TipTapEditor';
 
 const categories = ['Q&A', 'Experiences', 'Events'] as const;
 
+// Replace with your actual allowed GitHub ID
+const ALLOWED_GITHUB_ID = process.env.NEXT_PUBLIC_GITHUB_ALLOWED_ID || '';
+
 interface CategorySelectorProps {
   value: string;
   onChange: (category: string) => void;
 }
+
 export default function NewPostPage() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -24,7 +28,7 @@ export default function NewPostPage() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [category, setCategory] = useState<string | ''>('');
-  const [errorMEssage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
   const supabase = createClient();
 
@@ -33,6 +37,14 @@ export default function NewPostPage() {
       setUser(data.user || null);
     });
   }, [supabase.auth]);
+
+  function isUserAllowed(user: User | null) {
+    if (!user) return false;
+    const githubIdentity = user.identities?.find(
+      (id) => id.provider === 'github'
+    );
+    return githubIdentity?.id === ALLOWED_GITHUB_ID;
+  }
 
   async function generateUniqueSlug(
     baseSlug: string,
@@ -87,6 +99,12 @@ export default function NewPostPage() {
       return;
     }
 
+    if (!isUserAllowed(user)) {
+      alert('Access denied: only admin can create posts.');
+      setShowAuthModal(true);
+      return;
+    }
+
     if (!category) {
       setErrorMessage('Please select a category');
       return;
@@ -115,6 +133,8 @@ export default function NewPostPage() {
     }
   }
 
+  const isAllowed = isUserAllowed(user);
+
   return (
     <PageContainer>
       <div>
@@ -126,6 +146,13 @@ export default function NewPostPage() {
           ]}
         />
         <h1 className="text-3xl font-bold my-6">Create New Post</h1>
+
+        {!isAllowed && (
+          <p className="text-red-600 font-semibold mb-4">
+            You must be signed in as admin to create posts.
+          </p>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <input
             type="text"
@@ -134,31 +161,25 @@ export default function NewPostPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            disabled={loading}
+            disabled={loading || !isAllowed}
           />
           <CategorySelector value={category} onChange={setCategory} />
-          {/* <textarea
-            placeholder="Content"
-            className="w-full border p-3 rounded h-40"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            required
-            disabled={loading}
-          /> */}
+
           <TipTapEditor
             initialContent={content}
             onChange={(html: SetStateAction<string>) => setContent(html)}
           />
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !isAllowed}
             className="px-6 py-3 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
           >
             {loading ? 'Posting...' : 'Post'}
           </button>
         </form>
-        <div className="text-orange-600">
-          {errorMEssage && `Failed to post: ${errorMEssage}`}
+
+        <div className="text-orange-600 mt-2">
+          {errorMessage && `Failed to post: ${errorMessage}`}
         </div>
 
         {showAuthModal && (
@@ -166,8 +187,22 @@ export default function NewPostPage() {
             onClose={() => setShowAuthModal(false)}
             onAuthSuccess={async () => {
               const { data } = await supabase.auth.getUser();
-              setUser(data.user || null);
-              setShowAuthModal(false);
+              const newUser = data.user;
+
+              if (newUser) {
+                const githubIdentity = newUser.identities?.find(
+                  (id) => id.provider === 'github'
+                );
+                const githubUserId = githubIdentity?.id ?? '';
+
+                if (githubUserId === ALLOWED_GITHUB_ID) {
+                  setUser(newUser);
+                  setShowAuthModal(false);
+                } else {
+                  alert('Access denied: only admin can create posts.');
+                  await supabase.auth.signOut();
+                }
+              }
             }}
           />
         )}

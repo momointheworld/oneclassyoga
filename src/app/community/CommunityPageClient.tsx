@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { createClient } from '@/utils/supabase/supabaseClient';
-import AuthModal from '@/components/AuthModal'; // adjust path as needed
+import AuthModal from '@/components/AuthModal';
 import { Button } from '@/components/ui/button';
 import { PageContainer } from '@/components/PageContainer';
 
@@ -37,23 +37,42 @@ export default function CommunityPageClient({ user, posts }: Props) {
     setIsSigningOut(false);
   }
 
-  function handleAuthSuccess(newUser: User) {
-    setCurrentUser(newUser);
-    setShowAuthModal(false);
+  const allowedGithubId = process.env.NEXT_PUBLIC_GITHUB_ALLOWED_ID;
+  async function handleAuthSuccess(newUser: User) {
+    const githubIdentity = newUser.identities?.find(
+      (id) => id.provider === 'github'
+    );
+    const githubUserId = githubIdentity?.id ?? '';
+
+    if (githubUserId === allowedGithubId) {
+      setCurrentUser(newUser);
+      setShowAuthModal(false);
+    } else {
+      alert('Access denied: only admin can log in now.');
+      await supabase.auth.signOut();
+    }
   }
 
-  interface UserGreetingProps {
-    user: User | null;
+  function FormattedDate({ dateString }: { dateString: string }) {
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
+
+    if (!mounted) return null;
+
+    return <>{new Date(dateString).toLocaleDateString()}</>;
   }
 
-  function UserGreeting({ user }: UserGreetingProps) {
+  function UserGreeting({ user }: { user: User | null }) {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
       setMounted(true);
     }, []);
 
-    if (!mounted) return null;
+    if (!mounted) {
+      // Render a loading or fallback UI to keep server/client consistent
+      return <PageContainer>Loading...</PageContainer>;
+    }
 
     return (
       <div className="flex flex-row">
@@ -66,14 +85,11 @@ export default function CommunityPageClient({ user, posts }: Props) {
 
   return (
     <PageContainer>
-      {/* Page title */}
       <header className="mb-4 border-b border-gray-300 pb-4">
         <h1 className="text-4xl font-bold text-gray-900">Community Forum</h1>
       </header>
 
-      {/* Controls: Create New Post + login/welcome/sign out */}
       <div className="flex flex-col items-end space-y-4">
-        {/* Profile or Sign In */}
         {currentUser ? (
           <div className="flex flex-row items-center space-x-3">
             <div className="flex flex-row">
@@ -89,24 +105,17 @@ export default function CommunityPageClient({ user, posts }: Props) {
             </Button>
           </div>
         ) : (
-          <button
-            onClick={() => {
-              console.log('Sign in clicked');
-              setShowAuthModal(true);
-            }}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition"
-          >
-            Sign in
-          </button>
+          // Sign in button disabled for now
+          <></>
         )}
-
-        {/* Create New Post */}
-        <Link
-          href="/community/new"
-          className="text-blue-600 hover:text-blue-800 font-semibold mb-5"
-        >
-          + Create New Post
-        </Link>
+        {currentUser && (
+          <Link
+            href="/community/new"
+            className="text-blue-600 hover:text-blue-800 font-semibold mb-5"
+          >
+            + Create New Post
+          </Link>
+        )}
       </div>
 
       {showAuthModal && (
@@ -116,7 +125,6 @@ export default function CommunityPageClient({ user, posts }: Props) {
         />
       )}
 
-      {/* Posts list */}
       <ul className="space-y-3">
         {posts.map((post) => (
           <li key={post.id} className="p-2 rounded-lg transition">
@@ -136,8 +144,7 @@ export default function CommunityPageClient({ user, posts }: Props) {
                 </Link>
               </div>
               <p className="text-gray-400 text-sm">
-                {/* by {post.user_name || 'Anonymous'} |{' '} */}
-                {new Date(post.created_at).toLocaleDateString()}
+                <FormattedDate dateString={post.created_at.toString()} />
               </p>
             </div>
           </li>
