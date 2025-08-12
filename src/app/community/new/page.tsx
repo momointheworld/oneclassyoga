@@ -8,18 +8,11 @@ import AuthModal from '@/components/AuthModal';
 import type { User } from '@supabase/supabase-js';
 import { PageContainer } from '@/components/PageContainer';
 import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
-import { Checkbox } from '@/components/ui/checkbox';
 import TipTapEditor from '@/components/TipTapEditor';
-
-const categories = ['Q&A', 'Experiences', 'Events'] as const;
+import { categoryOptions } from '@/lib/constants';
 
 // Replace with your actual allowed GitHub ID
 const ALLOWED_GITHUB_ID = process.env.NEXT_PUBLIC_GITHUB_ALLOWED_ID || '';
-
-interface CategorySelectorProps {
-  value: string;
-  onChange: (category: string) => void;
-}
 
 export default function NewPostPage() {
   const [title, setTitle] = useState('');
@@ -65,28 +58,28 @@ export default function NewPostPage() {
     return slugToCheck;
   }
 
-  function CategorySelector({ value, onChange }: CategorySelectorProps) {
+  function CategorySelector() {
     return (
-      <div className="flex flex-col space-y-2">
-        <h2>Category:</h2>
-        {categories.map((cat) => (
-          <label
-            key={cat}
-            className="flex items-center space-x-2 cursor-pointer"
-          >
-            <Checkbox
-              checked={value === cat}
-              onCheckedChange={(checked) => {
-                if (checked) {
-                  onChange(cat);
-                } else {
-                  onChange('');
-                }
-              }}
-            />
-            <span>{cat}</span>
-          </label>
-        ))}
+      <div className="flex flex-col space-y-2 mb-4">
+        <h2 className="font-semibold">Category:</h2>
+        <div className="grid grid-cols-2 gap-3">
+          {categoryOptions.map((cat) => (
+            <label
+              key={cat}
+              className="flex items-center gap-2 cursor-pointer select-none"
+            >
+              <input
+                type="radio"
+                name="category"
+                value={cat}
+                checked={category === cat}
+                onChange={() => setCategory(cat)}
+                className="cursor-pointer"
+              />
+              {cat}
+            </label>
+          ))}
+        </div>
       </div>
     );
   }
@@ -163,7 +156,7 @@ export default function NewPostPage() {
             required
             disabled={loading || !isAllowed}
           />
-          <CategorySelector value={category} onChange={setCategory} />
+          <CategorySelector />
 
           <TipTapEditor
             initialContent={content}

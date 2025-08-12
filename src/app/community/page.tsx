@@ -1,5 +1,6 @@
 // app/community/page.tsx (server component)
 
+import { PageContainer } from '@/components/PageContainer';
 import CommunityPageClient from './CommunityPageClient';
 
 import { createClient } from '@/utils/supabase/supabaseServer';

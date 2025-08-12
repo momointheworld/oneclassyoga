@@ -38,3 +38,5 @@ export const availableDaysOptions = [
   'Fri',
   'Sat',
 ];
+
+export const categoryOptions = ['Q&A', 'Experiences', 'General', 'Random'];
