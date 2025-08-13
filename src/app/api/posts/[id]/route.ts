@@ -43,11 +43,11 @@ export async function PATCH(
   const postId = (await params).id;
   const { title, content, category } = await request.json();
 
-  console.log(`PATCH: userId=${user.id}, postId=${postId}, updateData=`, {
-    title,
-    content,
-    category,
-  });
+  // console.log(`PATCH: userId=${user.id}, postId=${postId}, updateData=`, {
+  //   title,
+  //   content,
+  //   category,
+  // });
 
   if (!(await canManagePost(supabase, postId, user.id))) {
     console.error(

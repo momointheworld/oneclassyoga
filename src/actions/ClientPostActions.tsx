@@ -128,6 +128,7 @@ export default function ClientPostActions({
         <TipTapEditor
           initialContent={content}
           onChange={(html: SetStateAction<string>) => setContent(html)}
+          postId={postId.toString()}
         />
 
         {error && <p className="text-red-600 mb-2">{error}</p>}
