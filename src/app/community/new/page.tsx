@@ -161,6 +161,7 @@ export default function NewPostPage() {
           <TipTapEditor
             initialContent={content}
             onChange={(html: SetStateAction<string>) => setContent(html)}
+            uploadDisabled={loading || !isAllowed}
           />
           <button
             type="submit"

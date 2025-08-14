@@ -132,23 +132,25 @@ export default function ClientPostActions({
         />
 
         {error && <p className="text-red-600 mb-2">{error}</p>}
+        <div className="mt-5">
+          <Button
+            variant="outline"
+            onClick={handleUpdate}
+            disabled={loading}
+            className="mr-2 text-blue-700 transition hover:bg-gray-200"
+          >
+            Save
+          </Button>
 
-        <Button
-          variant="outline"
-          onClick={handleUpdate}
-          disabled={loading}
-          className="mr-2 text-blue-700"
-        >
-          Save
-        </Button>
-
-        <Button
-          variant="outline"
-          onClick={() => setEditing(false)}
-          disabled={loading}
-        >
-          Cancel
-        </Button>
+          <Button
+            variant="outline"
+            onClick={() => setEditing(false)}
+            disabled={loading}
+            className="transition hover:bg-gray-200"
+          >
+            Cancel
+          </Button>
+        </div>
       </>
     );
   }

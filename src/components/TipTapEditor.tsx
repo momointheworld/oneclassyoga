@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
+import Youtube from '@tiptap/extension-youtube';
 import ImageResize from 'tiptap-extension-resize-image';
 
 interface TipTapEditorProps {
@@ -12,6 +13,7 @@ interface TipTapEditorProps {
   postId?: string; // optional for uploads
   maxWidth?: number; // optional client-side resize
   maxHeight?: number;
+  uploadDisabled?: boolean;
 }
 
 export default function TipTapEditor({
@@ -20,6 +22,7 @@ export default function TipTapEditor({
   postId,
   maxWidth = 800,
   maxHeight = 800,
+  uploadDisabled = false,
 }: TipTapEditorProps) {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -31,6 +34,11 @@ export default function TipTapEditor({
         StarterKit,
         Image.configure({ inline: false, allowBase64: true }),
         ImageResize.configure({ preserveAspectRatio: true }),
+        Youtube.configure({
+          controls: false,
+          nocookie: true,
+        }),
+        ResponsiveYoutube.configure({ controls: false, nocookie: true }),
       ],
       content: initialContent,
       onUpdate: ({ editor }) => onChange(editor.getHTML()),
@@ -97,7 +105,7 @@ export default function TipTapEditor({
 
         if (data.url) {
           // Insert image with width attribute to persist resizing
-          editor.chain().focus().setImage({ src: data.url, width: 400 }).run();
+          editor.chain().focus().setImage({ src: data.url }).run();
         } else {
           alert('Image upload failed');
         }
@@ -111,7 +119,11 @@ export default function TipTapEditor({
 
   return (
     <div className="space-y-4 border p-4 rounded-md shadow-sm bg-white">
-      <MenuBar editor={editor} onUploadImage={uploadImage} />
+      <MenuBar
+        editor={editor}
+        onUploadImage={uploadImage}
+        uploadDisabled={uploadDisabled}
+      />
       <div className="border rounded p-3 min-h-[200px]">
         <EditorContent editor={editor} className="tiptap prose max-w-none" />
       </div>
@@ -119,13 +131,95 @@ export default function TipTapEditor({
   );
 }
 
-function MenuBar({
-  editor,
-  onUploadImage,
-}: {
+const ResponsiveYoutube = Youtube.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      width: { default: 640 },
+      height: { default: 360 },
+    };
+  },
+
+  renderHTML({ node }) {
+    const width = node.attrs.width || 640;
+    const height = node.attrs.height || 360;
+    const ratio = (height / width) * 100;
+
+    return [
+      'div',
+      {
+        style: `position: relative; padding-bottom: ${ratio}%; height: 0; overflow: hidden;`,
+      },
+      [
+        'iframe',
+        {
+          src: node.attrs.src,
+          frameborder: 0,
+          allowfullscreen: 'true',
+          style:
+            'position: absolute; top: 0; left: 0; width: 100%; height: 100%;',
+        },
+      ],
+    ];
+  },
+});
+interface MenuBarProps {
   editor: Editor;
   onUploadImage: () => void;
-}) {
+  uploadDisabled: boolean;
+}
+
+export function MenuBar({
+  editor,
+  onUploadImage,
+  uploadDisabled,
+}: MenuBarProps) {
+  const [videoWidth, setVideoWidth] = useState('640');
+  const [videoHeight, setVideoHeight] = useState('360');
+
+  const addYoutubeVideo = () => {
+    const url = prompt('Enter YouTube URL');
+    // Extract the video ID
+    const match = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+    if (!match) return alert('Invalid YouTube URL');
+
+    const videoId = match[1];
+    const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    const width = Math.max(320, parseInt(videoWidth, 10) || 640);
+    const height = Math.max(
+      180,
+      parseInt(videoHeight, 10) || Math.floor((width * 9) / 16)
+    );
+
+    if (url) {
+      editor.commands.setYoutubeVideo({
+        src: embedUrl,
+        width: Math.max(320, parseInt(width.toString(), 10)) || 640,
+        height: Math.max(180, parseInt(height.toString(), 10)) || 480,
+      });
+    }
+  };
+
+  const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newWidth = e.target.value;
+    setVideoWidth(newWidth);
+
+    // Auto-calc height to preserve 16:9
+    setVideoHeight(
+      Math.floor(((parseInt(newWidth) || 640) * 9) / 16).toString()
+    );
+  };
+
+  const handleHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newHeight = e.target.value;
+    setVideoHeight(newHeight);
+
+    // Auto-calc width to preserve 16:9
+    setVideoWidth(
+      Math.floor(((parseInt(newHeight) || 360) * 16) / 9).toString()
+    );
+  };
+
   if (!editor) return null;
 
   return (
@@ -249,10 +343,37 @@ function MenuBar({
       </button>
       <button
         type="button"
+        disabled={uploadDisabled}
         onClick={onUploadImage}
         className="tiptap-menu-button text-blue-500"
       >
         📷 Upload Image
+      </button>
+      {/* YouTube Inputs */}
+      <input
+        type="number"
+        min="320"
+        max="1920"
+        value={videoWidth}
+        onChange={handleWidthChange}
+        placeholder="Width"
+        className="tiptap-input"
+      />
+      <input
+        type="number"
+        min="180"
+        max="1080"
+        value={videoHeight}
+        onChange={handleHeightChange}
+        placeholder="Height"
+        className="tiptap-input"
+      />
+      <button
+        type="button"
+        onClick={addYoutubeVideo}
+        className="tiptap-menu-button"
+      >
+        Add YouTube Video
       </button>
     </div>
   );
