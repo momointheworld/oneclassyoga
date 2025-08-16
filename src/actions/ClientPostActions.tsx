@@ -160,9 +160,7 @@ export default function ClientPostActions({
     <>
       <h1 className="text-3xl font-bold mb-4">{initialTitle}</h1>
       <p className="mb-2 font-semibold">Category: {category || 'None'}</p>
-      <div className="mb-8 tiptap prose max-w-none">
-        {parse(initialContent)}
-      </div>
+      <div className="mb-8 tiptap prose">{parse(initialContent)}</div>
 
       <Button
         variant="outline"

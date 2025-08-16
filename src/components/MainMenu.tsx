@@ -26,7 +26,9 @@ export default function MainMenu() {
   return (
     <div className="w-full shadow-sm">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <div className="text-lg font-semibold">Chiang Mai Yoga Teachers</div>
+        <div className="text-lg font-semibold">
+          One Class Yoga in Chiang Mai
+        </div>
 
         {/* Desktop menu */}
         <div className="hidden md:flex gap-6">

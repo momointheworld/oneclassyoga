@@ -28,16 +28,36 @@ export default function TipTapEditor({
 
   useEffect(() => setIsMounted(true), []);
 
+  const CustomImage = Image.extend({
+    addAttributes() {
+      return {
+        ...this.parent?.(),
+        width: {
+          default: null,
+          parseHTML: (element) => element.getAttribute('width'),
+          renderHTML: (attributes) => {
+            if (!attributes.width) return {};
+            return { width: attributes.width };
+          },
+        },
+        height: {
+          default: null,
+          parseHTML: (element) => element.getAttribute('height'),
+          renderHTML: (attributes) => {
+            if (!attributes.height) return {};
+            return { height: attributes.height };
+          },
+        },
+      };
+    },
+  });
+
   const editor = useEditor(
     {
       extensions: [
         StarterKit,
-        Image.configure({ inline: false, allowBase64: true }),
+        CustomImage.configure({ inline: false, allowBase64: true }),
         ImageResize.configure({ preserveAspectRatio: true }),
-        Youtube.configure({
-          controls: false,
-          nocookie: true,
-        }),
         ResponsiveYoutube.configure({ controls: false, nocookie: true }),
       ],
       content: initialContent,
@@ -50,7 +70,9 @@ export default function TipTapEditor({
   if (!isMounted || !editor) return null;
 
   /** Resize image client-side before upload */
-  const resizeImage = (file: File): Promise<Blob> => {
+  const resizeImage = (
+    file: File
+  ): Promise<{ blob: Blob; width: number; height: number }> => {
     return new Promise((resolve, reject) => {
       const img = new window.Image();
       img.src = URL.createObjectURL(file);
@@ -74,7 +96,7 @@ export default function TipTapEditor({
         ctx.drawImage(img, 0, 0, width, height);
         canvas.toBlob((blob) => {
           if (!blob) return reject('Failed to create blob');
-          resolve(blob);
+          resolve({ blob, width, height });
         }, file.type);
       };
       img.onerror = reject;
@@ -92,9 +114,9 @@ export default function TipTapEditor({
       if (!file || !editor) return;
 
       try {
-        const resizedBlob = await resizeImage(file);
+        const { blob, width, height } = await resizeImage(file);
         const formData = new FormData();
-        formData.append('file', resizedBlob, file.name);
+        formData.append('file', blob, file.name);
         if (postId) formData.append('postId', postId);
 
         const res = await fetch('/api/upload-post-image', {
@@ -104,8 +126,16 @@ export default function TipTapEditor({
         const data = await res.json();
 
         if (data.url) {
-          // Insert image with width attribute to persist resizing
-          editor.chain().focus().setImage({ src: data.url }).run();
+          // Insert image with width & height attributes
+          editor
+            .chain()
+            .focus()
+            .setImage({
+              src: data.url,
+              width,
+              height,
+            })
+            .run();
         } else {
           alert('Image upload failed');
         }
@@ -371,7 +401,7 @@ export function MenuBar({
       <button
         type="button"
         onClick={addYoutubeVideo}
-        className="tiptap-menu-button"
+        className="tiptap-menu-button text-orange-500"
       >
         Add YouTube Video
       </button>

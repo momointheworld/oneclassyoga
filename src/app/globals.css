@@ -8,7 +8,11 @@
 .tiptap {
   line-height: 1.75;
   font-size: 0.95rem;
+  box-sizing: border-box;
+  max-width: 100%;
   color: #1a202c; /* Tailwind's gray-900 */
+  overflow-wrap: break-word;
+
 }
 
 /* Paragraphs */
@@ -91,4 +95,28 @@
 /* Italic */
 .tiptap em {
   font-style: italic;
+}
+
+
+.tiptap img,
+.tiptap iframe,
+.tiptap pre,
+.tiptap table {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.tiptap img {
+  width: auto;      /* use inline width attribute */
+  height: auto;     /* use inline height attribute */
+  max-width: 100%;  /* responsive on mobile */
+  display: block;
+}
+
+
+/* Make tables scrollable horizontally */
+.tiptap table {
+  display: block;
+  overflow-x: auto;
 }

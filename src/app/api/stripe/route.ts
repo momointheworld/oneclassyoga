@@ -33,7 +33,24 @@ export async function POST(req: Request) {
 
   // Base session config
   const sessionOptions: Stripe.Checkout.SessionCreateParams = {
-    payment_method_types: ['card'],
+    payment_method_types: [
+      'card',
+      'wechat_pay',
+      'alipay',
+      'naver_pay',
+      'kakao_pay',
+      'kr_card',
+      'sepa_debit',
+      'eps',
+      'ideal',
+      'sofort',
+      'giropay',
+    ],
+    payment_method_options: {
+      wechat_pay: {
+        client: 'web', // required for Checkout
+      },
+    },
     mode: 'payment',
     customer_email: email,
     customer_creation: 'always',
