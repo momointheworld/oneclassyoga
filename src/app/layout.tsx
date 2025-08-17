@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'One Class Yoga',
+  title: 'OneClass Yoga',
   description: 'Find Your First Class Yoga Teachers',
 };
 

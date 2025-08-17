@@ -60,6 +60,7 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
         <Image
           src={teacher.photo || '/placeholder.png'}
           alt={teacher.name}
+          priority={true}
           width={400}
           height={300}
           className="rounded-xl object-cover w-full h-52"

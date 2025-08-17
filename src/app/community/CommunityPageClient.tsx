@@ -9,6 +9,7 @@ import AuthModal from '@/components/AuthModal';
 import { Button } from '@/components/ui/button';
 import { PageContainer } from '@/components/PageContainer';
 import parse from 'html-react-parser';
+import SkeletonCard from '@/components/SkeletonCard';
 
 type Post = {
   id: number;
@@ -42,6 +43,7 @@ export default function CommunityPageClient({ user, posts }: Props) {
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(user);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Update URL when selectedCategory changes
   useEffect(() => {
@@ -110,7 +112,7 @@ export default function CommunityPageClient({ user, posts }: Props) {
   function UserGreeting({ user }: { user: User | null }) {
     const [mounted, setMounted] = useState(false);
     useEffect(() => setMounted(true), []);
-    if (!mounted) return <PageContainer>Loading...</PageContainer>;
+    if (!mounted) return <PageContainer>loading...</PageContainer>;
     return (
       <div className="flex flex-row">
         {user
@@ -183,38 +185,48 @@ export default function CommunityPageClient({ user, posts }: Props) {
       )}
 
       {/* Posts List */}
-      <ul className="space-y-3">
-        {filteredPosts.slice(0, visibleCount).map((post) => (
-          <li
-            key={post.id}
-            className="transition border-b border-gray-200 mb-2"
-          >
-            <div className="flex justify-between">
-              <div className="flex flex-col space-x-3 sm:flex-row sm:justify-start mb-2">
-                <button
-                  onClick={() => handleCategoryClick(post.category)}
-                  className="text-md font-semibold text-gray-400 hover:text-gray-600 underline text-left"
-                >
-                  {post.category || 'Uncategorized'}
-                </button>
-                <Link
-                  href={`/community/${post.slug}`}
-                  className="text-md font-semibold text-gray-700 hover:text-gray-500"
-                >
-                  {post.title}
-                </Link>
+      {!posts ? (
+        <SkeletonCard
+          lines={[
+            { width: 'w-3/4', height: 'h-6' },
+            { width: 'w-full', height: 'h-4' },
+            { width: 'w-5/6', height: 'h-4' },
+            { width: 'w-2/3', height: 'h-4' },
+          ]}
+        />
+      ) : (
+        <ul className="space-y-3">
+          {filteredPosts.slice(0, visibleCount).map((post) => (
+            <li
+              key={post.id}
+              className="transition border-b border-gray-200 mb-2"
+            >
+              <div className="flex justify-between">
+                <div className="flex flex-col space-x-3 sm:flex-row sm:justify-start mb-2">
+                  <button
+                    onClick={() => handleCategoryClick(post.category)}
+                    className="text-md font-semibold text-gray-400 hover:text-gray-600 underline text-left"
+                  >
+                    {post.category || 'Uncategorized'}
+                  </button>
+                  <Link
+                    href={`/community/${post.slug}`}
+                    className="text-md font-semibold text-gray-700 hover:text-gray-500"
+                  >
+                    {post.title}
+                  </Link>
+                </div>
+                <p className="text-gray-400 text-sm">
+                  <FormattedDate dateString={post.created_at.toString()} />
+                </p>
               </div>
-              <p className="text-gray-400 text-sm">
-                <FormattedDate dateString={post.created_at.toString()} />
-              </p>
-            </div>
-            <div className="text-gray-600 text-sm whitespace-pre-wrap line-clamp-2 break-words prose mb-5 px-5">
-              {parse(post.content)}
-            </div>
-          </li>
-        ))}
-      </ul>
-
+              <div className="text-gray-600 text-sm whitespace-pre-wrap line-clamp-2 break-words prose mb-5 px-5">
+                {parse(post.content)}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
       {/* Load More Button */}
       {visibleCount < filteredPosts.length && (
         <div className="flex justify-center mt-6">
