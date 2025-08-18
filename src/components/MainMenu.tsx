@@ -1,5 +1,8 @@
 'use client';
-
+import { useState, useEffect, useTransition } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import clsx from 'clsx';
+import Link from 'next/link';
 import {
   Menubar,
   MenubarMenu,
@@ -7,11 +10,7 @@ import {
   MenubarContent,
   MenubarItem,
 } from '@/components/ui/menubar';
-import Link from 'next/link';
 import { Menu } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
-import clsx from 'clsx';
-import { useEffect, useState } from 'react';
 
 const links = [
   { label: 'Home', href: '/' },
@@ -24,39 +23,40 @@ const links = [
 export default function MainMenu() {
   const pathname = usePathname();
   const router = useRouter();
-  const [isNavigating, setIsNavigating] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [progress, setProgress] = useState(0);
 
   const handleNavigate = (href: string) => {
-    setIsNavigating(true);
-    setProgress(10);
-    router.push(href);
+    startTransition(() => {
+      router.push(href);
+    });
   };
 
-  // Animate progress while navigating
+  // Smooth "NProgress-style" animation
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    if (isNavigating && progress < 90) {
-      timer = setInterval(() => {
-        setProgress((prev) => Math.min(prev + Math.random() * 10, 90));
-      }, 200);
-    }
-    return () => clearInterval(timer);
-  }, [isNavigating, progress]);
 
-  // Finish navigation
-  useEffect(() => {
-    if (isNavigating) {
+    const step = () => {
+      setProgress((prev) => {
+        if (!isPending) return prev; // stop if not pending
+        // Move faster at start, slower near 90%
+        const diff = 90 - prev;
+        const increment = Math.max(0.5, diff * 0.1);
+        return Math.min(prev + increment, 90);
+      });
+      timer = setTimeout(step, 100);
+    };
+
+    if (isPending) step();
+    else if (progress > 0) {
       setProgress(100);
-      const timeout = setTimeout(() => {
-        setIsNavigating(false);
-        setProgress(0);
-      }, 300);
-      return () => clearTimeout(timeout);
+      const finishTimeout = setTimeout(() => setProgress(0), 300);
+      return () => clearTimeout(finishTimeout);
     }
-  }, [isNavigating, pathname]);
 
-  // Check if link or its subpaths are active
+    return () => clearTimeout(timer);
+  }, [isPending, progress]);
+
   const isActiveLink = (href: string) => {
     if (href === '/') return pathname === '/';
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -67,7 +67,6 @@ export default function MainMenu() {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="text-lg font-semibold">OneClass Yoga in Chiang Mai</div>
 
-        {/* Desktop menu */}
         <div className="hidden md:flex gap-6">
           {links.map(({ label, href }) => (
             <Link
@@ -87,7 +86,6 @@ export default function MainMenu() {
           ))}
         </div>
 
-        {/* Mobile menu */}
         <div className="md:hidden">
           <Menubar>
             <MenubarMenu>
@@ -118,10 +116,9 @@ export default function MainMenu() {
         </div>
       </div>
 
-      {/* Smooth progress bar */}
-      {isNavigating && (
+      {progress > 0 && (
         <div
-          className="h-1 bg-emerald-500 absolute top-full left-0 transition-all duration-200 ease-out"
+          className="h-1 bg-emerald-500 absolute top-full left-0 transition-all duration-100 ease-out"
           style={{ width: `${progress}%` }}
         />
       )}

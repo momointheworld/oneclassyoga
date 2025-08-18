@@ -181,6 +181,7 @@ export default function ContactPage() {
         {/* Wrap the form with GoogleReCaptchaProvider */}
         <GoogleReCaptchaProvider
           reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+          scriptProps={{ async: true, defer: true, appendTo: 'head' }}
         >
           <ContactForm />
         </GoogleReCaptchaProvider>

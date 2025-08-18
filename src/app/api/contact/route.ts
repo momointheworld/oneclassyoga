@@ -30,26 +30,37 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-
     // reCAPTCHA v3 verification
-    const secret = process.env.RECAPTCHA_SECRET_KEY!;
+    const secret = process.env.RECAPTCHA_SECRET_KEY;
+    const token = recaptchaToken;
+    // A quick check to ensure the secret and token exist before making the API call.
+    if (!secret || !token) {
+      return NextResponse.json(
+        { message: 'Missing reCAPTCHA secret or token' },
+        { status: 400 }
+      );
+    }
+
     const recaptchaResp = await fetch(
       'https://www.google.com/recaptcha/api/siteverify',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `secret=${encodeURIComponent(secret)}&response=${encodeURIComponent(
-          recaptchaToken
-        )}`,
+        body: `secret=${secret}&response=${token}`,
       }
     );
 
     const recaptchaData = await recaptchaResp.json();
 
-    if (!recaptchaData.success || recaptchaData.score < 0.5) {
+    // The updated verification check now includes the action.
+    if (
+      !recaptchaData.success ||
+      recaptchaData.score < 0.5 ||
+      recaptchaData.action !== 'contact_form_submit' // <-- Added this line
+    ) {
       return NextResponse.json(
         { message: 'Failed reCAPTCHA verification' },
-        { status: 403 }
+        { status: 403 } // 403 Forbidden is a good status code for a failed check.
       );
     }
 
