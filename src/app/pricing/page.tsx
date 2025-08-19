@@ -106,7 +106,11 @@ export default function PricingPage() {
 
         <div className="mt-10 text-center">
           <p className="text-md text-gray-700">
-            Have questions? Contact us here!
+            Have questions?{' '}
+            <Link href="/contact" className="hover:underline">
+              Contact us{' '}
+            </Link>{' '}
+            here!
           </p>
         </div>
       </div>

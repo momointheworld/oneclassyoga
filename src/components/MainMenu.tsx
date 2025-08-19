@@ -65,7 +65,7 @@ export default function MainMenu() {
   return (
     <div className="w-full shadow-sm bg-white z-50 relative">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <div className="text-lg font-semibold">OneClass Yoga in Chiang Mai</div>
+        <div className="text-lg font-semibold">OneClass Yoga</div>
 
         <div className="hidden md:flex gap-6">
           {links.map(({ label, href }) => (

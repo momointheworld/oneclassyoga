@@ -1,16 +1,18 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button } from '@/components/ui/button'; // assuming shadcn/ui
+import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { PageContainer } from '@/components/PageContainer';
 import { createClient } from '@/utils/supabase/supabaseServer';
+import BookingSteps from '@/components/BookingSteps';
+import FAQSection from '@/components/FAQSection';
 
 export default async function HomePage() {
   const supabase = createClient();
 
   const { data: teachers, error } = await (await supabase)
     .from('teachers')
-    .select('slug, name, photo, bio')
+    .select('slug, name, photo, bio, styles')
     .limit(6);
 
   if (error) {
@@ -23,11 +25,13 @@ export default async function HomePage() {
         {/* Hero Section */}
         <section className="text-center space-y-6">
           <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-            Personalized 1-on-1 Sessions with Trusted Teachers
+            Yoga Teachers in Chiang Mai — Curated by a Practitioner
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Find the right teacher, book a time that works for you, and start
-            your journey today.
+            As a longtime yoga practitioner, I’ve explored many teachers and
+            styles in Chiang Mai. This site highlights instructors I personally
+            recommend—skilled, passionate, and ready to help you grow your
+            practice. Discover your perfect match and join our community today.
           </p>
           <div className="flex justify-center">
             <Link href="/teachers">
@@ -35,7 +39,7 @@ export default async function HomePage() {
                 size="lg"
                 className="bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-emerald-700 transition flex items-center gap-2"
               >
-                Find a Teacher
+                Find Your Teacher
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
@@ -45,37 +49,34 @@ export default async function HomePage() {
         {/* How It Works */}
         <section className="text-center space-y-10">
           <h2 className="text-3xl font-semibold">How It Works</h2>
-          <div className="grid gap-8 md:grid-cols-3">
-            {[
-              {
-                title: '1. Choose a Teacher',
-                desc: 'Browse and select the teacher that fits your needs.',
-              },
-              {
-                title: '2. Book a Time',
-                desc: 'Pick a session time that works with your schedule.',
-              },
-              {
-                title: '3. Start Your Session',
-                desc: 'Join your private session and grow with guidance.',
-              },
-            ].map((step, idx) => (
-              <div
-                key={idx}
-                className="p-6 bg-white rounded-2xl shadow border border-gray-100 text-left"
-              >
-                <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
-                <p className="text-gray-600">{step.desc}</p>
-              </div>
-            ))}
+          <BookingSteps />
+        </section>
+
+        {/* FAQ section */}
+        <section>
+          <FAQSection />
+          <div className="mt-6 text-center">
+            <p className="text-gray-400 text-sm">
+              Have more questions? Visit our{' '}
+              <Link href="/community" className="text-blue-600 underline">
+                Community Q&A
+              </Link>{' '}
+            </p>
           </div>
         </section>
 
         {/* Featured Teachers */}
         <section className="space-y-10">
           <h2 className="text-3xl font-semibold text-center">
-            Meet Some of Our Teachers
+            Hand-Picked Teachers for Your Practice
           </h2>
+          <p className="text-center text-gray-600 max-w-2xl mx-auto">
+            Every teacher listed here has been personally vetted to ensure
+            quality, experience, and a welcoming approach. Explore their
+            profiles, discover their unique teaching styles, and find the
+            perfect fit for your yoga journey.
+          </p>
+
           <div className="grid gap-6 md:grid-cols-3">
             {teachers?.slice(0, 3).map((teacher) => (
               <div
@@ -84,7 +85,7 @@ export default async function HomePage() {
               >
                 <Image
                   src={teacher.photo}
-                  alt="Teacher profile"
+                  alt={`${teacher.name} – Yoga Teacher specializing in ${teacher.styles?.join(', ')}`}
                   width={96}
                   height={96}
                   className="w-24 h-24 mx-auto rounded-full object-cover mb-4"
@@ -93,13 +94,16 @@ export default async function HomePage() {
                 <h3 className="text-xl font-medium capitalize">
                   {teacher.name}
                 </h3>
-                <div className="text-gray-600 text-sm mb-4  ">
-                  Certified Yoga Teacher
+                <div className="text-gray-600 text-sm mb-4">
+                  <strong>Specializes in:</strong>{' '}
+                  {teacher.styles?.slice(0, 3).join(', ')}
+                  {teacher.styles && teacher.styles.length > 3 ? ', ...' : ''}
                 </div>
+
                 <Link href={`/teachers/${teacher.slug}`}>
                   <Button
                     variant="outline"
-                    className=" text-sm font-medium px-4 py-2 rounded-xl hover:bg-gray-200 transition"
+                    className="text-sm font-medium px-4 py-2 rounded-xl hover:bg-gray-200 transition"
                   >
                     View Profile
                   </Button>
@@ -108,7 +112,6 @@ export default async function HomePage() {
             ))}
           </div>
 
-          {/* See All Teachers button */}
           <div className="mt-8 flex justify-center">
             <Link href="/teachers">
               <Button className="bg-emerald-600 text-white text-sm font-medium px-6 py-3 rounded-xl hover:bg-emerald-700 transition">
@@ -143,23 +146,30 @@ export default async function HomePage() {
 
         {/* Trust Section */}
         <section className="bg-gray-50 py-12 rounded-2xl px-6 md:px-12 space-y-8">
-          <h2 className="text-3xl font-semibold text-center">Why Choose Us?</h2>
+          <h2 className="text-3xl font-semibold text-center">
+            Why OneClass Yoga?
+          </h2>
+
           <div className="grid gap-8 md:grid-cols-3 text-center">
             {[
               {
-                title: 'Flexible Scheduling',
-                desc: 'Book sessions that fit your lifestyle.',
+                title: 'Personalized Recommendations',
+                desc: 'Based on years of personal practice and exploration.',
+                icon: '🎯',
               },
               {
-                title: 'Carefully Selected Teachers',
-                desc: 'We hand-pick every teacher to ensure quality.',
+                title: 'Support Local Teachers',
+                desc: 'Helping talented yoga teachers in Chiang Mai gain the recognition they deserve.',
+                icon: '🧘‍♀️',
               },
               {
-                title: '1-on-1 Personalized Attention',
-                desc: 'Private sessions tailored to your goals.',
+                title: 'Private, Flexible Classes',
+                desc: 'Classes tailored to your schedule and personal goals.',
+                icon: '📅',
               },
             ].map((item, idx) => (
-              <div key={idx} className="space-y-2">
+              <div key={idx} className="space-y-2 flex flex-col items-center">
+                <div className="text-4xl mb-3">{item.icon}</div>
                 <h3 className="text-xl font-semibold">{item.title}</h3>
                 <p className="text-gray-600 text-sm">{item.desc}</p>
               </div>
@@ -176,7 +186,7 @@ export default async function HomePage() {
           <Link href="/contact">
             <Button
               variant="outline"
-              className=" text-sm font-medium px-4 py-2 rounded-xl hover:bg-gray-200 transition"
+              className="text-sm font-medium px-4 py-2 rounded-xl hover:bg-gray-200 transition"
             >
               Contact Us
             </Button>

@@ -73,7 +73,7 @@ export function Footer() {
           {/* Copyright */}
           <div className="text-center md:text-right text-sm mt-4 md:mt-0">
             <p>
-              © {new Date().getFullYear()} YourSiteName. All rights reserved.
+              © {new Date().getFullYear()} OneClass Yoga. All rights reserved.
             </p>
           </div>
         </div>
