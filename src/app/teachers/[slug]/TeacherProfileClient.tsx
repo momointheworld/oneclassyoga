@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ToBangkokDateOnly } from '@/components/BkkTimeConverter';
+import YouTubeVideo from '@/components/YoutubeViedo';
 
 export default function TeacherProfileClient({
   teacher,
@@ -138,7 +139,7 @@ export default function TeacherProfileClient({
 
             <div>
               <p>
-                <span className="font-semibold text-gray-700">Level:</span>{' '}
+                <span className="font-semibold text-gray-700">Levels:</span>{' '}
                 <span className="flex flex-wrap gap-2 mt-2">
                   {teacher.levels.map((level) => (
                     <Badge
@@ -157,28 +158,14 @@ export default function TeacherProfileClient({
           {galleryImages.length > 0 && (
             <TeacherGallery galleryImages={galleryImages} />
           )}
+
           {/* VIDEO PREVIEW */}
           {teacher.videoUrl && (
             <section className="mt-6">
               <h2 className="font-semibold my-5 text-xl text-center">
-                More About {teacher.name}
+                {teacher.name} on Yoga, Teaching, and Practice
               </h2>
-              <div className="aspect-[16/9]">
-                <iframe
-                  src={
-                    teacher.videoUrl.includes('youtube.com') ||
-                    teacher.videoUrl.includes('youtu.be')
-                      ? teacher.videoUrl
-                          .replace('watch?v=', 'embed/')
-                          .replace('youtu.be/', 'youtube.com/embed/')
-                      : teacher.videoUrl
-                  }
-                  title={`${teacher.name} Video`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full rounded-md border"
-                ></iframe>
-              </div>
+              <YouTubeVideo videoId="dQw4w9WgXcQ" />
             </section>
           )}
           <div

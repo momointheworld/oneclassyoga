@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Script from 'next/script';
 
 export default function FAQSection() {
@@ -17,10 +18,6 @@ export default function FAQSection() {
     {
       q: 'How do I book a private yoga class?',
       a: 'Booking is simple: select a teacher, pick a convenient time, and confirm online. The process is designed to be easy for students while helping local teachers connect with more people.',
-    },
-    {
-      q: 'Why choose this platform?',
-      a: 'This platform draws on my years of practicing yoga in Chiang Mai. It helps you find the best teachers, enjoy personalized guidance, and support the local yoga community.',
     },
   ];
 
@@ -50,7 +47,14 @@ export default function FAQSection() {
           ))}
         </div>
       </div>
-
+      <div className="mt-6 text-center">
+        <p className="text-gray-400 text-sm">
+          Have more questions? Visit our{' '}
+          <Link href="/community" className="text-blue-600 underline">
+            Community Q&A
+          </Link>{' '}
+        </p>
+      </div>
       {/* SEO FAQ Schema */}
       <Script
         id="faq-schema"

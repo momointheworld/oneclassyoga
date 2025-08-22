@@ -1,11 +1,18 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
 import { PageContainer } from '@/components/PageContainer';
 import { createClient } from '@/utils/supabase/supabaseServer';
 import BookingSteps from '@/components/BookingSteps';
 import FAQSection from '@/components/FAQSection';
+import { Metadata } from 'next';
+import YouTubeVideo from '@/components/YoutubeViedo';
+
+export const metadata: Metadata = {
+  title: 'Private & Small Group Yoga in Chiang Mai | 1–5 People Classes',
+  description:
+    'Discover experienced yoga teachers in Chiang Mai. Offering private and small group classes (1–5 people) for travelers, expats, and locals of all levels',
+};
 
 export default async function HomePage() {
   const supabase = createClient();
@@ -23,26 +30,21 @@ export default async function HomePage() {
     <PageContainer>
       <div className="px-4 space-y-24">
         {/* Hero Section */}
-        <section className="text-center space-y-6">
+        <section className="text-center mt-12 space-y-6">
           <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-            Yoga Teachers in Chiang Mai — Curated by a Practitioner
+            {' '}
+            Yoga Teachers in Chiang Mai — Curated by a Practitioner{' '}
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            As a longtime yoga practitioner, I’ve explored many teachers and
-            styles in Chiang Mai. This site highlights instructors I personally
-            recommend—skilled, passionate, and ready to help you grow your
-            practice. Discover your perfect match and join our community today.
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Hi, I’m a longtime yoga practitioner in Chiang Mai. I’ve explored
+            many teachers and styles here, and this video gives a short
+            introduction about me, my journey, and how this site can help you
+            discover the perfect yoga teacher.
           </p>
           <div className="flex justify-center">
-            <Link href="/teachers">
-              <Button
-                size="lg"
-                className="bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-emerald-700 transition flex items-center gap-2"
-              >
-                Find Your Teacher
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
+            <div className="w-full max-w-3xl aspect-video rounded-xl overflow-hidden shadow-lg">
+              <YouTubeVideo videoId="dQw4w9WgXcQ" />
+            </div>
           </div>
         </section>
 
@@ -55,14 +57,6 @@ export default async function HomePage() {
         {/* FAQ section */}
         <section>
           <FAQSection />
-          <div className="mt-6 text-center">
-            <p className="text-gray-400 text-sm">
-              Have more questions? Visit our{' '}
-              <Link href="/community" className="text-blue-600 underline">
-                Community Q&A
-              </Link>{' '}
-            </p>
-          </div>
         </section>
 
         {/* Featured Teachers */}

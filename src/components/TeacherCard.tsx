@@ -20,13 +20,11 @@ interface TeacherCardProps {
   teacher: {
     id: string | number;
     name: string;
+    bio?: string;
     slug?: string;
     photo?: string;
-    bio: string;
     styles: string[];
     levels: string[];
-    gallery?: string[];
-    videoUrl?: string;
     isActive?: boolean;
     isFeatured?: boolean;
   };

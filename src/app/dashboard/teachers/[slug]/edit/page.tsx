@@ -233,7 +233,7 @@ export default function EditTeacherProfilePage() {
 
         {/* timeslot Checkboxes */}
         <div>
-          <p className="font-semibold mb-2">Styles</p>
+          <p className="font-semibold mb-2">Time Slots</p>
           <div className="grid grid-cols-2 gap-3">
             {timeSlotOptions.map((timeSlot) => (
               <label key={timeSlot} className="flex items-center gap-2">

@@ -1,20 +1,21 @@
 export const levelOptions = ['Beginner', 'Intermediate', 'Advanced'];
 
 export const styleOptions = [
+  'Aerial',
+  'Anusara',
+  'Anusaranga',
   'Ashtanga',
+  'Bikram',
+  'Chair',
   'Hatha',
   'Iyengar',
-  'Yin',
-  'Restorative',
-  'Kundalini',
-  'Vinyasa',
-  'Bikram',
-  'Power',
-  'Aerial',
-  'Anusara ',
   'Karma',
+  'Kundalini',
+  'Power',
+  'Restorative',
   'Sivananda',
-  'Anusaranga',
+  'Vinyasa',
+  'Yin',
 ];
 
 export const timeSlotOptions = [

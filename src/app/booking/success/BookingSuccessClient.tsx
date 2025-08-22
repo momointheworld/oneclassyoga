@@ -1,0 +1,174 @@
+'use client';
+
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+
+export default function BookingSuccessClient() {
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get('session_id');
+  const teacherSlug = searchParams.get('teacher');
+  const date = searchParams.get('date');
+  const time = searchParams.get('timeSlot');
+  const participants = searchParams.get('participants');
+  const [copied, setCopied] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+
+  const teacherName = teacherSlug
+    ? teacherSlug
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, (char: string) => char.toUpperCase())
+    : null;
+
+  const hasBookingDetails = teacherSlug && date && time && participants;
+
+  const copyToClipboard = () => {
+    if (sessionId) {
+      navigator.clipboard.writeText(sessionId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  // Send booking confirmation email
+  useEffect(() => {
+    if (!sessionId) return;
+
+    const sendEmail = async () => {
+      try {
+        const res = await fetch('/api/send-confirmation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId }),
+        });
+        const data = await res.json();
+        if (data.success) setEmailSent(true);
+        else setEmailError(true);
+      } catch (err) {
+        console.error('Failed to send confirmation email', err);
+        setEmailError(true);
+      }
+    };
+
+    sendEmail();
+  }, [sessionId]);
+
+  return (
+    <div className="max-w-2xl mx-auto p-8 text-center">
+      <h1 className="text-3xl font-bold mb-4">🎉 Booking Confirmed!</h1>
+      <p className="text-lg text-gray-700 mb-4">Your payment was successful.</p>
+
+      {/* Booking Reference */}
+      {sessionId && (
+        <div className="mb-6">
+          <p className="text-gray-700 text-sm mb-2">Booking Reference:</p>
+          <div className="flex items-center justify-center gap-2">
+            <span className="font-mono bg-gray-100 px-2 py-1 rounded">
+              {sessionId.slice(0, 16)}...
+            </span>
+            <button
+              onClick={copyToClipboard}
+              className="text-sm text-blue-500 hover:text-blue-700"
+            >
+              {copied ? 'Copied!' : 'Copy Full ID'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Email status */}
+      {emailSent && (
+        <p className="text-sm text-green-600 mb-4">
+          Confirmation email sent! 📧
+        </p>
+      )}
+      {emailError && (
+        <p className="text-sm text-red-600 mb-4">
+          Failed to send confirmation email. Please contact support.
+        </p>
+      )}
+
+      {hasBookingDetails ? (
+        <div className="bg-white shadow-md p-6 rounded-xl mb-8 text-left border border-gray-100">
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">
+            Class Details
+          </h2>
+          <ul className="list-disc pl-5 space-y-2 text-gray-700">
+            {teacherName && (
+              <li>
+                <span className="font-medium">Teacher:</span> {teacherName}
+              </li>
+            )}
+            {date && (
+              <li>
+                <span className="font-medium">Date:</span>{' '}
+                {new Date(date).toLocaleDateString('en-US', {
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </li>
+            )}
+            {time && (
+              <li>
+                <span className="font-medium">Time:</span> {time}
+              </li>
+            )}
+            {participants && (
+              <li>
+                <span className="font-medium">Participants:</span>{' '}
+                {participants}{' '}
+                {Number(participants) === 1 ? 'person' : 'people'}
+              </li>
+            )}
+          </ul>
+        </div>
+      ) : (
+        <div className="bg-white  text-emerald-700 my-5">
+          <p>
+            Thank you for your purchase! We will contact you to arrange the
+            classes.
+          </p>
+        </div>
+      )}
+
+      {/* Contact Info */}
+      <div className="bg-gray-50 border border-gray-100 text-gray-500 p-5 rounded-lg text-left text-sm">
+        <h3 className="text-base font-semibold text-gray-600 mb-2">
+          Have questions?
+        </h3>
+        <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-start">
+          <p>
+            📞 <strong>Line | WhatsApp | Phone:</strong>
+          </p>
+          <p> +66-95-047-4936 </p>
+        </div>
+        <p className="mb-2 flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="#07C160"
+          >
+            <path d="M17.5 3C21.09 3 24 5.69 24 9.01c0 2.23-1.34 4.19-3.39 5.27l.84 2.96-3.12-1.7a8.43 8.43 0 0 1-2.83.47c-3.59 0-6.5-2.69-6.5-6.01C9 5.69 12 3 15.5 3zm-10 5C11.09 8 14 10.69 14 14.01c0 2.23-1.34 4.19-3.39 5.27l.84 2.96-3.12-1.7A8.43 8.43 0 0 1 5.5 21C1.91 21-1 18.31-1 15c0-3.32 2.91-6 6.5-6z" />
+          </svg>
+          <strong>WeChat ID:</strong> OneClassYoga
+        </p>
+        <p className="flex items-center gap-2">
+          📧 <strong>Email:</strong> support@oneclass.yoga
+        </p>
+      </div>
+
+      <div className="mt-8 text-center">
+        <Link
+          href="/teachers"
+          className="text-blue-600 hover:text-blue-800 hover:underline"
+        >
+          Check out more teachers
+        </Link>
+      </div>
+    </div>
+  );
+}
