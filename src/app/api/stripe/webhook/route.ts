@@ -30,10 +30,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Webhook error' }, { status: 400 });
   }
 
-  // Handle the checkout.session.completed event
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session;
 
+    // Get line items including price metadata
+    const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
+      expand: ['data.price.product'], // expands the price and product data
+    });
+
+    // If it’s a bundle, extract bundle_size from price metadata
+    let bundleSize: number | null = null;
+    const lineItem = lineItems.data[0]; // you probably only have 1 item per session
+    if (lineItem.price?.metadata?.bundle_size) {
+      bundleSize = parseInt(lineItem.price.metadata.bundle_size, 10);
+    }
     try {
       // Retrieve the customer details
       const customer = (await stripe.customers.retrieve(
@@ -45,6 +55,7 @@ export async function POST(req: Request) {
       const teacher_slug = metadata.teacher_slug || null;
       const date = metadata.date || null;
       const time_slot = metadata.time_slot || null;
+      const bundle_size = bundleSize;
       const participants = metadata.participants || null;
 
       let teacherId = null;
@@ -78,6 +89,7 @@ export async function POST(req: Request) {
         customer_email: customer.email || session.customer_email || '',
         date,
         time_slot,
+        bundle_size,
         participants: parseInt(participants || '1', 10),
         payment_intent: session.payment_intent as string,
         amount_total: session.amount_total ? session.amount_total / 100 : 0,

@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     date,
     time_slot,
     participants,
-    booking_type, // Correct name
+    booking_type,
   } = body;
 
   if (!priceId || !booking_type) {
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // Base session config
+  // Base session config (line_items will be set per type)
   const sessionOptions: Stripe.Checkout.SessionCreateParams = {
     payment_method_types: [
       'card',
@@ -48,18 +48,12 @@ export async function POST(req: Request) {
     ],
     payment_method_options: {
       wechat_pay: {
-        client: 'web', // required for Checkout
+        client: 'web',
       },
     },
     mode: 'payment',
     customer_email: email,
     customer_creation: 'always',
-    line_items: [
-      {
-        price: priceId,
-        quantity: 1,
-      },
-    ],
     success_url: '',
     cancel_url: '',
   };
@@ -93,12 +87,26 @@ export async function POST(req: Request) {
 
       const formattedDate = format(new Date(date), 'MMMM d, yyyy');
 
+      // line_items with adjustable quantity
+      sessionOptions.line_items = [
+        {
+          price: priceId,
+          quantity: 1, // default quantity
+          adjustable_quantity: {
+            enabled: true,
+            minimum: 1,
+            maximum: 4,
+          },
+        },
+      ];
+
       sessionOptions.metadata = {
         teacher_slug,
         date,
         time_slot,
         participants,
         booking_type,
+        quantity: 'dynamic', // placeholder, real quantity retrieved from webhook
       };
 
       sessionOptions.custom_fields = [
@@ -116,9 +124,19 @@ export async function POST(req: Request) {
       sessionOptions.success_url = `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&teacher=${teacher.slug}&date=${date}&timeSlot=${time_slot}&participants=${participants}`;
       sessionOptions.cancel_url = `${process.env.NEXT_PUBLIC_SITE_URL}/teachers/${teacher.slug}`;
     } else if (booking_type === 'bundle') {
+      // line_items fixed quantity
+      sessionOptions.line_items = [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ];
+
       sessionOptions.metadata = {
         booking_type,
+        quantity: '1',
       };
+
       sessionOptions.success_url = `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&bundle=true`;
       sessionOptions.cancel_url = `${process.env.NEXT_PUBLIC_SITE_URL}/pricing`;
     } else {
