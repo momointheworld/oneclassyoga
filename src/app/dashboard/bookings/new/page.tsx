@@ -1,5 +1,4 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/supabaseClient';
@@ -26,7 +25,7 @@ type Booking = {
 type Teacher = {
   slug: string;
   available_days: string[];
-  timeSlots: string[] | string; // handle stringified JSON
+  timeSlots: string[] | string;
 };
 
 export default function AddBookingPage() {
@@ -35,6 +34,10 @@ export default function AddBookingPage() {
   const customerEmail = searchParams.get('email') || '';
 
   const [customerName, setCustomerName] = useState('');
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [selectedTeacherSlug, setSelectedTeacherSlug] = useState<string | null>(
+    null
+  );
   const [teacher, setTeacher] = useState<Teacher | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [timeSlot, setTimeSlot] = useState<string | null>(null);
@@ -43,8 +46,17 @@ export default function AddBookingPage() {
   const [bundleBooking, setBundleBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
-  // Fetch bundle booking for this customer
+  useEffect(() => {
+    const fetchTeachers = async () => {
+      const { data, error } = await supabase.from('teachers').select('*');
+      if (error) console.error(error);
+      else setTeachers(data || []);
+    };
+    fetchTeachers();
+  }, []);
+
   useEffect(() => {
     if (!customerEmail) return;
 
@@ -62,7 +74,7 @@ export default function AddBookingPage() {
       else {
         setBundleBooking(data);
         setCustomerName(data?.customer_name || '');
-        if (data?.teacher_slug) await fetchTeacher(data.teacher_slug);
+        if (data?.teacher_slug) setSelectedTeacherSlug(data.teacher_slug);
       }
       setLoading(false);
     };
@@ -70,32 +82,36 @@ export default function AddBookingPage() {
     fetchBundle();
   }, [customerEmail]);
 
-  // Fetch teacher data
-  const fetchTeacher = async (slug: string) => {
-    const { data, error } = await supabase
-      .from('teachers')
-      .select('*')
-      .eq('slug', slug)
-      .single();
+  useEffect(() => {
+    if (!selectedTeacherSlug) return;
 
-    if (error) {
-      console.error('Error fetching teacher:', error.message);
-      setTeacher(null);
-    } else {
-      setTeacher(data);
-      try {
-        const slots = Array.isArray(data?.timeSlots)
-          ? data.timeSlots
-          : JSON.parse(data?.timeSlots || '[]');
-        setTimeSlots(slots);
-      } catch (err) {
-        console.error('Failed to parse timeSlots', err);
+    const fetchTeacher = async (slug: string) => {
+      const { data, error } = await supabase
+        .from('teachers')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+      if (error) {
+        console.error('Error fetching teacher:', error.message);
+        setTeacher(null);
         setTimeSlots([]);
+      } else {
+        setTeacher(data);
+        try {
+          const slots = Array.isArray(data?.timeSlots)
+            ? data.timeSlots
+            : JSON.parse(data?.timeSlots || '[]');
+          setTimeSlots(slots);
+        } catch (err) {
+          console.error('Failed to parse timeSlots', err);
+          setTimeSlots([]);
+        }
       }
-    }
-  };
+    };
 
-  // Fetch booked slots for selected date
+    fetchTeacher(selectedTeacherSlug);
+  }, [selectedTeacherSlug]);
+
   useEffect(() => {
     if (!teacher?.slug || !selectedDate) return;
 
@@ -116,30 +132,56 @@ export default function AddBookingPage() {
   }, [teacher, selectedDate]);
 
   const handleSubmit = async () => {
-    if (!selectedDate || !timeSlot || !customerName) return;
+    if (!selectedDate || !timeSlot || !customerName || !selectedTeacherSlug) {
+      setMessage('Please fill in all required fields.');
+      return;
+    }
 
     setSubmitting(true);
-    const { data, error } = await supabase.from('bookings').insert([
+    setMessage(null);
+
+    const { data: bundleBookings, error: fetchError } = await supabase
+      .from('bookings')
+      .select('id, session_id')
+      .eq('customer_email', customerEmail)
+      .eq('booking_type', 'bundle')
+      .limit(1)
+      .single();
+
+    if (fetchError) {
+      console.error(fetchError);
+      setMessage('Failed to fetch bundle booking.');
+      setSubmitting(false);
+      return;
+    }
+
+    const { session_id } = bundleBookings;
+
+    const { error } = await supabase.from('bookings').insert([
       {
         customer_name: customerName,
         customer_email: customerEmail,
         date: ToBangkokDateOnly(selectedDate),
         time_slot: timeSlot,
-        teacher_slug: bundleBooking?.teacher_slug || null,
+        teacher_slug: teacher?.slug || bundleBooking?.teacher_slug || null,
         booking_type: 'single',
-        bundle_size: bundleBooking?.id,
+        bundle_size: bundleBooking?.bundle_size || null,
         participants: 1,
-        createdAt: new Date().toISOString(),
+        createdAt: ToBangkokDateOnly(new Date()),
+        amount_total: 0,
+        session_id: session_id,
       },
     ]);
 
     setSubmitting(false);
     if (error) {
       console.error(error);
-      alert('Failed to add booking');
+      setMessage('Failed to add booking.');
     } else {
-      alert('Booking added successfully!');
-      router.push('/bookings'); // redirect to booking list
+      setMessage('Booking added successfully! Redirecting...');
+      setTimeout(() => {
+        router.push('/dashboard/bookings');
+      }, 1500);
     }
   };
 
@@ -150,7 +192,10 @@ export default function AddBookingPage() {
       <h1 className="text-2xl font-bold mb-2">Add Single Booking</h1>
 
       <p>
-        Customer: <strong>{customerName || customerEmail}</strong>{' '}
+        Customer:{' '}
+        <strong>
+          {customerName} | {customerEmail}
+        </strong>{' '}
         {bundleBooking && (
           <span className="ml-2 text-blue-600 font-medium">
             (Linked to bundle)
@@ -158,8 +203,29 @@ export default function AddBookingPage() {
         )}
       </p>
 
+      {message && (
+        <p className="p-2 bg-yellow-100 text-yellow-800 rounded">{message}</p>
+      )}
+
       <div>
-        <label className="block mb-1 font-medium">Select Date</label>
+        <label className="block mb-1 font-medium">Select Teacher</label>
+        <select
+          className="w-full border px-3 py-2 rounded"
+          value={selectedTeacherSlug || ''}
+          onChange={(e) => setSelectedTeacherSlug(e.target.value)}
+        >
+          <option value="" disabled>
+            -- Select Teacher --
+          </option>
+          {teachers.map((t) => (
+            <option key={t.slug} value={t.slug}>
+              {t.slug}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
         <DatePicker
           selected={selectedDate || undefined}
           onSelect={(date) => setSelectedDate(date ?? null)}
