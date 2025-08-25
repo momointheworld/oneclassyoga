@@ -8,6 +8,32 @@ export const metadata: Metadata = {
     'Chiang Mai Yoga Teachers | Private & Small Group Classes (1–5 People)',
   description:
     'Meet trusted yoga teachers in Chiang Mai. Offering private and small group classes (1–5 people) for travelers, expats, and locals—personalized yoga for all levels.',
+  openGraph: {
+    title:
+      'Chiang Mai Yoga Teachers | Private & Small Group Classes (1–5 People)',
+    description:
+      'Discover top yoga teachers in Chiang Mai. Book private or small group classes (1–5 people) tailored to your level and schedule.',
+    url: 'https://oneclass.yoga', // replace with your actual URL
+    siteName: 'OneClass Yoga',
+    images: [
+      {
+        url: 'https://oneclass.yoga/logos/teachers-og-image.png', // social preview image
+        width: 1200,
+        height: 630,
+        alt: 'Yoga classes in Chiang Mai with experienced teachers',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title:
+      'Chiang Mai Yoga Teachers | Private & Small Group Classes (1–5 People)',
+    description:
+      'Discover top yoga teachers in Chiang Mai. Book private or small group classes (1–5 people) tailored to your level and schedule.',
+    images: ['https://oneclass.yoga/logos/teachers-og-image.png'],
+  },
 };
 
 export const supabase = createClient(

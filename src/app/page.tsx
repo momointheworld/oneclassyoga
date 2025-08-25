@@ -11,7 +11,31 @@ import YouTubeVideo from '@/components/YoutubeViedo';
 export const metadata: Metadata = {
   title: 'Private & Small Group Yoga in Chiang Mai | 1–5 People Classes',
   description:
-    'Discover experienced yoga teachers in Chiang Mai. Offering private and small group classes (1–5 people) for travelers, expats, and locals of all levels',
+    'Discover experienced yoga teachers in Chiang Mai. Offering private and small group classes (1–5 people) for travelers, expats, and locals of all levels.',
+  openGraph: {
+    title: 'Private & Small Group Yoga in Chiang Mai | 1–5 People Classes',
+    description:
+      'Experience personalized yoga in Chiang Mai with expert teachers. Book private or small group sessions (1–5 people) tailored to your level and schedule.',
+    url: 'https://oneclass.yoga',
+    siteName: 'OneClass Yoga',
+    images: [
+      {
+        url: 'https://oneclass.yoga/logos/home-og-image.png', // social preview image
+        width: 1200,
+        height: 630,
+        alt: 'Private and small group yoga classes in Chiang Mai',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Private & Small Group Yoga in Chiang Mai | 1–5 People Classes',
+    description:
+      'Book private or small group yoga sessions in Chiang Mai with experienced teachers, perfect for all levels.',
+    images: ['https://oneclass.yoga/logos/home-og-image.png'],
+  },
 };
 
 export default async function HomePage() {

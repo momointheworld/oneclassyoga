@@ -1,4 +1,4 @@
-// app/teacher/[slug]/page.tsx (Server Component)
+// app/teacher/[slug]/page.tsx
 import { notFound } from 'next/navigation';
 import TeacherProfileClient from './TeacherProfileClient';
 import type { Metadata } from 'next';
@@ -19,7 +19,7 @@ export async function generateMetadata({
 
   const { data: teacher } = await (await supabase)
     .from('teachers')
-    .select('name, styles, bio')
+    .select('name, styles, bio, photo')
     .eq('slug', slug)
     .single();
 
@@ -38,9 +38,34 @@ export async function generateMetadata({
       ', '
     )}. Offering private & small group (1–5 people) classes.`;
 
+  const imageUrl =
+    teacher.photo || 'https://oneclass.yoga/logos/default-teacher-image.png'; // fallback image
+
   return {
     title: `${teacher.name} | Experienced Private Yoga Teacher in Chiang Mai`,
     description,
+    openGraph: {
+      title: `${teacher.name} | Experienced Private Yoga Teacher in Chiang Mai`,
+      description,
+      url: `https://oneclass.yoga/teachers/${slug}`,
+      siteName: 'OneClass Yoga',
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: `${teacher.name} - Yoga Teacher in Chiang Mai`,
+        },
+      ],
+      locale: 'en_US',
+      type: 'profile',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${teacher.name} | Private Yoga Teacher in Chiang Mai`,
+      description,
+      images: [imageUrl],
+    },
   };
 }
 
@@ -52,7 +77,6 @@ export default async function TeacherProfilePage({
   const { slug } = await params;
   const supabase = createClient();
 
-  // Fetch teacher data
   const { data: teacher, error } = await (await supabase)
     .from('teachers')
     .select('*')
