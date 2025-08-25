@@ -20,7 +20,9 @@ type Booking = {
   teacher_slug?: string;
   amount_total?: number;
   booking_type?: string;
-  bundle_size?: number; // If this is set, this booking belongs to a bundle
+  bundle_size?: number;
+  bundle_id?: string | null;
+  bundle_count?: number;
 };
 
 type Teacher = {
@@ -30,7 +32,7 @@ type Teacher = {
 };
 
 export default function BookingDashboard() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [allBookings, setAllBookings] = useState<Booking[]>([]); // Store all bookings
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
   const [formData, setFormData] = useState<Partial<Booking>>({});
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -41,46 +43,115 @@ export default function BookingDashboard() {
 
   // 🔍 Search state
   const [searchEmail, setSearchEmail] = useState('');
-  const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
 
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1); // current page
-  const [totalPages, setTotalPages] = useState(1);
   const pageSize = 20;
 
+  // Filter bookings based on search
+  const filteredBookings = searchEmail.trim()
+    ? allBookings.filter((b) =>
+        b.customer_email.toLowerCase().includes(searchEmail.toLowerCase())
+      )
+    : allBookings;
+
+  // Get single bookings (exclude bundle parent bookings)
+  const singleBookings = filteredBookings
+    .filter((b) => b.booking_type !== 'bundle')
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  // Get bundle bookings
+  const bundleBookings = filteredBookings
+    .filter((b) => b.booking_type === 'bundle')
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+  // Calculate pagination for single bookings
+  const totalPages = Math.ceil(singleBookings.length / pageSize);
   const startIndex = (page - 1) * pageSize;
   const endIndex = startIndex + pageSize;
+  const pageBookings = singleBookings.slice(startIndex, endIndex);
 
-  const pageBookings = filteredBookings
-    .filter((b) => b.booking_type !== 'single || bundle-single') // only single bookings
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(startIndex, endIndex);
-
-  async function fetchBookings(page: number) {
+  async function fetchAllBookings() {
     setLoading(true);
-    const start = (page - 1) * pageSize;
-    const end = page * pageSize - 1;
 
-    const { data, count, error } = await supabase
-      .from('bookings')
-      .select('*', { count: 'exact' }) // count for total pages
-      .order('date', { ascending: false })
-      .range(start, end);
+    try {
+      // 1️⃣ Fetch all bookings (no pagination here - get everything)
+      const { data: allBookingsData, error } = await supabase
+        .from('bookings')
+        .select('*')
+        .order('date', { ascending: false });
 
-    if (!error && data) {
-      setBookings(data);
-      setFilteredBookings(data); // default filter
-      setTotalPages(Math.ceil((count || 0) / pageSize));
-    } else if (error) {
-      console.error('Error fetching bookings:', error.message);
+      if (error || !allBookingsData) {
+        console.error('Error fetching bookings:', error?.message);
+        return;
+      }
+
+      // 2️⃣ Fetch all single bookings with a bundle_id
+      const { data: singleBookings, error: singleError } = await supabase
+        .from('bookings')
+        .select('bundle_id')
+        .eq('booking_type', 'single')
+        .not('bundle_id', 'is', null);
+
+      if (singleError) {
+        console.error(
+          'Error fetching single bookings for bundles:',
+          singleError.message
+        );
+      }
+
+      // 3️⃣ Build counts map: bundle_id -> number of single bookings linked
+      const countsMap: Record<string, number> = {};
+      (singleBookings as { bundle_id: string }[] | undefined)?.forEach(
+        (row) => {
+          if (row.bundle_id) {
+            countsMap[row.bundle_id] = (countsMap[row.bundle_id] || 0) + 1;
+          }
+        }
+      );
+
+      // 4️⃣ Attach bundle_count to each booking
+      const bookingsWithCounts = (allBookingsData as unknown[]).map(
+        (booking) => {
+          const typedBooking = booking as Booking;
+          if (typedBooking.booking_type === 'bundle') {
+            // For bundle bookings: count of single bookings linked to this bundle
+            return {
+              ...typedBooking,
+              bundle_count: countsMap[typedBooking.id] || 0,
+            };
+          } else {
+            // For single bookings: optional, count of others in the same bundle
+            return {
+              ...typedBooking,
+              bundle_count: typedBooking.bundle_id
+                ? countsMap[typedBooking.bundle_id as string] || 0
+                : 0,
+            };
+          }
+        }
+      );
+
+      // 5️⃣ Set state
+      setAllBookings(bookingsWithCounts);
+    } catch (error) {
+      console.error('Error in fetchAllBookings:', error);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   useEffect(() => {
-    fetchBookings(page);
-  }, [page]);
+    fetchAllBookings();
+  }, []);
+
+  // Reset to page 1 when search changes
+  useEffect(() => {
+    setPage(1);
+  }, [searchEmail]);
 
   // Fetch teacher details
   const fetchTeacher = async (slug: string) => {
@@ -157,7 +228,7 @@ export default function BookingDashboard() {
     }
 
     setEditingBooking(null);
-    fetchBookings(page);
+    fetchAllBookings(); // Refetch all data
   };
 
   // compare helper
@@ -166,15 +237,12 @@ export default function BookingDashboard() {
 
   // 🔍 Search filter handler
   const handleSearch = () => {
-    if (!searchEmail.trim()) {
-      setFilteredBookings(bookings); // reset
-    } else {
-      setFilteredBookings(
-        bookings.filter((b) =>
-          b.customer_email.toLowerCase().includes(searchEmail.toLowerCase())
-        )
-      );
-    }
+    // Search is handled automatically by the filteredBookings computed value
+    // This function can be used for additional search logic if needed
+  };
+
+  const handleResetSearch = () => {
+    setSearchEmail('');
   };
 
   return (
@@ -198,10 +266,7 @@ export default function BookingDashboard() {
         </button>
         <button
           className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
-          onClick={() => {
-            setSearchEmail('');
-            setFilteredBookings(bookings);
-          }}
+          onClick={handleResetSearch}
         >
           Reset
         </button>
@@ -341,7 +406,16 @@ export default function BookingDashboard() {
       {loading && <p>Loading bookings...</p>}
 
       {/* Single Bookings Table */}
-      <h2 className="text-xl font-semibold mb-2">Single Bookings</h2>
+      <div className="mb-4 flex justify-between items-center">
+        <h2 className="text-xl font-semibold">
+          Single Bookings ({singleBookings.length} total)
+        </h2>
+        <div className="text-sm text-gray-600">
+          Showing {startIndex + 1}-{Math.min(endIndex, singleBookings.length)}{' '}
+          of {singleBookings.length}
+        </div>
+      </div>
+
       <table className="w-full border-collapse border text-sm">
         <thead>
           <tr className="bg-gray-100">
@@ -369,18 +443,14 @@ export default function BookingDashboard() {
             >
               <td className="px-3 py-2 border">{startIndex + index + 1}</td>
               <td className="px-3 py-2 border">
-                {new Date(b.createdAt).toLocaleString('en-TH', {
-                  timeZone: 'Asia/Bangkok',
-                })}
+                {ToBangkokDateOnly(new Date(b.createdAt))}
               </td>
               <td className="px-3 py-2 border">{b.customer_name}</td>
               <td className="px-3 py-2 border">{b.customer_email}</td>
               <td className="px-3 py-2 border">{b.teacher_slug}</td>
               <td className="px-3 py-2 border">{b.participants}</td>
               <td className="px-3 py-2 border">
-                {new Date(b.date).toLocaleDateString('en-TH', {
-                  timeZone: 'Asia/Bangkok',
-                })}
+                {ToBangkokDateOnly(new Date(b.date))}
               </td>
               <td className="px-3 py-2 border">{b.time_slot}</td>
               <td className="px-3 py-2 border">
@@ -388,11 +458,9 @@ export default function BookingDashboard() {
               </td>
               <td className="px-3 py-2 border">{b.booking_type}</td>
               <td className="px-3 py-2 border">
-                {b.bundle_size ? (
-                  <span className="text-blue-600 font-medium">Linked</span>
-                ) : (
-                  '—'
-                )}
+                {b.bundle_size
+                  ? `${b.customer_name} | ${b.customer_email}`
+                  : '-'}
               </td>
               <td className="px-3 py-2 border">
                 <button
@@ -408,7 +476,7 @@ export default function BookingDashboard() {
       </table>
 
       {/* Pagination */}
-      <div className="flex justify-between mt-4">
+      <div className="flex justify-between items-center mt-4">
         <button
           className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
           disabled={page <= 1 || loading}
@@ -417,8 +485,22 @@ export default function BookingDashboard() {
           Previous
         </button>
 
-        <span>
-          Page {page} of {totalPages}
+        <span className="flex items-center gap-2">
+          <span>Page</span>
+          <input
+            type="number"
+            min="1"
+            max={totalPages}
+            value={page}
+            onChange={(e) => {
+              const newPage = Number(e.target.value);
+              if (newPage >= 1 && newPage <= totalPages) {
+                setPage(newPage);
+              }
+            }}
+            className="w-16 px-2 py-1 border rounded text-center"
+          />
+          <span>of {totalPages}</span>
         </span>
 
         <button
@@ -431,7 +513,9 @@ export default function BookingDashboard() {
       </div>
 
       {/* Bundle Bookings Table */}
-      <h2 className="text-xl font-semibold mt-6 mb-2">Bundle Bookings</h2>
+      <h2 className="text-xl font-semibold mt-6 mb-2">
+        Bundle Bookings ({bundleBookings.length} total)
+      </h2>
       <table className="w-full border-collapse border text-sm">
         <thead>
           <tr className="bg-gray-100">
@@ -440,43 +524,43 @@ export default function BookingDashboard() {
             <th className="px-3 py-2 border">Email</th>
             <th className="px-3 py-2 border">Teacher</th>
             <th className="px-3 py-2 border">Bundle Size</th>
+            <th className="px-3 py-2 border">Bundle count</th>
             <th className="px-3 py-2 border">Amount</th>
             <th className="px-3 py-2 border">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {filteredBookings
-            .filter((b) => b.bundle_size)
-            .map((b, index) => (
-              <tr key={b.id} className="border-t hover:bg-gray-50">
-                <td className="px-3 py-2 border">{index + 1}</td>
-                <td className="px-3 py-2 border">{b.customer_name}</td>
-                <td className="px-3 py-2 border">
-                  <Link
-                    href={`/dashboard/bookings/new?email=${encodeURIComponent(
-                      b.customer_email
-                    )}`}
-                  >
-                    <span className="text-blue-600 hover:underline cursor-pointer">
-                      {b.customer_email}
-                    </span>
-                  </Link>
-                </td>
-                <td className="px-3 py-2 border">{b.teacher_slug}</td>
-                <td className="px-3 py-2 border">{b.bundle_size}</td>
-                <td className="px-3 py-2 border">
-                  {b.amount_total?.toLocaleString()}
-                </td>
-                <td className="px-3 py-2 border">
-                  <button
-                    className="text-blue-600 hover:underline"
-                    onClick={() => setEditingBooking(b)}
-                  >
-                    Edit
-                  </button>
-                </td>
-              </tr>
-            ))}
+          {bundleBookings.map((b, index) => (
+            <tr key={b.id} className="border-t hover:bg-gray-50">
+              <td className="px-3 py-2 border">{index + 1}</td>
+              <td className="px-3 py-2 border">{b.customer_name}</td>
+              <td className="px-3 py-2 border">
+                <Link
+                  href={`/dashboard/bookings/new?email=${encodeURIComponent(
+                    b.customer_email
+                  )}`}
+                >
+                  <span className="text-blue-600 hover:underline cursor-pointer">
+                    {b.customer_email}
+                  </span>
+                </Link>
+              </td>
+              <td className="px-3 py-2 border">{b.teacher_slug}</td>
+              <td className="px-3 py-2 border">{b.bundle_size}</td>
+              <td className="px-3 py-2 border">{b.bundle_count}</td>
+              <td className="px-3 py-2 border">
+                {b.amount_total?.toLocaleString()}
+              </td>
+              <td className="px-3 py-2 border">
+                <button
+                  className="text-blue-600 hover:underline"
+                  onClick={() => setEditingBooking(b)}
+                >
+                  Edit
+                </button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

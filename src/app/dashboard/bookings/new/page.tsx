@@ -5,6 +5,7 @@ import { createClient } from '@/utils/supabase/supabaseClient';
 import { DatePicker } from '@/components/DatePicker';
 import { TimeSlotPicker } from '@/components/TimeSlot';
 import { ToBangkokDateOnly } from '@/components/BkkTimeConverter';
+import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
 
 const supabase = createClient();
 
@@ -20,6 +21,8 @@ type Booking = {
   amount_total?: number;
   booking_type?: string;
   bundle_size?: number;
+  bundle_id?: number | null;
+  session_id?: string;
 };
 
 type Teacher = {
@@ -114,11 +117,11 @@ export default function AddBookingPage() {
 
   useEffect(() => {
     if (!teacher?.slug || !selectedDate) return;
-
+    const bkkDate = ToBangkokDateOnly(selectedDate);
     const fetchBookedSlots = async () => {
       try {
         const res = await fetch(
-          `/api/search-booking?teacherSlug=${teacher.slug}&date=${selectedDate.toISOString()}`
+          `/api/search-booking?date=${bkkDate}&teacherSlug=${teacher.slug}`
         );
         const data = await res.json();
         setBookedSlots(data?.bookedTimeSlots || []);
@@ -170,6 +173,7 @@ export default function AddBookingPage() {
         createdAt: ToBangkokDateOnly(new Date()),
         amount_total: 0,
         session_id: session_id,
+        bundle_id: bundleBooking?.id || null,
       },
     ]);
 
@@ -189,6 +193,14 @@ export default function AddBookingPage() {
 
   return (
     <div className="max-w-lg mx-auto p-6 bg-white shadow rounded space-y-4">
+      <BreadcrumbTrail
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Bookings', href: '/dashboard/bookings' },
+          { label: `Add New Booking` }, // no href = current page
+        ]}
+      />
       <h1 className="text-2xl font-bold mb-2">Add Single Booking</h1>
 
       <p>
