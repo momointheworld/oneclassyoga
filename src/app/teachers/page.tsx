@@ -52,6 +52,8 @@ type Teacher = {
   isFeatured: boolean;
 };
 
+export const revalidate = 60; // cache for 60 seconds
+
 export default async function TeachersPage() {
   const { data: teachers, error } = await supabase
     .from('teachers')

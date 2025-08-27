@@ -31,7 +31,7 @@ export function Footer() {
           {/* Social Media */}
           <div className="flex space-x-6 items-center">
             <a
-              href="https://www.facebook.com/yourpage"
+              href="https://www.facebook.com/oneclassyoga"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"
@@ -48,7 +48,7 @@ export function Footer() {
               </svg>
             </a>
             <a
-              href="https://www.instagram.com/yourprofile"
+              href="https://www.instagram.com/oneclassyoga/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"

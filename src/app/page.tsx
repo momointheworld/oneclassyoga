@@ -38,6 +38,8 @@ export const metadata: Metadata = {
   },
 };
 
+export const revalidate = 60;
+
 export default async function HomePage() {
   const supabase = createClient();
 
@@ -57,7 +59,7 @@ export default async function HomePage() {
         <section className="text-center mt-12 space-y-6">
           <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
             {' '}
-            Yoga Teachers in Chiang Mai — Curated by a Practitioner{' '}
+            Yoga Teachers in Chiang Mai — Handpicked by a Practitioner{' '}
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Hi, I’m a longtime yoga practitioner in Chiang Mai. I’ve explored

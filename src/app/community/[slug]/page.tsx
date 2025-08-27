@@ -1,3 +1,5 @@
+// app/community/[slug]/page.tsx
+import { Metadata } from 'next';
 import { createClient } from '@/utils/supabase/supabaseServer';
 import { notFound } from 'next/navigation';
 import parse from 'html-react-parser';
@@ -21,6 +23,59 @@ async function canManagePost(
   if (error || !data) return false;
   return data.user_id === userId || userId === ADMIN_UID;
 }
+
+// 🟢 Dynamic Metadata
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = createClient();
+
+  const { data: post } = await (await supabase)
+    .from('posts')
+    .select('title, content, category')
+    .eq('slug', slug)
+    .single();
+
+  if (!post) return { title: 'Post Not Found | OneClass' };
+
+  // Short description (first 150 chars of content, stripped of HTML)
+  const textContent = post.content
+    .replace(/<[^>]+>/g, '') // remove HTML tags
+    .slice(0, 150);
+
+  return {
+    title: `${post.title} | OneClass Community`,
+    description: textContent || 'Read this post on OneClass Community.',
+    openGraph: {
+      title: `${post.title} | OneClass Community`,
+      description: textContent || 'Read this post on OneClass Community.',
+      url: `https://oneromeo.com/community/${slug}`,
+      siteName: 'OneClass',
+      images: [
+        {
+          url: 'https://oneromeo.com/logos/og-image.png', // fallback OG image
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${post.title} | OneClass Community`,
+      description: textContent || 'Read this post on OneClass Community.',
+      images: ['https://oneromeo.com/logos/og-image.png'],
+    },
+    alternates: {
+      canonical: `https://oneromeo.com/community/${slug}`,
+    },
+  };
+}
+
 export default async function PostPage({
   params,
 }: {
@@ -33,8 +88,8 @@ export default async function PostPage({
   } = await (await supabase).auth.getUser();
 
   const userId = user?.id || null;
-
   const { slug } = await params;
+
   const { data: post, error: postError } = await (await supabase)
     .from('posts')
     .select('id, title, content, user_id, user_name, category')
@@ -55,7 +110,7 @@ export default async function PostPage({
             <BreadcrumbTrail
               items={[
                 { label: 'Community', href: '/community' },
-                { label: `${slug}` }, // no href = current page
+                { label: `${slug}` },
               ]}
             />
           </div>
@@ -73,7 +128,7 @@ export default async function PostPage({
             <BreadcrumbTrail
               items={[
                 { label: 'Community', href: '/community' },
-                { label: `${slug}` }, // no href = current page
+                { label: `${slug}` },
               ]}
             />
           </div>

@@ -1,4 +1,40 @@
 import { PageContainer } from '@/components/PageContainer';
+import { Metadata } from 'next';
+
+export const cache = 'force-cache';
+
+export const metadata: Metadata = {
+  title: 'Terms of Service | OneClass',
+  description:
+    'Read the Terms of Service for OneClass — including booking, payments, cancellations, rescheduling, class locations, and equipment policies.',
+  openGraph: {
+    title: 'Terms of Service | OneClass',
+    description:
+      'Understand our policies on bookings, payments, cancellations, rescheduling, and class locations.',
+    url: 'https://oneromeo.com/tos',
+    siteName: 'OneClass',
+    images: [
+      {
+        url: 'https://oneromeo.com/logos/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'OneClass Terms of Service',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Terms of Service | OneClass',
+    description:
+      'Review the OneClass Terms of Service, including booking and cancellation policies.',
+    images: ['https://oneromeo.com/logos/og-image.png'],
+  },
+  alternates: {
+    canonical: 'https://oneromeo.com/tos',
+  },
+};
 
 export default function TermsPage() {
   return (
@@ -27,12 +63,31 @@ export default function TermsPage() {
       </p>
 
       <h2 className="text-2xl font-semibold mt-8 mb-4">
-        Cancellations and Refunds
+        Cancellations, Refunds, and Rescheduling
       </h2>
       <p className="mb-4">
-        Cancellation policies may vary. Please check the specific terms for your
-        booking. Refunds, if applicable, will be processed according to these
-        policies.
+        <strong>No refunds</strong> are provided for either single-session or
+        bundle purchases under any circumstances.
+      </p>
+      <p className="mb-4">
+        Rescheduling is permitted with the same teacher, subject to
+        availability. You may also add additional participants (up to 5 in
+        total) to your session for an additional fee.
+      </p>
+
+      <h2 className="text-2xl font-semibold mt-8 mb-4">Class Location</h2>
+      <p className="mb-4">
+        If a studio is required, the studio will be selected by us and will be
+        within a 20-minute distance of Chiang Mai Old Town. You may also choose
+        your own location for the class (e.g., your condo garden, a park, or
+        another suitable space). However, if more than 2 participants attend, a
+        studio is required.
+      </p>
+
+      <h2 className="text-2xl font-semibold mt-8 mb-4">Equipment</h2>
+      <p className="mb-4">
+        A yoga mat can be provided upon request. You are responsible for any
+        additional equipment unless otherwise agreed in advance.
       </p>
 
       <h2 className="text-2xl font-semibold mt-8 mb-4">User Conduct</h2>

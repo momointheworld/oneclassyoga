@@ -201,7 +201,7 @@ export default function AddBookingPage() {
           { label: `Add New Booking` }, // no href = current page
         ]}
       />
-      <h1 className="text-2xl font-bold mb-2">Add Single Booking</h1>
+      <h1 className="text-2xl font-bold mb-2 mt-8">Add Single Booking</h1>
 
       <p>
         Customer:{' '}

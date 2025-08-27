@@ -98,7 +98,7 @@ export default function TeachersDashboardPage() {
           { label: 'Teachers' },
         ]}
       />
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 mt-8">
         <h1 className="text-3xl font-bold">Manage Teachers</h1>
         <Button
           variant="outline"

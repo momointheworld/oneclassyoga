@@ -6,6 +6,7 @@ import { DatePicker } from '@/components/DatePicker';
 import { TimeSlotPicker } from '@/components/TimeSlot';
 import { ToBangkokDateOnly } from '@/components/BkkTimeConverter';
 import Link from 'next/link';
+import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
 
 const supabase = createClient();
 
@@ -247,7 +248,14 @@ export default function BookingDashboard() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Booking Dashboard</h1>
+      <BreadcrumbTrail
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Bookings' },
+        ]}
+      />
+      <h1 className="text-2xl font-bold mb-4 mt-8">Booking Dashboard</h1>
 
       {/* Search */}
       <div className="mb-6 flex gap-2">

@@ -43,7 +43,6 @@ export default function CommunityPageClient({ user, posts }: Props) {
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(user);
-  const [isLoading, setIsLoading] = useState(false);
 
   // Update URL when selectedCategory changes
   useEffect(() => {
