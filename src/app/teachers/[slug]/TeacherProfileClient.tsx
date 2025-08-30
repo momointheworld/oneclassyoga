@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ToBangkokDateOnly } from '@/components/BkkTimeConverter';
 import YouTubeVideo from '@/components/YoutubeViedo';
+import { set } from 'date-fns';
 
 export default function TeacherProfileClient({
   teacher,
@@ -36,17 +37,30 @@ export default function TeacherProfileClient({
   const [participantsCount, setParticipantsCount] = useState(1);
   const [rate, setRate] = useState<number | null>(null);
   const [selectedPriceId, setSelectedPriceId] = useState<string | null>(null);
-  const [includeStudio, setIncludeStudio] = useState(true);
+  const [bookingTitle, setBookingTitle] = useState<string>(
+    'Choose Your Date & Time'
+  );
   const [error, setError] = useState('');
+  const [selectedPackage, setSelectedPackage] = useState<
+    'single' | 'bundle5' | 'bundle10' | null
+  >(null);
+
   const router = useRouter();
 
-  // Map rates to Stripe price IDs, fallback to empty string if env vars missing
-  const rateToPriceIdMap: Record<number, string> = {
-    1250: process.env.NEXT_PUBLIC_STRIPE_SINGLE_PRICE_1250 || '',
-    1500: process.env.NEXT_PUBLIC_STRIPE_SINGLE_PRICE_1500 || '',
-    1750: process.env.NEXT_PUBLIC_STRIPE_SINGLE_PRICE_1750 || '',
-    2000: process.env.NEXT_PUBLIC_STRIPE_SINGLE_PRICE_2000 || '',
-    2250: process.env.NEXT_PUBLIC_STRIPE_SINGLE_PRICE_2250 || '',
+  // Single and bundle prices depending on participants
+  const priceIdMap: Record<string, Record<number, string>> = {
+    single: {
+      1: process.env.NEXT_PUBLIC_STRIPE_SINGLE_1 || '',
+      2: process.env.NEXT_PUBLIC_STRIPE_SINGLE_2 || '',
+    },
+    bundle5: {
+      1: process.env.NEXT_PUBLIC_STRIPE_BUNDLE5_1 || '',
+      2: process.env.NEXT_PUBLIC_STRIPE_BUNDLE5_2 || '',
+    },
+    bundle10: {
+      1: process.env.NEXT_PUBLIC_STRIPE_BUNDLE10_1 || '',
+      2: process.env.NEXT_PUBLIC_STRIPE_BUNDLE10_2 || '',
+    },
   };
 
   useEffect(() => {
@@ -63,12 +77,22 @@ export default function TeacherProfileClient({
   }, []);
 
   const handleBooking = () => {
+    if (!selectedPackage) {
+      setError('Please select a package.');
+      return;
+    }
     if (!selectedDate || !selectedTimeSlot) {
       setError('Please select a date and time slot before booking.');
       return;
     }
 
-    if (!selectedPriceId) {
+    let priceId = null;
+    if (selectedPackage) {
+      const participantCount = participantsCount;
+      priceId = priceIdMap[selectedPackage][participantCount] || null;
+    }
+
+    if (!priceId) {
       setError('Could not determine price for selected options.');
       return;
     }
@@ -76,28 +100,41 @@ export default function TeacherProfileClient({
     setError('');
     const query = new URLSearchParams({
       teacher: teacher.slug,
-      priceId: selectedPriceId,
+      priceId,
       date: ToBangkokDateOnly(selectedDate),
       timeSlot: selectedTimeSlot,
       participants: participantsCount.toString(),
-      includeStudio: includeStudio.toString(),
       booking_type,
+      package: selectedPackage,
     }).toString();
 
     router.push(`/booking/checkout?${query}`);
   };
+  const packageTitles: Record<'single' | 'bundle5' | 'bundle10', string> = {
+    single: 'Choose Your Date & Time',
+    bundle5: 'Choose Your First Class Date & Time',
+    bundle10: 'Choose Your First Class Date & Time',
+  };
+
+  const handlePackageSelect = (
+    packageType: 'single' | 'bundle5' | 'bundle10'
+  ) => {
+    setSelectedPackage(packageType);
+    setBookingTitle(packageTitles[packageType]);
+  };
 
   const handleRateChange = (newRate: number) => {
     setRate(newRate);
-    const priceId = rateToPriceIdMap[newRate];
-    setSelectedPriceId(priceId || null);
+    if (selectedPackage) {
+      const priceId = priceIdMap[selectedPackage][participantsCount];
+      setSelectedPriceId(priceId || null);
+    }
   };
 
   const galleryImages = teacher.gallery || [];
   const timeSlots = Array.isArray(teacher.timeSlots)
     ? teacher.timeSlots
     : JSON.parse(teacher.timeSlots || '[]');
-
   const availableDays = Array.isArray(teacher.available_days)
     ? teacher.available_days
     : [];
@@ -136,7 +173,6 @@ export default function TeacherProfileClient({
                 </span>
               </p>
             </div>
-
             <div>
               <p>
                 <span className="font-semibold text-gray-700">Levels:</span>{' '}
@@ -168,28 +204,95 @@ export default function TeacherProfileClient({
               <YouTubeVideo videoId="dQw4w9WgXcQ" />
             </section>
           )}
-          <div
-            id="booking-calendar"
-            className="mt-8 p-6 rounded-3xl shadow border border-blue-200"
-          >
-            <h2 className="text-xl font-semibold mb-4 text-center">
-              Choose Your Date & Time
-            </h2>
-            <BookingCalendar
-              onSelect={(date, timeSlot) => {
-                setSelectedDate(date);
-                setSelectedTimeSlot(timeSlot);
-              }}
-              teacherSlug={teacher.slug}
-              timeSlots={timeSlots}
-              onParticipantsChange={setParticipantsCount}
-              onStudioChange={setIncludeStudio}
-              initialParticipants={participantsCount}
-              onRateChange={handleRateChange}
-              availableDays={availableDays}
-            />
+
+          {/* PACKAGE SELECTION */}
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {/* Single Session */}
+            <div
+              onClick={handlePackageSelect.bind(null, 'single')}
+              className={`cursor-pointer p-6 rounded-2xl border shadow-sm transition 
+      ${selectedPackage === 'single' ? 'border-orange-500 ring-2 ring-orange-400' : 'border-gray-200 hover:shadow-md'}
+    `}
+            >
+              <h3 className="text-lg font-semibold my-2">Single Session</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Enjoy a hassle-free yoga session! Studio, yoga mat, and props
+                are included.
+              </p>
+              <p className="text-xl font-bold text-gray-800">2,200 THB</p>
+            </div>
+
+            {/* Bundle 5 */}
+            <div
+              onClick={handlePackageSelect.bind(null, 'bundle5')}
+              className={`cursor-pointer p-6 rounded-2xl border shadow-md transition relative 
+    ${selectedPackage === 'bundle5' ? 'border-orange-500 ring-2 ring-orange-400' : 'border-gray-200 hover:shadow-lg'}
+  `}
+            >
+              <Badge
+                variant="destructive"
+                className="absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-orange-400 text-white"
+              >
+                Most Popular
+              </Badge>
+
+              <h3 className="text-lg font-semibold my-2">Bundle of 5</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Save 1,000 THB vs single sessions! Studio, yoga mats, and props
+                included.
+              </p>
+              <p className="text-xl font-bold text-gray-800">10,000 THB</p>
+            </div>
+
+            {/* Bundle 10 */}
+            <div
+              onClick={handlePackageSelect.bind(null, 'bundle10')}
+              className={`cursor-pointer p-6 rounded-2xl border shadow-sm transition relative
+    ${selectedPackage === 'bundle10' ? 'border-orange-500 ring-2 ring-orange-400' : 'border-gray-200 hover:shadow-md'}
+  `}
+            >
+              <Badge
+                variant="secondary"
+                className="absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-green-600 text-white"
+              >
+                Best Value
+              </Badge>
+
+              <h3 className="text-lg font-semibold my-2">Bundle of 10</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Save 3,200 THB vs single sessions! Studio, yoga mats, and props
+                included.
+              </p>
+              <p className="text-xl font-bold text-gray-800">18,800 THB</p>
+            </div>
           </div>
 
+          {/* ALWAYS SHOW CALENDAR ONCE PACKAGE SELECTED */}
+          {selectedPackage && (
+            <div
+              id="booking-calendar"
+              className="mt-8 p-6 rounded-3xl shadow border border-blue-200"
+            >
+              <h2 className="text-xl font-semibold mb-4 text-center">
+                {bookingTitle}
+              </h2>
+              <BookingCalendar
+                onSelect={(date, timeSlot) => {
+                  setSelectedDate(date);
+                  setSelectedTimeSlot(timeSlot);
+                }}
+                teacherSlug={teacher.slug}
+                timeSlots={timeSlots}
+                onParticipantsChange={setParticipantsCount}
+                initialParticipants={participantsCount}
+                onRateChange={handleRateChange}
+                availableDays={availableDays}
+                selectedPackage={selectedPackage}
+              />
+            </div>
+          )}
+
+          {/* FOOTER ACTIONS */}
           <div className="mt-6 flex justify-between items-center">
             <Link
               href="/teachers"
@@ -197,9 +300,9 @@ export default function TeacherProfileClient({
             >
               ← Back to teachers
             </Link>
-
             <Button
               onClick={handleBooking}
+              disabled={!selectedPackage}
               className="bg-orange-600 text-white text-lg font-medium px-4 py-2 rounded-xl hover:bg-orange-700 transition"
             >
               Book Now
