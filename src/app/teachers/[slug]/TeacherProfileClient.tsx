@@ -11,7 +11,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ToBangkokDateOnly } from '@/components/BkkTimeConverter';
 import YouTubeVideo from '@/components/YoutubeViedo';
-import { set } from 'date-fns';
 
 export default function TeacherProfileClient({
   teacher,
@@ -62,6 +61,52 @@ export default function TeacherProfileClient({
       2: process.env.NEXT_PUBLIC_STRIPE_BUNDLE10_2 || '',
     },
   };
+
+  type BadgeVariant =
+    | 'secondary'
+    | 'destructive'
+    | 'default'
+    | 'outline'
+    | null
+    | undefined;
+
+  const packages: Array<{
+    id: 'single' | 'bundle5' | 'bundle10';
+    title: string;
+    description: string;
+    friendNote: string;
+    price: string;
+    badge: string | null;
+    badgeVariant: BadgeVariant;
+  }> = [
+    {
+      id: 'single',
+      title: 'Single Session',
+      description: 'Enjoy a hassle-free yoga session!',
+      friendNote: 'Invite a friend and grow together!',
+      price: '2,250 THB',
+      badge: null,
+      badgeVariant: undefined,
+    },
+    {
+      id: 'bundle5',
+      title: 'Bundle of 5',
+      description: 'Save 1,000 THB vs single sessions! ',
+      friendNote: 'Share it with a friend for even more savings!',
+      price: '10,000 THB',
+      badge: 'Most Popular',
+      badgeVariant: 'destructive',
+    },
+    {
+      id: 'bundle10',
+      title: 'Bundle of 10',
+      description: 'Save 3,200 THB vs single sessions!',
+      friendNote: 'Bring a friend and double the fun!',
+      price: '18,800 THB',
+      badge: 'Best Value',
+      badgeVariant: 'secondary',
+    },
+  ];
 
   useEffect(() => {
     if (window.location.hash === '#booking-calendar') {
@@ -205,74 +250,62 @@ export default function TeacherProfileClient({
             </section>
           )}
 
-          {/* PACKAGE SELECTION */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {/* Single Session */}
-            <div
-              onClick={handlePackageSelect.bind(null, 'single')}
-              className={`cursor-pointer p-6 rounded-2xl border shadow-sm transition 
-      ${selectedPackage === 'single' ? 'border-orange-500 ring-2 ring-orange-400' : 'border-gray-200 hover:shadow-md'}
+          {/* PACKAGES */}
+
+          {/* PACKAGES */}
+          <section className="grid grid-cols-1 gap-6 my-12">
+            <h2 className="text-xl text-center font-semibold">
+              Reserve Your Yoga Spot Today!
+              <br />
+              <span className="text-center text-sm text-gray-400 mb-4">
+                Studio, yoga mats, and props included.
+              </span>
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {packages.map((pkg) => (
+                <div
+                  key={pkg.id}
+                  onClick={() => handlePackageSelect(pkg.id)}
+                  className={`cursor-pointer p-6 rounded-2xl border shadow-sm transition relative
+          ${selectedPackage === pkg.id ? 'border-orange-500 ring-2 ring-orange-400' : 'border-gray-200 hover:shadow-md'}
+          ${pkg.id === 'bundle5' ? 'shadow-md hover:shadow-lg' : ''}
+        `}
+                >
+                  {/* Badge */}
+                  {pkg.badge && (
+                    <Badge
+                      className={`
+      absolute top-2 right-2 text-xs px-2 py-1 rounded-full
+      ${pkg.id === 'bundle5' ? 'bg-orange-500 text-white' : ''}
+      ${pkg.id === 'bundle10' ? 'bg-green-500 text-white' : ''}
+      ${pkg.id === 'single' ? 'bg-gray-300 text-gray-800' : ''}
     `}
-            >
-              <h3 className="text-lg font-semibold my-2">Single Session</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Enjoy a hassle-free yoga session! Studio, yoga mat, and props
-                are included.
-              </p>
-              <p className="text-xl font-bold text-gray-800">2,200 THB</p>
+                    >
+                      {pkg.badge}
+                    </Badge>
+                  )}
+
+                  <h3 className="text-lg font-semibold my-3 text-center">
+                    {pkg.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-2 text-center">
+                    {pkg.description}
+                  </p>
+                  <p className="text-xs text-gray-500 mb-4 text-center">
+                    {pkg.friendNote}
+                  </p>
+                  <p className="text-xl font-bold text-gray-800 text-center">
+                    {pkg.price}
+                  </p>
+                </div>
+              ))}
             </div>
-
-            {/* Bundle 5 */}
-            <div
-              onClick={handlePackageSelect.bind(null, 'bundle5')}
-              className={`cursor-pointer p-6 rounded-2xl border shadow-md transition relative 
-    ${selectedPackage === 'bundle5' ? 'border-orange-500 ring-2 ring-orange-400' : 'border-gray-200 hover:shadow-lg'}
-  `}
-            >
-              <Badge
-                variant="destructive"
-                className="absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-orange-400 text-white"
-              >
-                Most Popular
-              </Badge>
-
-              <h3 className="text-lg font-semibold my-2">Bundle of 5</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Save 1,000 THB vs single sessions! Studio, yoga mats, and props
-                included.
-              </p>
-              <p className="text-xl font-bold text-gray-800">10,000 THB</p>
-            </div>
-
-            {/* Bundle 10 */}
-            <div
-              onClick={handlePackageSelect.bind(null, 'bundle10')}
-              className={`cursor-pointer p-6 rounded-2xl border shadow-sm transition relative
-    ${selectedPackage === 'bundle10' ? 'border-orange-500 ring-2 ring-orange-400' : 'border-gray-200 hover:shadow-md'}
-  `}
-            >
-              <Badge
-                variant="secondary"
-                className="absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-green-600 text-white"
-              >
-                Best Value
-              </Badge>
-
-              <h3 className="text-lg font-semibold my-2">Bundle of 10</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Save 3,200 THB vs single sessions! Studio, yoga mats, and props
-                included.
-              </p>
-              <p className="text-xl font-bold text-gray-800">18,800 THB</p>
-            </div>
-          </div>
+          </section>
 
           {/* ALWAYS SHOW CALENDAR ONCE PACKAGE SELECTED */}
           {selectedPackage && (
-            <div
-              id="booking-calendar"
-              className="mt-8 p-6 rounded-3xl shadow border border-blue-200"
-            >
+            <div id="booking-calendar" className="mt-8 p-6 rounded-3xl">
               <h2 className="text-xl font-semibold mb-4 text-center">
                 {bookingTitle}
               </h2>

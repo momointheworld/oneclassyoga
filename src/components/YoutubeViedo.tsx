@@ -76,11 +76,11 @@ export default function YouTubeVideo({
           className="w-full h-full rounded-md border"
         ></iframe>
       </div>
-      {videoData && (
+      {/* {videoData && (
         <p className="mt-2 text-sm text-gray-600 whitespace-pre-line">
           {videoData.description}
         </p>
-      )}
+      )} */}
     </section>
   );
 }
