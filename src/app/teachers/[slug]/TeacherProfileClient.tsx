@@ -14,7 +14,6 @@ import YouTubeVideo from '@/components/YoutubeViedo';
 
 export default function TeacherProfileClient({
   teacher,
-  booking_type,
 }: {
   teacher: {
     id: string;
@@ -29,11 +28,11 @@ export default function TeacherProfileClient({
     timeSlots: string[];
     available_days: string[];
   };
-  booking_type: string;
 }) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
-  const [participantsCount, setParticipantsCount] = useState(1);
+  const [participants, setParticipants] = useState<number>(1);
+  // const [participantsCount, setParticipantsCount] = useState(1);
   const [rate, setRate] = useState<number | null>(null);
   const [selectedPriceId, setSelectedPriceId] = useState<string | null>(null);
   const [bookingTitle, setBookingTitle] = useState<string>(
@@ -84,7 +83,7 @@ export default function TeacherProfileClient({
       title: 'Single Session',
       description: 'Enjoy a hassle-free yoga session!',
       friendNote: 'Invite a friend and grow together!',
-      price: '2,250 THB',
+      price: '2,200 THB',
       badge: null,
       badgeVariant: undefined,
     },
@@ -133,7 +132,7 @@ export default function TeacherProfileClient({
 
     let priceId = null;
     if (selectedPackage) {
-      const participantCount = participantsCount;
+      const participantCount = participants;
       priceId = priceIdMap[selectedPackage][participantCount] || null;
     }
 
@@ -148,8 +147,8 @@ export default function TeacherProfileClient({
       priceId,
       date: ToBangkokDateOnly(selectedDate),
       timeSlot: selectedTimeSlot,
-      participants: participantsCount.toString(),
-      booking_type,
+      participants: participants.toString(),
+      booking_type: selectedPackage,
       package: selectedPackage,
     }).toString();
 
@@ -171,7 +170,7 @@ export default function TeacherProfileClient({
   const handleRateChange = (newRate: number) => {
     setRate(newRate);
     if (selectedPackage) {
-      const priceId = priceIdMap[selectedPackage][participantsCount];
+      const priceId = priceIdMap[selectedPackage][participants];
       setSelectedPriceId(priceId || null);
     }
   };
@@ -316,8 +315,8 @@ export default function TeacherProfileClient({
                 }}
                 teacherSlug={teacher.slug}
                 timeSlots={timeSlots}
-                onParticipantsChange={setParticipantsCount}
-                initialParticipants={participantsCount}
+                onParticipantsChange={setParticipants}
+                participants={participants}
                 onRateChange={handleRateChange}
                 availableDays={availableDays}
                 selectedPackage={selectedPackage}

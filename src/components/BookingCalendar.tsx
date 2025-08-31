@@ -11,21 +11,8 @@ interface BookingCalendarProps {
   timeSlots: string[];
   availableDays: string[];
   teacherSlug: string;
-  onReadyForCheckout?: (
-    date: Date | undefined,
-    timeSlot: string | null,
-    participants: number,
-    packageType: string | null
-  ) => void;
-  initialParticipants?: number;
-  onParticipantsChange?: (count: number) => void;
-  onRateChange?: (rate: number) => void;
-}
-interface BookingCalendarProps {
-  onSelect: (date: Date | null, timeSlot: string | null) => void;
-  timeSlots: string[];
-  availableDays: string[];
-  teacherSlug: string;
+  participants?: number;
+  onParticipantsChange?: (value: number) => void;
   selectedPackage?: 'single' | 'bundle5' | 'bundle10'; // new prop
   onReadyForCheckout?: (
     date: Date | undefined,
@@ -41,6 +28,8 @@ export default function BookingCalendar({
   timeSlots,
   availableDays,
   teacherSlug,
+  participants = 1,
+  onParticipantsChange,
   selectedPackage = 'single',
   onReadyForCheckout,
   onRateChange,
@@ -48,14 +37,13 @@ export default function BookingCalendar({
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [timeSlot, setTimeSlot] = useState<string | null>(null);
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
-  const [participants, setParticipants] = useState(1);
   const [rate, setRate] = useState<number | null>(null);
 
   const calculateRate = useCallback(() => {
     let total = 0;
 
     // Base rate based on selected package
-    if (selectedPackage === 'single') total = 2250;
+    if (selectedPackage === 'single') total = 2200;
     if (selectedPackage === 'bundle5') total = 10000;
     if (selectedPackage === 'bundle10') total = 18800;
 
@@ -90,6 +78,8 @@ export default function BookingCalendar({
     onReadyForCheckout,
     selectedPackage,
   ]);
+
+  console.log(participants);
 
   // fetch booked slots
   useEffect(() => {
@@ -131,7 +121,7 @@ export default function BookingCalendar({
         bookedSlots={bookedSlots}
       />
       <ParticipantsCount
-        onParticipantsChange={setParticipants}
+        onParticipantsChange={onParticipantsChange ?? (() => {})}
         participants={participants}
       />
 

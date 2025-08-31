@@ -38,12 +38,13 @@ export async function POST(req: Request) {
       expand: ['data.price.product'], // expands the price and product data
     });
 
-    // If it’s a bundle, extract bundle_size from price metadata
+    // Extract bundle_size from price metadata (if exists)
     let bundleSize: number | null = null;
-    const lineItem = lineItems.data[0]; // you probably only have 1 item per session
+    const lineItem = lineItems.data[0];
     if (lineItem.price?.metadata?.bundle_size) {
       bundleSize = parseInt(lineItem.price.metadata.bundle_size, 10);
     }
+
     try {
       // Retrieve the customer details
       const customer = (await stripe.customers.retrieve(
@@ -55,17 +56,12 @@ export async function POST(req: Request) {
       const teacher_slug = metadata.teacher_slug || null;
       const date = metadata.date || null;
       const time_slot = metadata.time_slot || null;
-      const bundle_size = bundleSize;
       const participants = metadata.participants || null;
 
       let teacherId = null;
 
-      if (booking_type === 'single') {
-        if (!teacher_slug || !date || !time_slot) {
-          throw new Error('Missing required metadata for single booking');
-        }
-
-        // Fetch teacher
+      // ✅ Always try to resolve teacherId if teacher_slug exists
+      if (teacher_slug) {
         const { data: teacher, error: teacherError } = await supabase
           .from('teachers')
           .select('id, slug')
@@ -79,7 +75,7 @@ export async function POST(req: Request) {
         teacherId = teacher.id;
       }
 
-      // Insert into bookings
+      // ✅ Insert into bookings (same structure for single and bundle)
       const { error: insertError } = await supabase.from('bookings').insert({
         session_id: session.id,
         booking_type,
@@ -89,7 +85,7 @@ export async function POST(req: Request) {
         customer_email: customer.email || session.customer_email || '',
         date,
         time_slot,
-        bundle_size,
+        bundle_size: bundleSize,
         participants: parseInt(participants || '1', 10),
         payment_intent: session.payment_intent as string,
         amount_total: session.amount_total ? session.amount_total / 100 : 0,

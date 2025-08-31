@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // Base session config (line_items will be set per type)
+  // Base session config
   const sessionOptions: Stripe.Checkout.SessionCreateParams = {
     payment_method_types: [
       'card',
@@ -47,9 +47,7 @@ export async function POST(req: Request) {
       'giropay',
     ],
     payment_method_options: {
-      wechat_pay: {
-        client: 'web',
-      },
+      wechat_pay: { client: 'web' },
     },
     mode: 'payment',
     customer_email: email,
@@ -59,39 +57,30 @@ export async function POST(req: Request) {
   };
 
   try {
-    if (booking_type === 'single') {
-      if (!teacher_slug || !date || !time_slot || !participants) {
-        return NextResponse.json(
-          { error: 'Missing single-session booking info' },
-          { status: 400 }
-        );
-      }
-
-      // Fetch teacher
-      const { data: teacher, error: teacherError } = await supabase
+    // Fetch teacher if provided
+    let teacherName: string | null = null;
+    if (teacher_slug) {
+      const { data: teacher } = await supabase
         .from('teachers')
-        .select('id, slug, name')
+        .select('slug')
         .eq('slug', teacher_slug)
         .single();
 
-      if (teacherError || !teacher) {
-        return NextResponse.json(
-          { error: 'Teacher not found' },
-          { status: 404 }
-        );
+      if (teacher) {
+        teacherName = teacher.slug
+          .replace(/-/g, ' ')
+          .replace(/\b\w/g, (char: string) => char.toUpperCase());
       }
+    }
 
-      const teacherName = teacher.slug
-        .replace(/-/g, ' ')
-        .replace(/\b\w/g, (char: string) => char.toUpperCase());
+    const formattedDate = date ? format(new Date(date), 'MMMM d, yyyy') : '';
 
-      const formattedDate = format(new Date(date), 'MMMM d, yyyy');
-
-      // line_items with adjustable quantity
+    // Line items differ based on booking_type
+    if (booking_type === 'single') {
       sessionOptions.line_items = [
         {
           price: priceId,
-          quantity: 1, // default quantity
+          quantity: 1,
           adjustable_quantity: {
             enabled: true,
             minimum: 1,
@@ -99,16 +88,32 @@ export async function POST(req: Request) {
           },
         },
       ];
+    } else if (booking_type === 'bundle5' || booking_type === 'bundle10') {
+      sessionOptions.line_items = [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ];
+    } else {
+      return NextResponse.json(
+        { error: 'Invalid booking_type' },
+        { status: 400 }
+      );
+    }
 
-      sessionOptions.metadata = {
-        teacher_slug,
-        date,
-        time_slot,
-        participants,
-        booking_type,
-        quantity: 'dynamic', // placeholder, real quantity retrieved from webhook
-      };
+    // ✅ Metadata is now always stored, regardless of type
+    sessionOptions.metadata = {
+      teacher_slug: teacher_slug || '',
+      date: date || '',
+      time_slot: time_slot || '',
+      participants: participants?.toString() || '',
+      booking_type,
+      quantity: booking_type === 'single' ? 'dynamic' : '1',
+    };
 
+    // Custom fields (visible in checkout page)
+    if (teacherName && date && time_slot) {
       sessionOptions.custom_fields = [
         {
           key: 'appointment_date',
@@ -120,30 +125,15 @@ export async function POST(req: Request) {
           optional: false,
         },
       ];
+    }
 
-      sessionOptions.success_url = `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&teacher=${teacher.slug}&date=${date}&timeSlot=${time_slot}&participants=${participants}`;
-      sessionOptions.cancel_url = `${process.env.NEXT_PUBLIC_SITE_URL}/teachers/${teacher.slug}`;
-    } else if (booking_type === 'bundle') {
-      // line_items fixed quantity
-      sessionOptions.line_items = [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ];
-
-      sessionOptions.metadata = {
-        booking_type,
-        quantity: '1',
-      };
-
-      sessionOptions.success_url = `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&bundle=true`;
-      sessionOptions.cancel_url = `${process.env.NEXT_PUBLIC_SITE_URL}/pricing`;
+    // Success / cancel URLs differ
+    if (booking_type === 'single') {
+      sessionOptions.success_url = `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&teacher=${teacher_slug}&date=${date}&timeSlot=${time_slot}&participants=${participants}`;
+      sessionOptions.cancel_url = `${process.env.NEXT_PUBLIC_SITE_URL}/teachers/${teacher_slug}`;
     } else {
-      return NextResponse.json(
-        { error: 'Invalid booking_type' },
-        { status: 400 }
-      );
+      sessionOptions.success_url = `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&bundle=true&teacher=${teacher_slug}&date=${date}&timeSlot=${time_slot}&participants=${participants}`;
+      sessionOptions.cancel_url = `${process.env.NEXT_PUBLIC_SITE_URL}/teachers/${teacher_slug}`;
     }
 
     // Create the checkout session
@@ -155,7 +145,6 @@ export async function POST(req: Request) {
       console.error('[Stripe Checkout Error]', err.message);
       return NextResponse.json({ error: err.message }, { status: 500 });
     }
-
     console.error('[Stripe Checkout Unknown Error]', err);
     return NextResponse.json({ error: 'Unknown error' }, { status: 500 });
   }

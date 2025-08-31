@@ -11,6 +11,8 @@ export default function BookingSuccessClient() {
   const date = searchParams.get('date');
   const time = searchParams.get('timeSlot');
   const participants = searchParams.get('participants');
+  const isBundle = searchParams.get('bundle') === 'true';
+
   const [copied, setCopied] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -92,7 +94,7 @@ export default function BookingSuccessClient() {
       {hasBookingDetails ? (
         <div className="bg-white shadow-md p-6 rounded-xl mb-8 text-left border border-gray-100">
           <h2 className="text-xl font-semibold mb-4 text-gray-800">
-            Class Details
+            {isBundle ? 'Bundle Details' : 'Class Details'}
           </h2>
           <ul className="list-disc pl-5 space-y-2 text-gray-700">
             {teacherName && (
@@ -102,7 +104,9 @@ export default function BookingSuccessClient() {
             )}
             {date && (
               <li>
-                <span className="font-medium">Date:</span>{' '}
+                <span className="font-medium">
+                  {isBundle ? 'First Class Date:' : 'Date:'}
+                </span>{' '}
                 {new Date(date).toLocaleDateString('en-US', {
                   month: 'long',
                   day: 'numeric',
@@ -123,9 +127,16 @@ export default function BookingSuccessClient() {
               </li>
             )}
           </ul>
+
+          {isBundle && (
+            <p className="mt-4 text-emerald-700 text-sm">
+              The rest of your classes will be scheduled together with your
+              teacher.
+            </p>
+          )}
         </div>
       ) : (
-        <div className="bg-white  text-emerald-700 my-5">
+        <div className="bg-white text-emerald-700 my-5">
           <p>
             Thank you for your purchase! We will contact you to arrange the
             classes.

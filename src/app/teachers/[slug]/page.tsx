@@ -87,5 +87,5 @@ export default async function TeacherProfilePage({
     return notFound();
   }
 
-  return <TeacherProfileClient teacher={teacher} booking_type="single" />;
+  return <TeacherProfileClient teacher={teacher} />;
 }
