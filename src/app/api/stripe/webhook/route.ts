@@ -33,18 +33,6 @@ export async function POST(req: Request) {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session;
 
-    // Get line items including price metadata
-    const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
-      expand: ['data.price.product'], // expands the price and product data
-    });
-
-    // Extract bundle_size from price metadata (if exists)
-    let bundleSize: number | null = null;
-    const lineItem = lineItems.data[0];
-    if (lineItem.price?.metadata?.bundle_size) {
-      bundleSize = parseInt(lineItem.price.metadata.bundle_size, 10);
-    }
-
     try {
       // Retrieve the customer details
       const customer = (await stripe.customers.retrieve(
@@ -57,7 +45,9 @@ export async function POST(req: Request) {
       const date = metadata.date || null;
       const time_slot = metadata.time_slot || null;
       const participants = metadata.participants || null;
-
+      let bundleSize: number | null = null;
+      if (metadata.booking_type === 'bundle5') bundleSize = 5;
+      else if (metadata.booking_type === 'bundle10') bundleSize = 10;
       let teacherId = null;
 
       // ✅ Always try to resolve teacherId if teacher_slug exists
@@ -90,6 +80,7 @@ export async function POST(req: Request) {
         payment_intent: session.payment_intent as string,
         amount_total: session.amount_total ? session.amount_total / 100 : 0,
         createdAt: new Date().toISOString(),
+        bundle_id: bundleSize ? session.id : null, // Use session ID as bundle_id for bundles
       });
 
       if (insertError) {

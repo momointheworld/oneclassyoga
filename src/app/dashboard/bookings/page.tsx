@@ -56,30 +56,32 @@ export default function BookingDashboard() {
       )
     : allBookings;
 
-  // Get single bookings (exclude bundle parent bookings)
-  const singleBookings = filteredBookings
-    .filter((b) => b.booking_type !== 'bundle')
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  // Sort all bookings by date descending
+  const sortedBookings = filteredBookings.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
 
   // Get bundle bookings
   const bundleBookings = filteredBookings
-    .filter((b) => b.booking_type === 'bundle')
+    .filter(
+      (b) => b.booking_type === 'bundle5' || b.booking_type === 'bundle10'
+    )
     .sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
 
-  // Calculate pagination for single bookings
-  const totalPages = Math.ceil(singleBookings.length / pageSize);
+  // Pagination
+  const totalPages = Math.ceil(sortedBookings.length / pageSize);
   const startIndex = (page - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const pageBookings = singleBookings.slice(startIndex, endIndex);
+  const pageBookings = sortedBookings.slice(startIndex, endIndex);
 
   async function fetchAllBookings() {
-    setLoading(true);
-
     try {
-      // 1️⃣ Fetch all bookings (no pagination here - get everything)
+      setLoading(true);
+
+      // 1️⃣ Fetch all bookings in one query
       const { data: allBookingsData, error } = await supabase
         .from('bookings')
         .select('*')
@@ -90,53 +92,27 @@ export default function BookingDashboard() {
         return;
       }
 
-      // 2️⃣ Fetch all single bookings with a bundle_id
-      const { data: singleBookings, error: singleError } = await supabase
-        .from('bookings')
-        .select('bundle_id')
-        .eq('booking_type', 'single')
-        .not('bundle_id', 'is', null);
-
-      if (singleError) {
-        console.error(
-          'Error fetching single bookings for bundles:',
-          singleError.message
-        );
-      }
-
-      // 3️⃣ Build counts map: bundle_id -> number of single bookings linked
+      // 1️⃣ Build counts map: count all bookings by their bundle_id
       const countsMap: Record<string, number> = {};
-      (singleBookings as { bundle_id: string }[] | undefined)?.forEach(
-        (row) => {
-          if (row.bundle_id) {
-            countsMap[row.bundle_id] = (countsMap[row.bundle_id] || 0) + 1;
-          }
+      (allBookingsData as Booking[]).forEach((booking) => {
+        if (booking.bundle_id) {
+          const key = booking.bundle_id;
+          countsMap[key] = (countsMap[key] || 0) + 1;
         }
-      );
-
-      // 4️⃣ Attach bundle_count to each booking
-      const bookingsWithCounts = (allBookingsData as unknown[]).map(
+      });
+      // 2️⃣ Attach bundle_count to all bookings
+      const bookingsWithCounts = (allBookingsData as Booking[]).map(
         (booking) => {
-          const typedBooking = booking as Booking;
-          if (typedBooking.booking_type === 'bundle') {
-            // For bundle bookings: count of single bookings linked to this bundle
-            return {
-              ...typedBooking,
-              bundle_count: countsMap[typedBooking.id] || 0,
-            };
-          } else {
-            // For single bookings: optional, count of others in the same bundle
-            return {
-              ...typedBooking,
-              bundle_count: typedBooking.bundle_id
-                ? countsMap[typedBooking.bundle_id as string] || 0
-                : 0,
-            };
-          }
+          return {
+            ...booking,
+            bundle_count: booking.bundle_id
+              ? countsMap[booking.bundle_id] || 0
+              : 0,
+          };
         }
       );
 
-      // 5️⃣ Set state
+      // 4️⃣ Set state
       setAllBookings(bookingsWithCounts);
     } catch (error) {
       console.error('Error in fetchAllBookings:', error);
@@ -413,15 +389,13 @@ export default function BookingDashboard() {
 
       {loading && <p>Loading bookings...</p>}
 
-      {/* Single Bookings Table */}
-      <div className="mb-4 flex justify-between items-center">
-        <h2 className="text-xl font-semibold">
-          Single Bookings ({singleBookings.length} total)
-        </h2>
-        <div className="text-sm text-gray-600">
-          Showing {startIndex + 1}-{Math.min(endIndex, singleBookings.length)}{' '}
-          of {singleBookings.length}
-        </div>
+      {/* All bookings */}
+      <h2 className="text-xl font-semibold">
+        All Bookings ({sortedBookings.length} total)
+      </h2>
+      <div className="text-sm text-gray-600">
+        Showing {startIndex + 1}-{Math.min(endIndex, sortedBookings.length)} of{' '}
+        {sortedBookings.length}
       </div>
 
       <table className="w-full border-collapse border text-sm">

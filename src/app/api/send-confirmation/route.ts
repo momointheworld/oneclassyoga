@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
 
     const isBundle =
       booking.booking_type === 'bundle5' || booking.booking_type === 'bundle10';
+    const bundleSize = booking.booking_type === 'bundle5' ? 5 : 10;
 
     const subject = isBundle
       ? 'Your Yoga Class Bundle is Confirmed! 🌸'
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
 
     const bundleNote = isBundle
       ? `<p style="margin-bottom:16px;">
-          You’ve purchased a <strong>${booking.bundle_size}-class bundle</strong>.  
+          You’ve purchased a <strong>${bundleSize}-class bundle</strong>.  
           Your <strong>first class</strong> is now confirmed, and the rest of your sessions will be scheduled together with your teacher. 🌿
         </p>`
       : '';

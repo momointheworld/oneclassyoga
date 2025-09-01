@@ -104,10 +104,10 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
           {loading ? (
             <>
               <Loader2Icon className="animate-spin" />
-              Check Availability
+              Redirecting...
             </>
           ) : (
-            'Check Availability'
+            'Book This Teacher'
           )}
         </Button>
       </CardFooter>

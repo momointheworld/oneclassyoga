@@ -69,7 +69,7 @@ export default function AddBookingPage() {
         .from('bookings')
         .select('*')
         .eq('customer_email', customerEmail)
-        .eq('booking_type', 'bundle')
+        .neq('booking_type', 'single')
         .limit(1)
         .single();
 
@@ -147,7 +147,7 @@ export default function AddBookingPage() {
       .from('bookings')
       .select('id, session_id')
       .eq('customer_email', customerEmail)
-      .eq('booking_type', 'bundle')
+      .neq('booking_type', 'single')
       .limit(1)
       .single();
 
@@ -173,7 +173,7 @@ export default function AddBookingPage() {
         createdAt: ToBangkokDateOnly(new Date()),
         amount_total: 0,
         session_id: session_id,
-        bundle_id: bundleBooking?.id || null,
+        bundle_id: bundleBooking?.session_id || null,
       },
     ]);
 

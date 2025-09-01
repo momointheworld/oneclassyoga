@@ -13,7 +13,7 @@ export default function ParticipantsCount({
 }: ParticipantsProps) {
   const options = [
     { value: 1, label: 'Just me' },
-    { value: 2, label: 'With a friend (+350฿)' },
+    { value: 2, label: 'With a friend' },
   ];
 
   return (

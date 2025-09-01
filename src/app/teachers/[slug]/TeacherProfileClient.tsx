@@ -81,27 +81,30 @@ export default function TeacherProfileClient({
     {
       id: 'single',
       title: 'Single Session',
-      description: 'Enjoy a hassle-free yoga session!',
-      friendNote: 'Invite a friend and grow together!',
-      price: '2,200 THB',
+      description: 'Enjoy a hassle-free yoga session guided by your teacher!',
+      friendNote: 'Bring a friend for just +500฿ — mats & props included!',
+      price: '2,300 THB',
       badge: null,
       badgeVariant: undefined,
     },
     {
       id: 'bundle5',
       title: 'Bundle of 5',
-      description: 'Save 1,000 THB vs single sessions! ',
-      friendNote: 'Share it with a friend for even more savings!',
-      price: '10,000 THB',
+      description:
+        'Save 1,000฿ vs single sessions! Perfect for regular practice. ',
+      friendNote:
+        'Share the joy & save together! Add a friend for only +400฿ per class!',
+      price: '9500 THB',
       badge: 'Most Popular',
       badgeVariant: 'destructive',
     },
     {
       id: 'bundle10',
       title: 'Bundle of 10',
-      description: 'Save 3,200 THB vs single sessions!',
-      friendNote: 'Bring a friend and double the fun!',
-      price: '18,800 THB',
+      description:
+        'Biggest savings — 3,200฿ off singles! Commit to your growth.',
+      friendNote: 'Double the fun! Add a friend for just +400฿ per class!',
+      price: '18,000 THB',
       badge: 'Best Value',
       badgeVariant: 'secondary',
     },
@@ -109,14 +112,22 @@ export default function TeacherProfileClient({
 
   useEffect(() => {
     if (window.location.hash === '#booking-calendar') {
-      const element = document.getElementById('booking-calendar');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-        element.classList.add('ring-2', 'ring-blue-500');
-        setTimeout(() => {
-          element.classList.remove('ring-2', 'ring-blue-500');
-        }, 2000);
-      }
+      const timeout = setTimeout(() => {
+        const element = document.getElementById('booking-calendar');
+        if (element) {
+          const yOffset = -80;
+          const y =
+            element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+
+          element.classList.add('ring-2', 'ring-blue-500');
+          setTimeout(() => {
+            element.classList.remove('ring-2', 'ring-blue-500');
+          }, 2000);
+        }
+      }, 300); // wait 300ms for video layout
+
+      return () => clearTimeout(timeout);
     }
   }, []);
 
@@ -250,14 +261,12 @@ export default function TeacherProfileClient({
           )}
 
           {/* PACKAGES */}
-
-          {/* PACKAGES */}
-          <section className="grid grid-cols-1 gap-6 my-12">
-            <h2 className="text-xl text-center font-semibold">
-              Reserve Your Yoga Spot Today!
+          <section className="grid grid-cols-1 gap-6" id="booking-calendar">
+            <h2 className="text-xl text-center font-semibold mt-12 mb-4">
+              Select Your Package & Time Slot
               <br />
-              <span className="text-center text-sm text-gray-400 mb-4">
-                Studio, yoga mats, and props included.
+              <span className="text-md text-orange-500">
+                Add a Friend for as low as 400฿ more!
               </span>
             </h2>
 
@@ -304,7 +313,7 @@ export default function TeacherProfileClient({
 
           {/* ALWAYS SHOW CALENDAR ONCE PACKAGE SELECTED */}
           {selectedPackage && (
-            <div id="booking-calendar" className="mt-8 p-6 rounded-3xl">
+            <div className="mt-8 p-6 rounded-3xl">
               <h2 className="text-xl font-semibold mb-4 text-center">
                 {bookingTitle}
               </h2>

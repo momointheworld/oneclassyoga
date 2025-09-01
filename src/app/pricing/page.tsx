@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { PageContainer } from '@/components/PageContainer';
+import { Badge } from '@/components/ui/badge';
 
 export const metadata = {
   title: 'Yoga Pricing in Chiang Mai | Private Classes & Bundles',
@@ -36,6 +37,38 @@ export const metadata = {
 
 export const revalidate = 60;
 
+const pricingOptions = [
+  {
+    id: 'single',
+    title: 'Single Session',
+    description: 'Enjoy a hassle-free yoga session guided by your teacher!',
+    friendNote: 'Bring a friend for just +500฿ — mats & props included!',
+    price: '2,300 THB',
+    badge: null,
+    badgeVariant: undefined,
+  },
+  {
+    id: 'bundle5',
+    title: 'Bundle of 5',
+    description:
+      'Save 1,000฿ vs single sessions! Perfect for regular practice.',
+    friendNote:
+      'Share the joy & save together! Add a friend for only +400฿ per class!',
+    price: '9,500 THB',
+    badge: 'Most Popular',
+    badgeVariant: 'destructive',
+  },
+  {
+    id: 'bundle10',
+    title: 'Bundle of 10',
+    description: 'Biggest savings — 3,200฿ off singles! Commit to your growth.',
+    friendNote: 'Double the fun! Add a friend for just +400฿ per class!',
+    price: '18,000 THB',
+    badge: 'Best Value',
+    badgeVariant: 'secondary',
+  },
+];
+
 export default function PricingPage() {
   return (
     <PageContainer>
@@ -52,96 +85,47 @@ export default function PricingPage() {
 
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-4xl">
-          {/* Single Session */}
-          <div className="flex flex-col justify-between border rounded-xl p-6 shadow text-center hover:shadow-lg transition">
-            <div>
-              <h2 className="text-xl font-semibold mb-2">Single Session</h2>
-              <p className="text-2xl font-bold mb-2">฿1,250</p>
-              <p className="mb-6 text-sm text-gray-700">
-                Pick your preferred teacher, choose the perfect date and time,
-                and bring up to 5 participants. Add extra friends for just ฿250
-                each—great for sharing the experience with loved ones!
-              </p>
-            </div>
-            <div className="flex justify-center">
-              <Link href="/teachers" passHref>
-                <Button
-                  variant="default"
-                  className="bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-emerald-700 transition"
+          {pricingOptions.map((option) => (
+            <div
+              key={option.id}
+              className={`relative flex flex-col justify-between border rounded-xl p-6 shadow text-center hover:shadow-lg transition ${
+                option.id === 'bundle5' ? 'bg-blue-50' : ''
+              }`}
+            >
+              {option.badge && (
+                <Badge
+                  className={`
+        absolute top-2 right-2 text-xs px-2 py-1 rounded-full
+        ${option.id === 'bundle5' ? 'bg-orange-500 text-white' : ''}
+        ${option.id === 'bundle10' ? 'bg-green-500 text-white' : ''}
+        ${option.id === 'single' ? 'bg-gray-300 text-gray-800' : ''}
+      `}
                 >
-                  Pick a Teacher Now
-                </Button>
-              </Link>
-            </div>
-          </div>
+                  {option.badge}
+                </Badge>
+              )}
 
-          {/* 5-Session Bundle */}
-          <div className="flex flex-col justify-between border rounded-xl p-6 shadow text-center bg-blue-50 hover:shadow-lg transition">
-            <div>
-              <h2 className="text-xl font-semibold mb-2">5-Session Bundle</h2>
-              <p className="text-2xl font-bold mb-2">฿6,000</p>
-              <p className="mb-6 text-sm text-gray-700">
-                Stay consistent and <strong>save ฿250</strong> compared to
-                single sessions. Choose up to{' '}
-                <strong>3 different teachers</strong> to experience a variety of
-                styles and find your perfect fit. Schedule your sessions
-                directly with your teachers for maximum flexibility.
-              </p>
-            </div>
-            <div className="flex justify-center">
-              <Link
-                href={{
-                  pathname: '/booking/checkout',
-                  query: {
-                    priceId: process.env.NEXT_STRIPE_BUNDLE5_PRICE_ID,
-                    booking_type: 'bundle',
-                  },
-                }}
-                passHref
-              >
-                <Button
-                  variant="default"
-                  className="bg-orange-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-orange-700 transition"
-                >
-                  Checkout
-                </Button>
-              </Link>
-            </div>
-          </div>
+              <div>
+                <h2 className="text-xl font-semibold my-2">{option.title}</h2>
+                <p className="text-2xl font-bold mb-2">{option.price}</p>
+                <p className="mb-2 text-sm text-gray-700">
+                  {option.description}
+                </p>
+                <p className="text-sm text-gray-500">{option.friendNote}</p>
+              </div>
 
-          {/* 10-Session Bundle */}
-          <div className="flex flex-col justify-between border rounded-xl p-6 shadow text-center hover:shadow-lg transition">
-            <div>
-              <h2 className="text-xl font-semibold mb-2">10-Session Bundle</h2>
-              <p className="text-2xl font-bold mb-2">฿11,700</p>
-              <p className="mb-6 text-sm text-gray-700">
-                Commit to your long-term well-being and{' '}
-                <strong>save ฿800</strong> compared to single sessions. Choose
-                up to <strong>3 different teachers</strong> to explore a range
-                of teaching styles and build a dynamic, personalized yoga
-                practice.
-              </p>
+              <div className="flex justify-center mt-4">
+                <Link href="/teachers" passHref>
+                  <Button
+                    variant="default"
+                    className={`text-sm font-medium px-4 py-2 rounded-xl transition bg-emerald-600 text-white hover:bg-emerald-700`}
+                  >
+                    Pick a Teacher Now
+                  </Button>
+                </Link>
+              </div>
             </div>
-            <div className="flex justify-center">
-              <Link
-                href={{
-                  pathname: '/booking/checkout',
-                  query: {
-                    priceId: process.env.NEXT_STRIPE_BUNDLE10_PRICE_ID,
-                    booking_type: 'bundle',
-                  },
-                }}
-                passHref
-              >
-                <Button
-                  variant="default"
-                  className="bg-orange-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-orange-700 transition"
-                >
-                  Checkout
-                </Button>
-              </Link>
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* FAQ / Contact */}
