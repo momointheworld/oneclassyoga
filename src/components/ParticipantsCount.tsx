@@ -19,12 +19,12 @@ export default function ParticipantsCount({
   return (
     <div className="w-full mt-4">
       <p className="mb-2 text-gray-500 text-sm">Share it with a friend:</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2">
         {options.map((option) => (
           <Button
             key={option.value}
             onClick={() => onParticipantsChange(option.value)}
-            className={`px-4 py-2 rounded-md border text-sm text-gray-700 font-medium ${
+            className={`px-4 py-2 rounded-md border border-gray-300 text-sm text-gray-700 font-medium ${
               participants === option.value
                 ? 'bg-emerald-500 text-white'
                 : 'hover:bg-gray-100'

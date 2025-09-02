@@ -6,12 +6,15 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-center md:items-start space-y-6 md:space-y-0">
           {/* Navigation Links */}
-          <nav className="flex flex-nowrap gap-6 text-center md:text-left items-center overflow-x-auto">
+          <nav className="flex flex-nowrap gap-6 text-center md:text-left items-center overflow-x-auto  px-4 sm:px-6 lg:px-8">
             <Link href="/teachers" className="hover:text-white transition">
               Teachers
             </Link>
             <Link href="/pricing" className="hover:text-white transition">
               Pricing
+            </Link>
+            <Link href="/location" className="hover:text-white transition">
+              Location
             </Link>
 
             <Link

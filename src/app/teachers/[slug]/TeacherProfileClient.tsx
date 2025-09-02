@@ -7,7 +7,7 @@ import TeacherGallery from '@/components/TeacherGallery';
 import parse from 'html-react-parser';
 import BookingCalendar from '@/components/BookingCalendar';
 import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ToBangkokDateOnly } from '@/components/BkkTimeConverter';
 import YouTubeVideo from '@/components/YoutubeViedo';
@@ -38,6 +38,10 @@ export default function TeacherProfileClient({
   const [bookingTitle, setBookingTitle] = useState<string>(
     'Choose Your Date & Time'
   );
+  const [showNote, setShowNote] = useState(false);
+  const note = showNote
+    ? ' (Rest of sessions scheduled with your teacher.)'
+    : '';
   const [error, setError] = useState('');
   const [selectedPackage, setSelectedPackage] = useState<
     'single' | 'bundle5' | 'bundle10' | null
@@ -82,8 +86,8 @@ export default function TeacherProfileClient({
       id: 'single',
       title: 'Single Session',
       description: 'Enjoy a hassle-free yoga session guided by your teacher!',
-      friendNote: 'Bring a friend for just +500฿ — mats & props included!',
-      price: '2,300 THB',
+      friendNote: 'Bring a friend for just +800฿ — mats & props included!',
+      price: '3,500 THB',
       badge: null,
       badgeVariant: undefined,
     },
@@ -91,10 +95,10 @@ export default function TeacherProfileClient({
       id: 'bundle5',
       title: 'Bundle of 5',
       description:
-        'Save 1,000฿ vs single sessions! Perfect for regular practice. ',
+        'Save 6,500฿ vs single sessions! Perfect for regular practice. ',
       friendNote:
-        'Share the joy & save together! Add a friend for only +400฿ per class!',
-      price: '9500 THB',
+        'Share the joy & save together! Add a friend for only +800฿ per class!',
+      price: '11,000 THB',
       badge: 'Most Popular',
       badgeVariant: 'destructive',
     },
@@ -102,9 +106,9 @@ export default function TeacherProfileClient({
       id: 'bundle10',
       title: 'Bundle of 10',
       description:
-        'Biggest savings — 3,200฿ off singles! Commit to your growth.',
-      friendNote: 'Double the fun! Add a friend for just +400฿ per class!',
-      price: '18,000 THB',
+        'Biggest savings — 15,000฿ off singles! Commit to your growth.',
+      friendNote: 'Double the fun! Add a friend for just +800฿ per class!',
+      price: '20,000 THB',
       badge: 'Best Value',
       badgeVariant: 'secondary',
     },
@@ -176,6 +180,7 @@ export default function TeacherProfileClient({
   ) => {
     setSelectedPackage(packageType);
     setBookingTitle(packageTitles[packageType]);
+    setShowNote(packageType !== 'single');
   };
 
   const handleRateChange = (newRate: number) => {
@@ -266,7 +271,7 @@ export default function TeacherProfileClient({
               Select Your Package & Time Slot
               <br />
               <span className="text-md text-orange-500">
-                Add a Friend for as low as 400฿ more!
+                Add a Friend for 800฿ more only!
               </span>
             </h2>
 
@@ -316,6 +321,8 @@ export default function TeacherProfileClient({
             <div className="mt-8 p-6 rounded-3xl">
               <h2 className="text-xl font-semibold mb-4 text-center">
                 {bookingTitle}
+                <br />
+                <span className="text-sm">{note}</span>
               </h2>
               <BookingCalendar
                 onSelect={(date, timeSlot) => {

@@ -55,7 +55,7 @@ export function DatePicker({
             variant="outline"
             id="date-picker"
             className={cn(
-              'w-full justify-between text-left font-normal border rounded-xl px-4 py-2 shadow-sm transition-all',
+              'w-full justify-between text-left font-normal border border-gray-300 rounded-xl px-4 py-2 shadow-sm transition-all',
               !internalDate && 'text-muted-foreground'
             )}
           >
@@ -65,7 +65,7 @@ export function DatePicker({
         </PopoverTrigger>
         <PopoverContent
           align="start"
-          className="w-auto p-2 rounded-xl shadow-lg border bg-white dark:bg-zinc-900"
+          className="w-auto p-2 rounded-xl shadow-lg border border-gray-300 bg-white dark:bg-zinc-900"
         >
           <Calendar
             mode="single"

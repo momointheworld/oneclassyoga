@@ -43,15 +43,15 @@ export default function BookingCalendar({
     let total = 0;
 
     // Base rate based on selected package
-    if (selectedPackage === 'single') total = 2300;
-    if (selectedPackage === 'bundle5') total = 9500;
-    if (selectedPackage === 'bundle10') total = 18000;
+    if (selectedPackage === 'single') total = 3500;
+    if (selectedPackage === 'bundle5') total = 11000;
+    if (selectedPackage === 'bundle10') total = 20000;
 
     // Extra for second participant
     if (participants === 2) {
-      if (selectedPackage === 'single') total += 500;
-      if (selectedPackage === 'bundle5') total += 2000;
-      if (selectedPackage === 'bundle10') total += 4000;
+      if (selectedPackage === 'single') total += 800;
+      if (selectedPackage === 'bundle5') total += 4000;
+      if (selectedPackage === 'bundle10') total += 8000;
     }
 
     setRate(total);

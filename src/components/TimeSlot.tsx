@@ -26,7 +26,7 @@ export function TimeSlotPicker({
   return (
     <div className="w-full mt-4">
       <p className="mb-2 text-gray-500">Select a time</p>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid gap-2 grid-cols-[repeat(auto-fit,minmax(80px,1fr))]">
         {sortTimeSlots(timeSlots).map((slot) => {
           const isBooked = bookedSlots.includes(slot);
           return (
@@ -34,12 +34,12 @@ export function TimeSlotPicker({
               key={slot}
               onClick={() => !isBooked && onSelect(slot)}
               disabled={isBooked}
-              className={`px-3 py-2 rounded-md border text-sm ${
+              className={`px-3 py-2 rounded-md border text-sm transition-colors duration-150 ${
                 isBooked
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                   : selectedSlot === slot
-                    ? 'bg-emerald-500 text-white'
-                    : 'bg-white'
+                    ? 'bg-emerald-500 text-white border-emerald-500'
+                    : 'bg-white border-gray-300 hover:bg-gray-100'
               }`}
             >
               {slot}
