@@ -6,10 +6,10 @@ import { createClient } from '@/utils/supabase/supabaseClient';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
-  availableDaysOptions,
   levelOptions,
   styleOptions,
   timeSlotOptions,
+  weekly_schedule,
 } from '@/lib/constants';
 import ImageUpload from '@/components/ImageUpload';
 import { Label } from '@radix-ui/react-label';
@@ -36,8 +36,9 @@ export default function EditTeacherProfilePage() {
   const [isActive, setIsActive] = useState(false);
   const [isFeatured, setIsFeatured] = useState(false);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
-  const [timeSlots, setTimeSlots] = useState<string[]>([]);
-  const [availableDays, setAvailbleDays] = useState<string[]>([]);
+  const [weeklySchedule, setWeeklySchedule] = useState<{
+    [key: string]: string[];
+  }>(weekly_schedule);
 
   useEffect(() => {
     const fetchTeacher = async () => {
@@ -61,20 +62,10 @@ export default function EditTeacherProfilePage() {
         setIsActive(data.isActive ?? true);
         setIsFeatured(data.isFeatured ?? false);
         setUpdatedAt(data.updatedAt || null);
-        if (data.timeSlots) {
-          const parsedTimeSlots =
-            typeof data.timeSlots === 'string'
-              ? JSON.parse(data.timeSlots)
-              : data.timeSlots;
-          setTimeSlots(parsedTimeSlots); // parse the timeSlots if it's a string
-        }
-      }
-      if (data.available_days) {
-        const parsedAvailableDays =
-          typeof data.available_days === 'string'
-            ? JSON.parse(data.available_days)
-            : data.available_days;
-        setAvailbleDays(parsedAvailableDays); // parse the timeSlots if it's a string
+        setWeeklySchedule({
+          ...weekly_schedule, // template with all days
+          ...(data.weekly_schedule || {}), // overwrite with saved teacher slots
+        });
       }
 
       setLoading(false);
@@ -114,8 +105,9 @@ export default function EditTeacherProfilePage() {
         photo: profilePhoto,
         gallery: galleryUrls,
         updatedAt: new Date().toISOString(),
-        timeSlots,
-        available_days: availableDays,
+        weekly_schedule: weeklySchedule,
+        // timeSlots,
+        // available_days: availableDays,
       })
       .eq('id', teacherId);
 
@@ -206,51 +198,35 @@ export default function EditTeacherProfilePage() {
           </div>
         </div>
 
-        {/* available days Checkboxes */}
+        {/* weekly schedule */}
         <div>
-          <p className="font-semibold mb-2">Days Available</p>
-          <div className="grid grid-cols-2 gap-3">
-            {availableDaysOptions.map((availDay) => (
-              <label key={availDay} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  value={availDay}
-                  checked={availableDays.includes(availDay)}
-                  onChange={(e) => {
-                    if (e.target.checked)
-                      setAvailbleDays([...availableDays, availDay]);
-                    else
-                      setAvailbleDays(
-                        availableDays.filter((s) => s !== availDay)
-                      );
-                  }}
-                />
-                {availDay}
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* timeslot Checkboxes */}
-        <div>
-          <p className="font-semibold mb-2">Time Slots</p>
-          <div className="grid grid-cols-2 gap-3">
-            {timeSlotOptions.map((timeSlot) => (
-              <label key={timeSlot} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  value={timeSlot}
-                  checked={timeSlots.includes(timeSlot)}
-                  onChange={(e) => {
-                    if (e.target.checked)
-                      setTimeSlots([...timeSlots, timeSlot]);
-                    else setTimeSlots(timeSlots.filter((s) => s !== timeSlot));
-                  }}
-                />
-                {timeSlot}
-              </label>
-            ))}
-          </div>
+          <p className="font-semibold mb-2">Weekly Schedule</p>
+          {Object.entries(weeklySchedule).map(([day, slots]) => (
+            <div key={day} className="mb-4 border p-3 rounded-lg">
+              <p className="font-medium mb-1">{day}</p>
+              <div className="grid grid-cols-2 gap-2">
+                {timeSlotOptions.map((timeSlot) => (
+                  <label key={timeSlot} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      value={timeSlot}
+                      checked={slots.includes(timeSlot)}
+                      onChange={(e) => {
+                        const newSlots = e.target.checked
+                          ? [...slots, timeSlot]
+                          : slots.filter((s) => s !== timeSlot);
+                        setWeeklySchedule({
+                          ...weeklySchedule,
+                          [day]: newSlots,
+                        });
+                      }}
+                    />
+                    {timeSlot}
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* PROFILE PHOTO UPLOAD */}

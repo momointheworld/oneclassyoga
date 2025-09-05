@@ -1,9 +1,11 @@
 'use client';
 
+import { set } from 'date-fns';
 import { useEffect, useState } from 'react';
 
 interface YouTubeVideoProps {
   videoId: string;
+  bilibiliId?: string;
   teacherName?: string;
   maxDescriptionLength?: number; // optional, default 200
 }
@@ -30,13 +32,34 @@ function truncateBySentence(text: string, maxLength: number) {
 
 export default function YouTubeVideo({
   videoId,
-  teacherName,
+  bilibiliId,
   maxDescriptionLength = 200,
 }: YouTubeVideoProps) {
   const [videoData, setVideoData] = useState<VideoData | null>(null);
+  const [isChina, setIsChina] = useState(false);
+
+  useEffect(() => {
+    // 🌍 Detect location
+    async function detectLocation() {
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        if (data.country_code === 'CN') {
+          setIsChina(true);
+        }
+        // setIsChina(true); // For testing outside China
+      } catch (err) {
+        console.error('Location detection failed:', err);
+      }
+    }
+
+    detectLocation();
+  }, []);
 
   useEffect(() => {
     async function fetchVideo() {
+      if (isChina) return; // skip fetching YouTube data
+
       try {
         const res = await fetch(
           `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
@@ -61,26 +84,23 @@ export default function YouTubeVideo({
     }
 
     fetchVideo();
-  }, [videoId, maxDescriptionLength]);
+  }, [videoId, maxDescriptionLength, isChina]);
 
-  const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+  const embedUrl = isChina
+    ? `https://player.bilibili.com/player.html?bvid=${bilibiliId}&page=1`
+    : `https://www.youtube.com/embed/${videoId}`;
 
   return (
     <section className="mt-6">
       <div className="aspect-[16/9]">
         <iframe
           src={embedUrl}
-          title={videoData?.title || 'YouTube Video'}
+          title={videoData?.title || 'Video Player'}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           className="w-full h-full rounded-md border"
         ></iframe>
       </div>
-      {/* {videoData && (
-        <p className="mt-2 text-sm text-gray-600 whitespace-pre-line">
-          {videoData.description}
-        </p>
-      )} */}
     </section>
   );
 }

@@ -69,7 +69,10 @@ export default async function HomePage() {
           </p>
           <div className="flex justify-center">
             <div className="w-full max-w-3xl aspect-video rounded-xl overflow-hidden shadow-lg">
-              <YouTubeVideo videoId="dQw4w9WgXcQ" />
+              <YouTubeVideo
+                videoId="dQw4w9WgXcQ"
+                bilibiliId="BV1Nr4y1r7ps?t=1.5"
+              />
             </div>
           </div>
         </section>

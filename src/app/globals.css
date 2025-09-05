@@ -120,3 +120,17 @@
   display: block;
   overflow-x: auto;
 }
+
+/* cloudflare turnstile */
+.turnstile-wrapper {
+  width: 100%;
+  max-width: 350px; /* or whatever max width */
+  transform: scale(1);
+  transform-origin: top left;
+}
+
+@media (max-width: 400px) {
+  .turnstile-wrapper {
+    transform: scale(0.8);
+  }
+}

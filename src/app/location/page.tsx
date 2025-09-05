@@ -1,4 +1,5 @@
 import { PageContainer } from '@/components/PageContainer';
+import Image from 'next/image';
 
 export default function LocationPage() {
   return (
@@ -29,24 +30,21 @@ export default function LocationPage() {
         </div>
 
         {/* Address */}
-        <div>
+        <div className="space-y-2">
           <h2 className="text-lg font-semibold mb-2">Address</h2>
           <p className="text-gray-700">
-            11 Rachadamnoen Rd Soi 5, Tambon Si Phum, Mueang Chiang Mai
-            District, Chiang Mai 50200
+            Rachadamnoen Rd Soi 5, Tambon Si Phum, Mueang Chiang Mai District,
+            Chiang Mai 50200
           </p>
         </div>
-
-        {/* Map Embed */}
-        <div className="mt-4 w-full h-64 sm:h-96">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3777.211431120749!2d98.98818647519822!3d18.78872858235758!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30da3a989d7889b9%3A0x6e71e30452574cd7!2zMTEgUmFjaGFkYW1ub2VuIFJkIFNvaSA1LCBUYW1ib24gU2kgUGh1bSwg4LitLuC5gOC4oeC4t-C4reC4hyBDaGFuZyBXYXQgQ2hpYW5nIE1haSA1MDIwMA!5e0!3m2!1sen!2sth!4v1756811848605!5m2!1sen!2sth"
-            width="600"
-            height="450"
-            className="w-full h-full border-0 rounded-lg"
-            allowFullScreen
-            loading="lazy"
-          ></iframe>
+        <div className="flex justify-center">
+          <Image
+            src="/location-map.png"
+            alt="Yoga Venue"
+            width={400}
+            height={300}
+            className="h-auto rounded-lg shadow-md"
+          />
         </div>
       </div>
     </PageContainer>

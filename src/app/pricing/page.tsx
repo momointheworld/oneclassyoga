@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { PageContainer } from '@/components/PageContainer';
 import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
 
 export const metadata = {
   title: 'Yoga Pricing in Chiang Mai | Private Classes & Bundles',
@@ -70,30 +69,6 @@ const pricingOptions = [
   },
 ];
 
-const comparisonTable = [
-  {
-    package: 'Single',
-    total: '3,500 THB',
-    perSession: '3,500 THB',
-    withFriend: '4,300 THB',
-    perPerson: '2,150 THB each',
-  },
-  {
-    package: 'Bundle of 5',
-    total: '11,000 THB',
-    perSession: '2,200 THB',
-    withFriend: '15,000 THB',
-    perPerson: '1,500 THB each',
-  },
-  {
-    package: 'Bundle of 10',
-    total: '20,000 THB',
-    perSession: '2,000 THB',
-    withFriend: '28,000 THB',
-    perPerson: '1,400 THB each',
-  },
-];
-
 export default function PricingPage() {
   return (
     <PageContainer>
@@ -112,9 +87,10 @@ export default function PricingPage() {
             1.5-hour class
           </li>
           <li className="bg-gray-200 px-3 py-1 rounded-full font-semibold">
-            <a href="/location" className="text-blue-600 hover:underline">
-              Studio fee included (500฿/session)
+            <a href="/location" className="text-emerald-600 hover:underline">
+              Studio{' '}
             </a>
+            fee included (500฿/session)
           </li>
           <li className="bg-gray-200 text-gray-800 px-3 py-1 rounded-full font-semibold">
             Bring a friend (+800฿)

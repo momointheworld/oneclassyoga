@@ -45,6 +45,8 @@ export async function POST(req: NextRequest) {
     // Create slug from name
     const slug = slugify(data.name);
 
+    const weekly_schedule = data.weekly_schedule || {};
+
     // Insert into supabase table
     const { data: created, error } = await supabase
       .from('teachers')
@@ -59,8 +61,7 @@ export async function POST(req: NextRequest) {
         isActive: data.isActive ?? true,
         isFeatured: data.isFeatured ?? false,
         photo: data.photo,
-        timeSlots: data.timeSlots || [],
-        available_days: data.available_days || [],
+        weekly_schedule,
       })
       .select()
       .single();

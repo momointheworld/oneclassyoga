@@ -18,7 +18,7 @@ export default function ParticipantsCount({
 
   return (
     <div className="w-full mt-4">
-      <p className="mb-2 text-gray-500 text-sm">Share it with a friend:</p>
+      <p className="mb-2 text-gray-500 text-sm">Invite a friend</p>
       <div className="grid grid-cols-2 gap-2">
         {options.map((option) => (
           <Button

@@ -9,7 +9,7 @@ import {
   styleOptions,
   levelOptions,
   timeSlotOptions,
-  availableDaysOptions,
+  weekly_schedule,
 } from '@/lib/constants';
 import { Loader2 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/supabaseClient';
@@ -28,9 +28,10 @@ export default function NewTeacherPage() {
   const router = useRouter();
   const [isActive, setIsActive] = useState(true);
   const [isFeatured, setIsFeatured] = useState(false);
-  const [timeSlots, setTimeSlots] = useState<string[]>([]);
-  const [availableDays, setAvailbleDays] = useState<string[]>([]);
   const supabase = createClient();
+  const [weeklySchedule, setWeeklySchedule] = useState<{
+    [key: string]: string[];
+  }>(weekly_schedule);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,8 +48,7 @@ export default function NewTeacherPage() {
       photo: profilePhoto,
       gallery: galleryUrls,
       slug: name.toLowerCase().replace(/\s+/g, '-'), // add slug here
-      timeSlots: timeSlots, // add time slots here
-      available_days: availableDays,
+      weekly_schedule: weeklySchedule,
     });
 
     setButtonLoading(false);
@@ -161,52 +161,36 @@ export default function NewTeacherPage() {
           </div>
         </div>
 
-        {/* available days checker */}
+        {/* Weekly Schedule */}
 
         <div>
-          <p className="font-semibold mb-2">Days Available</p>
-          <div className="grid grid-cols-2 gap-3">
-            {availableDaysOptions.map((availDay) => (
-              <label key={availDay} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  value={availDay}
-                  checked={availableDays.includes(availDay)}
-                  onChange={(e) => {
-                    if (e.target.checked)
-                      setAvailbleDays([...availableDays, availDay]);
-                    else
-                      setAvailbleDays(
-                        availableDays.filter((s) => s !== availDay)
-                      );
-                  }}
-                />
-                {availDay}
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* TimeSlots Checkboxes */}
-        <div>
-          <p className="font-semibold mb-2">Time Slots</p>
-          <div className="grid grid-cols-2 gap-3">
-            {timeSlotOptions.map((timeSlot) => (
-              <label key={timeSlot} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  value={timeSlot}
-                  checked={timeSlots.includes(timeSlot)}
-                  onChange={(e) => {
-                    if (e.target.checked)
-                      setTimeSlots([...timeSlots, timeSlot]);
-                    else setTimeSlots(timeSlots.filter((s) => s !== timeSlot));
-                  }}
-                />
-                {timeSlot}
-              </label>
-            ))}
-          </div>
+          <p className="font-semibold mb-2">Weekly Schedule</p>
+          {Object.entries(weeklySchedule).map(([day, slots]) => (
+            <div key={day} className="mb-4 border p-3 rounded-lg">
+              <p className="font-medium mb-1">{day}</p>
+              <div className="grid grid-cols-2 gap-2">
+                {timeSlotOptions.map((timeSlot) => (
+                  <label key={timeSlot} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      value={timeSlot}
+                      checked={slots.includes(timeSlot)}
+                      onChange={(e) => {
+                        const newSlots = e.target.checked
+                          ? [...slots, timeSlot]
+                          : slots.filter((s) => s !== timeSlot);
+                        setWeeklySchedule({
+                          ...weeklySchedule,
+                          [day]: newSlots,
+                        });
+                      }}
+                    />
+                    {timeSlot}
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Profile Photo Upload */}

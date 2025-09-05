@@ -7,11 +7,11 @@ import TeacherGallery from '@/components/TeacherGallery';
 import parse from 'html-react-parser';
 import BookingCalendar from '@/components/BookingCalendar';
 import { Button } from '@/components/ui/button';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ToBangkokDateOnly } from '@/components/BkkTimeConverter';
 import YouTubeVideo from '@/components/YoutubeViedo';
-
+import { formatInTimeZone } from 'date-fns-tz';
 export default function TeacherProfileClient({
   teacher,
 }: {
@@ -25,8 +25,7 @@ export default function TeacherProfileClient({
     gallery: string[];
     videoUrl: string;
     slug: string;
-    timeSlots: string[];
-    available_days: string[];
+    weekly_schedule: Record<string, string[]>;
   };
 }) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -192,12 +191,18 @@ export default function TeacherProfileClient({
   };
 
   const galleryImages = teacher.gallery || [];
-  const timeSlots = Array.isArray(teacher.timeSlots)
-    ? teacher.timeSlots
-    : JSON.parse(teacher.timeSlots || '[]');
-  const availableDays = Array.isArray(teacher.available_days)
-    ? teacher.available_days
-    : [];
+  // Get days that have at least one time slot
+  const weeklySchedule = teacher.weekly_schedule || {};
+  const availableDays = Object.entries(weeklySchedule)
+    .filter(([day, slots]) => slots.length > 0)
+    .map(([day]) => day); // ["Monday", "Tuesday", "Thursday", "Friday"]
+
+  const selectedDay = selectedDate
+    ? formatInTimeZone(selectedDate, 'Asia/Bangkok', 'EEEE') // "Monday", "Tuesday", ...
+    : null;
+  const timeSlots = selectedDay ? weeklySchedule[selectedDay] || [] : [];
+
+  console.log(selectedDay, weeklySchedule);
 
   return (
     <main className="max-w-3xl mx-auto p-6 space-y-8">

@@ -6,15 +6,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { PageContainer } from '@/components/PageContainer';
 import { Loader2Icon } from 'lucide-react';
-import {
-  GoogleReCaptchaProvider,
-  useGoogleReCaptcha,
-} from 'react-google-recaptcha-v3';
+import Turnstile from 'react-turnstile';
 
 type FormData = {
   name: string;
   email: string;
   message: string;
+  turnstileToken?: string;
 };
 
 function ContactForm() {
@@ -27,8 +25,7 @@ function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Partial<FormData>>({});
   const [generalError, setGeneralError] = useState('');
-
-  const { executeRecaptcha } = useGoogleReCaptcha();
+  const [showTurnstile, setShowTurnstile] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -40,31 +37,16 @@ function ContactForm() {
     setFieldErrors((prev) => ({ ...prev, [e.target.name]: undefined }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitForm = async (dataToSubmit: FormData) => {
     setLoading(true);
     setFieldErrors({});
     setGeneralError('');
 
     try {
-      if (!executeRecaptcha) {
-        setGeneralError('reCAPTCHA is not ready. Please try again later.');
-        setLoading(false);
-        return;
-      }
-
-      const token = await executeRecaptcha('contact_form_submit');
-
-      if (!token) {
-        setGeneralError('reCAPTCHA verification failed. Please try again.');
-        setLoading(false);
-        return;
-      }
-
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, recaptchaToken: token }),
+        body: JSON.stringify(dataToSubmit),
       });
 
       const data = await res.json();
@@ -84,6 +66,34 @@ function ContactForm() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFieldErrors({});
+    setGeneralError('');
+
+    // If Turnstile hasn't been shown yet, show it and stop submission
+    if (!formData.turnstileToken) {
+      setShowTurnstile(true);
+      setGeneralError('Please complete the human verification.');
+      return;
+    }
+
+    // If we have the token, submit immediately
+    await submitForm(formData);
+  };
+
+  const handleTurnstileVerify = async (token: string) => {
+    const updatedFormData = { ...formData, turnstileToken: token };
+    setFormData(updatedFormData);
+
+    // Clear any existing errors
+    setFieldErrors({});
+    setGeneralError('');
+
+    // Auto-submit the form immediately after verification
+    await submitForm(updatedFormData);
   };
 
   if (submitted) {
@@ -153,6 +163,17 @@ function ContactForm() {
         )}
       </div>
 
+      {showTurnstile && (
+        <div className="turnstile-wrapper">
+          <Turnstile
+            sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+            onVerify={handleTurnstileVerify}
+            theme="light"
+            size="normal"
+          />
+        </div>
+      )}
+
       <Button
         variant="outline"
         type="submit"
@@ -160,9 +181,12 @@ function ContactForm() {
         className="rounded-full px-6 flex items-center justify-center hover:bg-gray-200 transition"
       >
         {loading && <Loader2Icon className="animate-spin h-4 w-4 mr-2" />}
-        {loading ? 'Sending...' : 'Send Message'}
+        {loading
+          ? 'Sending...'
+          : showTurnstile
+            ? 'Verifying...'
+            : 'Send Message'}
       </Button>
-
       {generalError && <p className="text-orange-500 mt-2">{generalError}</p>}
     </form>
   );
@@ -174,17 +198,11 @@ export default function ContactPage() {
       <div className="max-w-2xl mx-auto px-4">
         <h1 className="text-3xl font-bold mb-4">Contact Us</h1>
         <p className="text-gray-600 mb-10">
-          Have a question or need help? Fill out the form below and we’ll get
+          Have a question or need help? Fill out the form below and we'll get
           back to you as soon as we can.
         </p>
 
-        {/* Wrap the form with GoogleReCaptchaProvider */}
-        <GoogleReCaptchaProvider
-          reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
-          scriptProps={{ async: true, defer: true, appendTo: 'head' }}
-        >
-          <ContactForm />
-        </GoogleReCaptchaProvider>
+        <ContactForm />
       </div>
     </PageContainer>
   );

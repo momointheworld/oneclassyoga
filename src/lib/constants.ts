@@ -19,20 +19,30 @@ export const styleOptions = [
 ];
 
 export const timeSlotOptions = [
-  '10:30 - 12:00',
-  '12:00 - 13:30',
-  '13:30 - 15:00',
+  '11:00 - 12:30',
+  '13:00 - 14:30',
+  '14:00 - 15:30',
   '15:00 - 16:30',
 ];
 
 export const availableDaysOptions = [
-  'Sun',
-  'Mon',
-  'Tue',
-  'Wed',
-  'Thu',
-  'Fri',
-  'Sat',
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
 ];
+
+export const weekly_schedule: Record<string, string[]> = {
+  Monday: [],
+  Tuesday: [],
+  Wednesday: [],
+  Thursday: [],
+  Friday: [],
+  Saturday: [],
+  Sunday: [],
+};
 
 export const categoryOptions = ['Q&A', 'Experiences', 'General', 'Random'];

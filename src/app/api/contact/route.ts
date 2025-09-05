@@ -7,13 +7,13 @@ type ContactRequestBody = {
   name: string;
   email: string;
   message: string;
-  recaptchaToken: string;
+  turnstileToken: string; // Updated field name
 };
 
 export async function POST(req: Request) {
   try {
     const body: ContactRequestBody = await req.json();
-    const { name, email, message, recaptchaToken } = body;
+    const { name, email, message, turnstileToken } = body;
 
     // Basic validation
     const errors: Partial<ContactRequestBody> = {};
@@ -30,37 +30,32 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-    // reCAPTCHA v3 verification
-    const secret = process.env.RECAPTCHA_SECRET_KEY;
-    const token = recaptchaToken;
-    // A quick check to ensure the secret and token exist before making the API call.
+
+    // Cloudflare Turnstile verification
+    const secret = process.env.TURNSTILE_SECRET_KEY;
+    const token = turnstileToken;
     if (!secret || !token) {
       return NextResponse.json(
-        { message: 'Missing reCAPTCHA secret or token' },
+        { message: 'Missing Turnstile secret or token' },
         { status: 400 }
       );
     }
 
-    const recaptchaResp = await fetch(
-      'https://www.google.com/recaptcha/api/siteverify',
+    const turnstileResp = await fetch(
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `secret=${secret}&response=${token}`,
+        body: `secret=${encodeURIComponent(secret)}&response=${encodeURIComponent(token)}`,
       }
     );
 
-    const recaptchaData = await recaptchaResp.json();
+    const turnstileData = await turnstileResp.json();
 
-    // The updated verification check now includes the action.
-    if (
-      !recaptchaData.success ||
-      recaptchaData.score < 0.5 ||
-      recaptchaData.action !== 'contact_form_submit' // <-- Added this line
-    ) {
+    if (!turnstileData.success) {
       return NextResponse.json(
-        { message: 'Failed reCAPTCHA verification' },
-        { status: 403 } // 403 Forbidden is a good status code for a failed check.
+        { message: 'Failed Turnstile verification' },
+        { status: 403 }
       );
     }
 
