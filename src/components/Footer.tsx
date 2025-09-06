@@ -2,11 +2,11 @@ import Link from 'next/link';
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 py-10  text-gray-300 text-sm px-6 sm:px-8 lg:px-10">
+    <footer className="bg-gray-900 py-10  text-gray-300 text-sm px-2 sm:px-8 lg:px-10">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center md:items-start space-y-6 md:space-y-0">
           {/* Navigation Links */}
-          <nav className="flex flex-nowrap gap-6 text-center md:text-left items-center overflow-x-auto">
+          <nav className="flex flex-col gap-3 md:flex-row flex-nowrap md:gap-6 text-center md:text-left items-center overflow-x-auto">
             <Link href="/teachers" className="hover:text-white transition">
               Teachers
             </Link>
@@ -16,16 +16,15 @@ export function Footer() {
             <Link href="/location" className="hover:text-white transition">
               Location
             </Link>
-
             <Link
               href="/privacy"
-              className="hover:text-gray-400 transition text-gray-600 "
+              className="hover:text-gray-400 transition text-gray-600"
             >
               Privacy Policy
             </Link>
             <Link
               href="/tos"
-              className="hover:text-gray-400 transition text-gray-600 "
+              className="hover:text-gray-400 transition text-gray-600"
             >
               Terms of Service
             </Link>

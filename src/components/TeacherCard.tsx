@@ -67,7 +67,7 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
 
       <CardContent className="p-5">
         <div className="text-sm text-gray-600 mb-4 line-clamp-3">
-          {parse(teacher.bio)}
+          {parse(teacher.bio || '')}
         </div>
 
         <div className="text-sm text-gray-800 space-y-1">

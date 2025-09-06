@@ -202,8 +202,6 @@ export default function TeacherProfileClient({
     : null;
   const timeSlots = selectedDay ? weeklySchedule[selectedDay] || [] : [];
 
-  console.log(selectedDay, weeklySchedule);
-
   return (
     <main className="max-w-3xl mx-auto p-6 space-y-8">
       <div className="rounded-3xl overflow-hidden shadow-lg border border-gray-100">

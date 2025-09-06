@@ -26,7 +26,7 @@ export function TimeSlotPicker({
   return (
     <div className="w-full mt-4">
       <p className="mb-2 text-gray-500 text-sm">Select a time</p>
-      <div className="grid gap-2 grid-cols-[repeat(auto-fit,minmax(80px,1fr))]">
+      <div className="grid gap-2 grid-cols-[repeat(auto-fit,minmax(80px,1fr))] md:grid-cols-4">
         {sortTimeSlots(timeSlots).map((slot) => {
           const isBooked = bookedSlots.includes(slot);
           return (

@@ -7,6 +7,8 @@ import { TimeSlotPicker } from '@/components/TimeSlot';
 import { ToBangkokDateOnly } from '@/components/BkkTimeConverter';
 import Link from 'next/link';
 import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
+import { formatInTimeZone } from 'date-fns-tz';
+import { weekly_schedule } from '@/lib/constants';
 
 const supabase = createClient();
 
@@ -28,12 +30,11 @@ type Booking = {
 
 type Teacher = {
   slug: string;
-  available_days: string[];
-  timeSlots: string[] | string; // handle stringified JSON
+  weekly_schedule: Record<string, string[]>;
 };
 
 export default function BookingDashboard() {
-  const [allBookings, setAllBookings] = useState<Booking[]>([]); // Store all bookings
+  const [allBookings, setAllBookings] = useState<Booking[]>([]);
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
   const [formData, setFormData] = useState<Partial<Booking>>({});
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -41,12 +42,18 @@ export default function BookingDashboard() {
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
   const [teacher, setTeacher] = useState<Teacher | null>(null);
   const [initialBooking, setInitialBooking] = useState<Booking | null>(null);
+  const [weeklySchedule, setWeeklySchedule] =
+    useState<Record<string, string[]>>(weekly_schedule);
+  const [availableDays, setAvailableDays] = useState<string[]>([]);
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
+
+  // Add loading state for timeslots
+  const [timeSlotsLoading, setTimeSlotsLoading] = useState(false);
 
   // 🔍 Search state
   const [searchEmail, setSearchEmail] = useState('');
-
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1); // current page
+  const [page, setPage] = useState(1);
   const pageSize = 20;
 
   // Filter bookings based on search
@@ -81,7 +88,6 @@ export default function BookingDashboard() {
     try {
       setLoading(true);
 
-      // 1️⃣ Fetch all bookings in one query
       const { data: allBookingsData, error } = await supabase
         .from('bookings')
         .select('*')
@@ -92,7 +98,6 @@ export default function BookingDashboard() {
         return;
       }
 
-      // 1️⃣ Build counts map: count all bookings by their bundle_id
       const countsMap: Record<string, number> = {};
       (allBookingsData as Booking[]).forEach((booking) => {
         if (booking.bundle_id) {
@@ -100,7 +105,7 @@ export default function BookingDashboard() {
           countsMap[key] = (countsMap[key] || 0) + 1;
         }
       });
-      // 2️⃣ Attach bundle_count to all bookings
+
       const bookingsWithCounts = (allBookingsData as Booking[]).map(
         (booking) => {
           return {
@@ -112,7 +117,6 @@ export default function BookingDashboard() {
         }
       );
 
-      // 4️⃣ Set state
       setAllBookings(bookingsWithCounts);
     } catch (error) {
       console.error('Error in fetchAllBookings:', error);
@@ -130,25 +134,74 @@ export default function BookingDashboard() {
     setPage(1);
   }, [searchEmail]);
 
-  // Fetch teacher details
-  const fetchTeacher = async (slug: string) => {
-    const { data, error } = await supabase
-      .from('teachers')
-      .select('*')
-      .eq('slug', slug)
-      .single();
-
-    if (error) {
-      console.error('Error fetching teacher:', error.message);
-      setTeacher(null);
-    } else {
-      setTeacher(data);
+  // Optimized function to update timeslots immediately
+  const updateTimeSlotsForDate = (
+    date: Date | null,
+    schedule: Record<string, string[]>
+  ) => {
+    if (!date) {
+      setTimeSlots([]);
+      return;
     }
+
+    const selectedDay = formatInTimeZone(date, 'Asia/Bangkok', 'EEEE');
+    const daySlots = schedule[selectedDay] || [];
+    setTimeSlots(daySlots);
   };
 
-  const timeSlots = Array.isArray(teacher?.timeSlots)
-    ? teacher?.timeSlots
-    : JSON.parse((teacher?.timeSlots as string) || '[]');
+  // Fetch teacher details - optimized version
+  const fetchTeacher = async (slug: string) => {
+    setTimeSlotsLoading(true);
+
+    try {
+      const { data, error } = await supabase
+        .from('teachers')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+
+      if (error) {
+        console.error('Error fetching teacher:', error.message);
+        setTeacher(null);
+        // Fallback to default schedule
+        const availDays = Object.entries(weekly_schedule)
+          .filter(([_, slots]) => (slots as string[]).length > 0)
+          .map(([day]) => day);
+
+        setWeeklySchedule(weekly_schedule);
+        setAvailableDays(availDays);
+        updateTimeSlotsForDate(selectedDate, weekly_schedule);
+        return;
+      }
+
+      const schedule = data.weekly_schedule || weekly_schedule;
+      const availDays = Object.entries(schedule)
+        .filter(([_, slots]) => (slots as string[]).length > 0)
+        .map(([day]) => day);
+
+      setTeacher({
+        ...data,
+        weekly_schedule: schedule,
+      });
+      setWeeklySchedule(schedule);
+      setAvailableDays(availDays);
+
+      // Update timeslots immediately with the fetched schedule
+      updateTimeSlotsForDate(selectedDate, schedule);
+    } catch (error) {
+      console.error('Error fetching teacher:', error);
+      // Fallback to default schedule
+      const availDays = Object.entries(weekly_schedule)
+        .filter(([_, slots]) => (slots as string[]).length > 0)
+        .map(([day]) => day);
+
+      setWeeklySchedule(weekly_schedule);
+      setAvailableDays(availDays);
+      updateTimeSlotsForDate(selectedDate, weekly_schedule);
+    } finally {
+      setTimeSlotsLoading(false);
+    }
+  };
 
   // Fetch booked slots
   const fetchBookedSlots = async (teacherSlug: string, date: string) => {
@@ -164,24 +217,59 @@ export default function BookingDashboard() {
     }
   };
 
-  // Populate edit form when switching entry
+  // Optimized effect for when selectedDate changes
+  useEffect(() => {
+    if (selectedDate && weeklySchedule) {
+      updateTimeSlotsForDate(selectedDate, weeklySchedule);
+
+      // Fetch booked slots if we have a teacher
+      if (editingBooking?.teacher_slug) {
+        fetchBookedSlots(
+          editingBooking.teacher_slug,
+          ToBangkokDateOnly(selectedDate)
+        );
+      }
+    }
+  }, [editingBooking?.teacher_slug, selectedDate, weeklySchedule]);
+
+  // Populate edit form when switching entry - optimized
   useEffect(() => {
     if (editingBooking) {
       setFormData(editingBooking);
-      setSelectedDate(
-        editingBooking.date ? new Date(editingBooking.date) : null
-      );
+      const bookingDate = editingBooking.date
+        ? new Date(editingBooking.date + 'T00:00:00') // force local midnight
+        : null;
+
+      setSelectedDate(bookingDate);
+      console.log('bookingDate:', bookingDate);
       setTimeSlot(editingBooking.time_slot || null);
       setInitialBooking(editingBooking);
 
       if (editingBooking.teacher_slug) {
+        // Immediately set fallback schedule and timeslots
+        const availDays = Object.entries(weekly_schedule)
+          .filter(([_, slots]) => (slots as string[]).length > 0)
+          .map(([day]) => day);
+
+        setAvailableDays(availDays);
+        setWeeklySchedule(weekly_schedule);
+
+        // Set timeslots immediately with fallback
+        if (bookingDate) {
+          updateTimeSlotsForDate(bookingDate, weekly_schedule);
+        }
+
+        // Then fetch actual teacher schedule (this will update timeslots again when complete)
         fetchTeacher(editingBooking.teacher_slug);
+
         if (editingBooking.date) {
           fetchBookedSlots(editingBooking.teacher_slug, editingBooking.date);
         }
       }
     }
   }, [editingBooking]);
+
+  console.log(selectedDate);
 
   // Update booking
   const updateBooking = async () => {
@@ -205,21 +293,34 @@ export default function BookingDashboard() {
     }
 
     setEditingBooking(null);
-    fetchAllBookings(); // Refetch all data
+    resetEditingState();
+    fetchAllBookings();
   };
 
   // compare helper
   const hasChanged = (field: keyof Booking) =>
     initialBooking && formData[field] !== initialBooking[field];
 
-  // 🔍 Search filter handler
-  const handleSearch = () => {
-    // Search is handled automatically by the filteredBookings computed value
-    // This function can be used for additional search logic if needed
-  };
-
   const handleResetSearch = () => {
     setSearchEmail('');
+  };
+
+  const resetEditingState = () => {
+    setFormData({});
+    setSelectedDate(null);
+    setTimeSlot(null);
+    setBookedSlots([]);
+    setTeacher(null);
+    setWeeklySchedule(weekly_schedule);
+    setAvailableDays([]);
+    setTimeSlots([]);
+    setInitialBooking(null);
+    setTimeSlotsLoading(false);
+  };
+
+  const cancelEditing = () => {
+    setEditingBooking(null);
+    resetEditingState();
   };
 
   return (
@@ -242,10 +343,7 @@ export default function BookingDashboard() {
           onChange={(e) => setSearchEmail(e.target.value)}
           className="border px-3 py-2 rounded-md w-64"
         />
-        <button
-          className="px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700"
-          onClick={handleSearch}
-        >
+        <button className="px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700">
           Search
         </button>
         <button
@@ -299,32 +397,38 @@ export default function BookingDashboard() {
               />
             </div>
 
-            {teacher && (
-              <>
-                {/* Date Picker */}
-                <div>
-                  <label className="block text-sm font-medium mb-1">Date</label>
-                  <DatePicker
-                    selected={selectedDate || undefined}
-                    onSelect={(date) => setSelectedDate(date ?? null)}
-                    availableDays={teacher.available_days}
-                  />
-                </div>
-
-                {/* Time Slot Picker */}
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Time Slot
-                  </label>
-                  <TimeSlotPicker
-                    selectedSlot={timeSlot || ''}
-                    onSelect={setTimeSlot}
-                    timeSlots={timeSlots || []}
-                    bookedSlots={bookedSlots}
-                  />
-                </div>
-              </>
+            {/* Date Picker - always show */}
+            {selectedDate && (
+              <div>
+                <DatePicker
+                  selected={selectedDate} // ✅ Use selectedDate instead of formData.date
+                  onSelect={(date) => {
+                    setSelectedDate(date ?? null);
+                    // Also update formData to keep them in sync
+                    setFormData((prev) => ({
+                      ...prev,
+                      date: date ? ToBangkokDateOnly(date) : '',
+                    }));
+                  }}
+                  availableDays={availableDays}
+                />
+              </div>
             )}
+
+            {/* Time Slot Picker - always show with loading state */}
+            <div>
+              <TimeSlotPicker
+                selectedSlot={timeSlot || ''}
+                onSelect={setTimeSlot}
+                timeSlots={timeSlots}
+                bookedSlots={bookedSlots}
+              />
+              {timeSlotsLoading && (
+                <div className="text-sm text-gray-500 mt-1">
+                  Loading time slots...
+                </div>
+              )}
+            </div>
 
             {/* Participants */}
             <div>
@@ -379,7 +483,7 @@ export default function BookingDashboard() {
             </button>
             <button
               className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
-              onClick={() => setEditingBooking(null)}
+              onClick={cancelEditing}
             >
               Cancel
             </button>

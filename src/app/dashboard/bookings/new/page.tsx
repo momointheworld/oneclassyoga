@@ -6,6 +6,9 @@ import { DatePicker } from '@/components/DatePicker';
 import { TimeSlotPicker } from '@/components/TimeSlot';
 import { ToBangkokDateOnly } from '@/components/BkkTimeConverter';
 import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
+import { availableDaysOptions, weekly_schedule } from '@/lib/constants';
+import { formatInTimeZone } from 'date-fns-tz';
+import { set } from 'date-fns';
 
 const supabase = createClient();
 
@@ -27,15 +30,17 @@ type Booking = {
 
 type Teacher = {
   slug: string;
-  available_days: string[];
-  timeSlots: string[] | string;
+  weekly_schedule: Record<string, string[]>;
 };
 
 export default function AddBookingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const customerEmail = searchParams.get('email') || '';
-
+  const [weeklySchedule, setWeeklySchedule] =
+    useState<Record<string, string[]>>(weekly_schedule);
+  const [availableDays, setAvailableDays] = useState<string[]>([]);
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
   const [customerName, setCustomerName] = useState('');
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [selectedTeacherSlug, setSelectedTeacherSlug] = useState<string | null>(
@@ -44,7 +49,7 @@ export default function AddBookingPage() {
   const [teacher, setTeacher] = useState<Teacher | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [timeSlot, setTimeSlot] = useState<string | null>(null);
-  const [timeSlots, setTimeSlots] = useState<string[] | null>(null);
+  // const [timeSlots, setTimeSlots] = useState<string[] | null>(null);
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
   const [bundleBooking, setBundleBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
@@ -94,26 +99,33 @@ export default function AddBookingPage() {
         .select('*')
         .eq('slug', slug)
         .single();
+
       if (error) {
         console.error('Error fetching teacher:', error.message);
         setTeacher(null);
         setTimeSlots([]);
-      } else {
-        setTeacher(data);
-        try {
-          const slots = Array.isArray(data?.timeSlots)
-            ? data.timeSlots
-            : JSON.parse(data?.timeSlots || '[]');
-          setTimeSlots(slots);
-        } catch (err) {
-          console.error('Failed to parse timeSlots', err);
-          setTimeSlots([]);
-        }
+        return;
       }
+
+      setTeacher(data);
+
+      const schedule = data.weekly_schedule || weekly_schedule;
+      setWeeklySchedule(schedule);
+
+      const availDays = Object.entries(schedule)
+        .filter(([_, slots]) => (slots as string[]).length > 0)
+        .map(([day]) => day);
+      setAvailableDays(availDays);
+
+      const selectedDay = selectedDate
+        ? formatInTimeZone(selectedDate, 'Asia/Bangkok', 'EEEE')
+        : null;
+
+      setTimeSlots(selectedDay ? schedule[selectedDay] || [] : []);
     };
 
     fetchTeacher(selectedTeacherSlug);
-  }, [selectedTeacherSlug]);
+  }, [selectedTeacherSlug, selectedDate]);
 
   useEffect(() => {
     if (!teacher?.slug || !selectedDate) return;
@@ -241,19 +253,16 @@ export default function AddBookingPage() {
         <DatePicker
           selected={selectedDate || undefined}
           onSelect={(date) => setSelectedDate(date ?? null)}
-          availableDays={teacher?.available_days}
+          availableDays={availableDays}
         />
       </div>
 
-      <div>
-        <label className="block mb-1 font-medium">Select Time Slot</label>
-        <TimeSlotPicker
-          selectedSlot={timeSlot || ''}
-          onSelect={setTimeSlot}
-          timeSlots={timeSlots || []}
-          bookedSlots={bookedSlots}
-        />
-      </div>
+      <TimeSlotPicker
+        selectedSlot={timeSlot || ''}
+        onSelect={setTimeSlot}
+        timeSlots={timeSlots || []}
+        bookedSlots={bookedSlots}
+      />
 
       <button
         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
