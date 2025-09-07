@@ -46,8 +46,9 @@ export async function POST(req: Request) {
       const time_slot = metadata.time_slot || null;
       const participants = metadata.participants || null;
       let bundleSize: number | null = null;
-      if (metadata.booking_type === 'bundle5') bundleSize = 5;
-      else if (metadata.booking_type === 'bundle10') bundleSize = 10;
+      if (metadata.booking_type?.startsWith('bundle')) {
+        bundleSize = parseInt(metadata.booking_type.replace('bundle', ''), 10);
+      }
       let teacherId = null;
 
       // ✅ Always try to resolve teacherId if teacher_slug exists

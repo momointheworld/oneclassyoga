@@ -5,19 +5,40 @@ export default function FAQSection() {
   const faqs = [
     {
       q: 'Do I need experience for a private yoga class in Chiang Mai?',
-      a: 'Not at all! Whether you are a complete beginner or an experienced yogi, our teachers tailor each session to your level and goals. Every instructor here has been selected for their ability to guide students at any stage.',
+      aDisplay:
+        'Not at all! Each teacher offers classes at different levels, and they can adapt the session to your experience and goals. Whether you’re a beginner or an advanced practitioner, you’ll get guidance tailored to you.',
+      aSchema:
+        'Not at all! Each teacher offers classes at different levels, and they can adapt the session to your experience and goals. Whether you’re a beginner or an advanced practitioner, you’ll get guidance tailored to you.',
     },
     {
       q: 'Where are the yoga classes held?',
-      a: 'Classes can take place online or in person at a location that suits you in Chiang Mai. Options include a studio, your home, or even a local park—flexible setups that have been tested and recommended by experienced practitioners.',
+      aDisplay: (
+        <>
+          All classes take place at our{' '}
+          <Link href="/location" className="text-blue-600 underline">
+            Old Town studio
+          </Link>{' '}
+          in Chiang Mai. It’s centrally located for easy access, so you don’t
+          have to worry about finding a spot. The space is designed to create a
+          comfortable and focused environment for your practice.
+        </>
+      ),
+      aSchema:
+        'All classes take place at our Old Town studio in Chiang Mai. It’s centrally located for easy access, so you don’t have to worry about finding a spot. The space is designed to create a comfortable and focused environment for your practice.',
     },
     {
       q: 'Are your yoga teachers certified?',
-      a: 'Yes! All teachers featured here are certified and bring years of experience. Each one has been carefully chosen for their quality of teaching and ability to create meaningful, personalized sessions.',
+      aDisplay:
+        'Yes! All teachers featured here are certified and bring years of experience. Each one has been carefully chosen for their quality of teaching and ability to create meaningful, personalized sessions.',
+      aSchema:
+        'Yes! All teachers featured here are certified and bring years of experience. Each one has been carefully chosen for their quality of teaching and ability to create meaningful, personalized sessions.',
     },
     {
       q: 'How do I book a private yoga class?',
-      a: 'Booking is simple: select a teacher, pick a convenient time, and confirm online. The process is designed to be easy for students while helping local teachers connect with more people.',
+      aDisplay:
+        'Booking is simple: choose a teacher, pick a time, and confirm online. This hassle-free process lets teachers focus on giving you a high-quality, personalized class.',
+      aSchema:
+        'Booking is simple: choose a teacher, pick a time, and confirm online. This hassle-free process lets teachers focus on giving you a high-quality, personalized class.',
     },
   ];
 
@@ -29,7 +50,7 @@ export default function FAQSection() {
       name: faq.q,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: faq.a,
+        text: faq.aSchema,
       },
     })),
   };
@@ -42,7 +63,7 @@ export default function FAQSection() {
           {faqs.map((faq, idx) => (
             <div key={idx} className="pb-4">
               <h3 className="font-semibold text-lg">{faq.q}</h3>
-              <p className="text-gray-600 mt-2">- {faq.a}</p>
+              <p className="text-gray-600 mt-2">- {faq.aDisplay}</p>
             </div>
           ))}
         </div>
@@ -55,7 +76,6 @@ export default function FAQSection() {
           </Link>{' '}
         </p>
       </div>
-      {/* SEO FAQ Schema */}
       <Script
         id="faq-schema"
         type="application/ld+json"

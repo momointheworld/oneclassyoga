@@ -3,19 +3,19 @@ import Script from 'next/script';
 export default function BookingSteps() {
   const steps = [
     {
-      title: '1. Discover Your Ideal Yoga Teacher',
-      desc: 'As a long-time yoga practitioner in Chiang Mai, I’ve tried many teachers. I’ve hand-picked only those who offer exceptional guidance and create meaningful experiences. Browse our curated list and find the teacher who resonates with you.',
+      title: '1. Pick Your Ideal Yoga Teacher',
+      desc: 'I’ve personally handpicked experienced yoga teachers in Chiang Mai who offer exceptional guidance and create meaningful experiences. Browse our curated list to find the teacher who resonates with you.',
     },
     {
-      title: '2. Schedule Your Private Session',
-      desc: 'Booking is simple and flexible. Pick a time and location that suit your lifestyle—studio, home, or park—and secure your personalized yoga session. This process was designed to save you time so you can focus on your practice.',
+      title: '2. Schedule Your First Private Session',
+      desc: 'Booking is simple and flexible. Select a time that fits your schedule, and your session will take place at our studio—no extra fuss. You can also share the class with a friend for a more enjoyable experience and savings.',
     },
+
     {
       title: '3. Experience Your 1-on-1 Yoga Class',
       desc: 'Step into your private session and enjoy guidance tailored to your level, goals, and needs. Each teacher brings their expertise and passion, ensuring you feel supported, challenged, and inspired throughout your practice.',
     },
   ];
-
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'HowTo',

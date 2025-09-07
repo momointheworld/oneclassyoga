@@ -4,23 +4,21 @@ import { createClient } from '@supabase/supabase-js';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title:
-    'Chiang Mai Yoga Teachers | Private & Small Group Classes (1–5 People)',
+  title: 'Chiang Mai Yoga Teachers | Private 1-on-1 Classes',
   description:
-    'Meet trusted yoga teachers in Chiang Mai. Offering private and small group classes (1–5 people) for travelers, expats, and locals—personalized yoga for all levels.',
+    'Meet trusted yoga teachers in Chiang Mai. Offering private 1-on-1 yoga classes for travelers, expats, and locals—personalized yoga for all levels. Option to share a session with a friend.',
   openGraph: {
-    title:
-      'Chiang Mai Yoga Teachers | Private & Small Group Classes (1–5 People)',
+    title: 'Chiang Mai Yoga Teachers | Private 1-on-1 Classes',
     description:
-      'Discover top yoga teachers in Chiang Mai. Book private or small group classes (1–5 people) tailored to your level and schedule.',
-    url: 'https://oneclass.yoga', // replace with your actual URL
+      'Discover top yoga teachers in Chiang Mai. Book private 1-on-1 classes tailored to your level and schedule, with the option to share the session with a friend.',
+    url: 'https://oneclass.yoga',
     siteName: 'OneClass Yoga',
     images: [
       {
-        url: 'https://oneclass.yoga/logos/teachers-og-image.png', // social preview image
+        url: 'https://oneclass.yoga/logos/teachers-og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Yoga classes in Chiang Mai with experienced teachers',
+        alt: 'Private yoga classes in Chiang Mai with experienced teachers',
       },
     ],
     locale: 'en_US',
@@ -28,10 +26,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title:
-      'Chiang Mai Yoga Teachers | Private & Small Group Classes (1–5 People)',
+    title: 'Chiang Mai Yoga Teachers | Private 1-on-1 Classes',
     description:
-      'Discover top yoga teachers in Chiang Mai. Book private or small group classes (1–5 people) tailored to your level and schedule.',
+      'Discover top yoga teachers in Chiang Mai. Book private 1-on-1 classes tailored to your level and schedule, with the option to share the session with a friend.',
     images: ['https://oneclass.yoga/logos/teachers-og-image.png'],
   },
 };
@@ -74,7 +71,13 @@ export default async function TeachersPage() {
         Chiang Mai Yoga Teachers: Private Classes
       </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div
+        className={`gap-6 ${
+          sortedTeachers.length < 3
+            ? 'flex justify-center flex-wrap'
+            : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+        }`}
+      >
         {sortedTeachers.map((teacher: Teacher) => (
           <TeacherCard
             key={teacher.id}

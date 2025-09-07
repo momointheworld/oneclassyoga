@@ -36,7 +36,7 @@ export async function generateMetadata({
     plainBio.slice(0, 150) ||
     `Learn yoga in Chiang Mai with ${teacher.name}, specializing in ${teacher.styles?.join(
       ', '
-    )}. Offering private & small group (1–5 people) classes.`;
+    )}. Offering private 1-on-1 classes.`;
 
   const imageUrl =
     teacher.photo || 'https://oneclass.yoga/logos/default-teacher-image.png'; // fallback image

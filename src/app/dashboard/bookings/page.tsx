@@ -70,9 +70,7 @@ export default function BookingDashboard() {
 
   // Get bundle bookings
   const bundleBookings = filteredBookings
-    .filter(
-      (b) => b.booking_type === 'bundle5' || b.booking_type === 'bundle10'
-    )
+    .filter((b) => b.booking_type?.startsWith('bundle'))
     .sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()

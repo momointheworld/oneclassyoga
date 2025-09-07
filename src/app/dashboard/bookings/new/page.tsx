@@ -6,9 +6,8 @@ import { DatePicker } from '@/components/DatePicker';
 import { TimeSlotPicker } from '@/components/TimeSlot';
 import { ToBangkokDateOnly } from '@/components/BkkTimeConverter';
 import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
-import { availableDaysOptions, weekly_schedule } from '@/lib/constants';
+import { weekly_schedule } from '@/lib/constants';
 import { formatInTimeZone } from 'date-fns-tz';
-import { set } from 'date-fns';
 
 const supabase = createClient();
 

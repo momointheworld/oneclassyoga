@@ -9,21 +9,23 @@ import { Metadata } from 'next';
 import YouTubeVideo from '@/components/YoutubeViedo';
 
 export const metadata: Metadata = {
-  title: 'Private & Small Group Yoga in Chiang Mai | 1–5 People Classes',
+  title:
+    'Handpicked Private Yoga in Chiang Mai | Share a Class with a Friend for More Fun & Savings',
   description:
-    'Discover experienced yoga teachers in Chiang Mai. Offering private and small group classes (1–5 people) for travelers, expats, and locals of all levels.',
+    'Discover handpicked, experienced yoga teachers in Chiang Mai. Book a private class, or share it with a friend for a more fun and cost-effective experience, perfect for travelers, expats, and locals of all levels.',
   openGraph: {
-    title: 'Private & Small Group Yoga in Chiang Mai | 1–5 People Classes',
+    title:
+      'Handpicked Private Yoga in Chiang Mai | Share a Class with a Friend for More Fun & Savings',
     description:
-      'Experience personalized yoga in Chiang Mai with expert teachers. Book private or small group sessions (1–5 people) tailored to your level and schedule.',
+      'Experience personalized yoga in Chiang Mai with handpicked expert teachers. Book a private session, or bring a friend to share the class for extra fun and savings.',
     url: 'https://oneclass.yoga',
     siteName: 'OneClass Yoga',
     images: [
       {
-        url: 'https://oneclass.yoga/logos/home-og-image.png', // social preview image
+        url: 'https://oneclass.yoga/logos/home-og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Private and small group yoga classes in Chiang Mai',
+        alt: 'Handpicked private yoga classes in Chiang Mai – share a class with a friend for more fun and savings',
       },
     ],
     locale: 'en_US',
@@ -31,9 +33,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Private & Small Group Yoga in Chiang Mai | 1–5 People Classes',
+    title:
+      'Handpicked Private Yoga in Chiang Mai | Share a Class with a Friend for More Fun & Savings',
     description:
-      'Book private or small group yoga sessions in Chiang Mai with experienced teachers, perfect for all levels.',
+      'Book a private yoga class with handpicked teachers, or share it with a friend in Chiang Mai for a fun and cost-effective experience. Personalized sessions for all levels.',
     images: ['https://oneclass.yoga/logos/home-og-image.png'],
   },
 };
@@ -91,13 +94,14 @@ export default async function HomePage() {
         {/* Featured Teachers */}
         <section className="space-y-10">
           <h2 className="text-3xl font-semibold text-center">
-            Hand-Picked Teachers for Your Practice
+            Hand-Picked Teachers for Personalized Yoga Sessions
           </h2>
           <p className="text-center text-gray-600 max-w-2xl mx-auto">
-            Every teacher listed here has been personally vetted to ensure
-            quality, experience, and a welcoming approach. Explore their
-            profiles, discover their unique teaching styles, and find the
-            perfect fit for your yoga journey.
+            Our teachers specialize in a variety of yoga styles and levels, each
+            bringing their unique approach and knowledge. They provide hands-on
+            guidance to help you safely explore advanced movements such as
+            handstands, backbends, and inversions, while also tailoring sessions
+            for beginners or those looking to deepen their practice.
           </p>
 
           <div className="grid gap-6 md:grid-cols-3">
@@ -146,23 +150,32 @@ export default async function HomePage() {
 
         {/* Pricing Preview */}
         <section className="space-y-6 text-center">
-          <h2 className="text-3xl font-semibold">Simple Pricing</h2>
+          <h2 className="text-3xl font-semibold text-center">Simple Pricing</h2>
           <p className="text-gray-600 max-w-xl mx-auto">
-            Choose from a one-time session or a discounted bundle package.
+            Every class is 1.5 hours and includes the studio fee. Choose a
+            one-time session or a discounted bundle for extra savings. Bring a
+            friend and share the experience—it&apos;s even more cost-effective
+            while enjoying personalized guidance and a fun, supportive
+            environment.
           </p>
+
           <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
             <div className="p-6 border border-gray-200 rounded-2xl shadow">
-              <h3 className="text-xl font-semibold">Single Session</h3>
-              <p className="text-gray-500 mt-2">฿1,250 per 1-hour session</p>
-            </div>
+              {' '}
+              <h3 className="text-xl font-semibold">Single Session</h3>{' '}
+              <p className="text-gray-500 mt-2">
+                ฿3,400 per 1.5-hour session
+              </p>{' '}
+            </div>{' '}
             <div className="p-6 border border-gray-200 rounded-2xl shadow">
-              <h3 className="text-xl font-semibold">5-Session Bundle</h3>
-              <p className="text-gray-500 mt-2">฿6,000 – Save ฿250</p>
+              {' '}
+              <h3 className="text-xl font-semibold">3-Session Bundle</h3>{' '}
+              <p className="text-gray-500 mt-2">฿7,000 – Save ฿3,250</p>{' '}
             </div>
           </div>
           <Link href="/pricing">
             <Button className="bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-emerald-700 transition">
-              See Full Pricing
+              Compare Pricing Options
             </Button>
           </Link>
         </section>
@@ -187,7 +200,7 @@ export default async function HomePage() {
               },
               {
                 title: 'Private, Flexible Classes',
-                desc: 'Classes tailored to your schedule and personal goals.',
+                desc: 'Tailored to your schedule and goals — choose 1-on-1 sessions or “share it with a friend” for a more fun experience',
                 icon: '📅',
               },
             ].map((item, idx) => (

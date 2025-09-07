@@ -5,6 +5,7 @@ import { DatePicker } from './DatePicker';
 import { TimeSlotPicker } from './TimeSlot';
 import ParticipantsCount from './ParticipantsCount';
 import { ToBangkokDateOnly } from './BkkTimeConverter';
+import { BUNDLE3, BUNDLE6, PackageType } from '@/lib/packages';
 
 interface BookingCalendarProps {
   onSelect: (date: Date | null, timeSlot: string | null) => void;
@@ -13,7 +14,7 @@ interface BookingCalendarProps {
   teacherSlug: string;
   participants?: number;
   onParticipantsChange?: (value: number) => void;
-  selectedPackage?: 'single' | 'bundle5' | 'bundle10'; // new prop
+  selectedPackage?: PackageType;
   onReadyForCheckout?: (
     date: Date | undefined,
     timeSlot: string | null,
@@ -44,14 +45,14 @@ export default function BookingCalendar({
 
     // Base rate based on selected package
     if (selectedPackage === 'single') total = 3500;
-    if (selectedPackage === 'bundle5') total = 11000;
-    if (selectedPackage === 'bundle10') total = 20000;
+    if (selectedPackage === BUNDLE3) total = 7000;
+    if (selectedPackage === BUNDLE6) total = 13000;
 
     // Extra for second participant
     if (participants === 2) {
       if (selectedPackage === 'single') total += 800;
-      if (selectedPackage === 'bundle5') total += 4000;
-      if (selectedPackage === 'bundle10') total += 8000;
+      if (selectedPackage === BUNDLE3) total += 2400;
+      if (selectedPackage === BUNDLE6) total += 4800;
     }
 
     setRate(total);
@@ -61,6 +62,11 @@ export default function BookingCalendar({
   useEffect(() => {
     calculateRate();
   }, [participants, selectedPackage, calculateRate]);
+
+  // Reset selected time when date changes
+  useEffect(() => {
+    setTimeSlot(null);
+  }, [selectedDate]);
 
   // call parent callbacks
   useEffect(() => {

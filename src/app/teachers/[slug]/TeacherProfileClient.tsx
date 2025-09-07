@@ -12,21 +12,20 @@ import { useRouter } from 'next/navigation';
 import { ToBangkokDateOnly } from '@/components/BkkTimeConverter';
 import YouTubeVideo from '@/components/YoutubeViedo';
 import { formatInTimeZone } from 'date-fns-tz';
+import {
+  BUNDLE3,
+  BUNDLE6,
+  PackageType,
+  packageTitles,
+  packages,
+  priceIdMap,
+} from '@/lib/packages';
+import { Teacher } from '@/types/teacher'; // adjust the path
+
 export default function TeacherProfileClient({
   teacher,
 }: {
-  teacher: {
-    id: string;
-    name: string;
-    photo: string;
-    bio: string;
-    styles: string[];
-    levels: string[];
-    gallery: string[];
-    videoUrl: string;
-    slug: string;
-    weekly_schedule: Record<string, string[]>;
-  };
+  teacher: Teacher;
 }) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
@@ -42,76 +41,11 @@ export default function TeacherProfileClient({
     ? ' (Rest of sessions scheduled with your teacher.)'
     : '';
   const [error, setError] = useState('');
-  const [selectedPackage, setSelectedPackage] = useState<
-    'single' | 'bundle5' | 'bundle10' | null
-  >(null);
+  const [selectedPackage, setSelectedPackage] = useState<PackageType | null>(
+    null
+  );
 
   const router = useRouter();
-
-  // Single and bundle prices depending on participants
-  const priceIdMap: Record<string, Record<number, string>> = {
-    single: {
-      1: process.env.NEXT_PUBLIC_STRIPE_SINGLE_1 || '',
-      2: process.env.NEXT_PUBLIC_STRIPE_SINGLE_2 || '',
-    },
-    bundle5: {
-      1: process.env.NEXT_PUBLIC_STRIPE_BUNDLE5_1 || '',
-      2: process.env.NEXT_PUBLIC_STRIPE_BUNDLE5_2 || '',
-    },
-    bundle10: {
-      1: process.env.NEXT_PUBLIC_STRIPE_BUNDLE10_1 || '',
-      2: process.env.NEXT_PUBLIC_STRIPE_BUNDLE10_2 || '',
-    },
-  };
-
-  type BadgeVariant =
-    | 'secondary'
-    | 'destructive'
-    | 'default'
-    | 'outline'
-    | null
-    | undefined;
-
-  const packages: Array<{
-    id: 'single' | 'bundle5' | 'bundle10';
-    title: string;
-    description: string;
-    friendNote: string;
-    price: string;
-    badge: string | null;
-    badgeVariant: BadgeVariant;
-  }> = [
-    {
-      id: 'single',
-      title: 'Single Session',
-      description: 'Enjoy a hassle-free yoga session guided by your teacher!',
-      friendNote: 'Bring a friend for just +800฿ — mats & props included!',
-      price: '3,500 THB',
-      badge: null,
-      badgeVariant: undefined,
-    },
-    {
-      id: 'bundle5',
-      title: 'Bundle of 5',
-      description:
-        'Save 6,500฿ vs single sessions! Perfect for regular practice. ',
-      friendNote:
-        'Share the joy & save together! Add a friend for only +800฿ per class!',
-      price: '11,000 THB',
-      badge: 'Most Popular',
-      badgeVariant: 'destructive',
-    },
-    {
-      id: 'bundle10',
-      title: 'Bundle of 10',
-      description:
-        'Biggest savings — 15,000฿ off singles! Commit to your growth.',
-      friendNote: 'Double the fun! Add a friend for just +800฿ per class!',
-      price: '20,000 THB',
-      badge: 'Best Value',
-      badgeVariant: 'secondary',
-    },
-  ];
 
   useEffect(() => {
     if (window.location.hash === '#booking-calendar') {
@@ -143,12 +77,14 @@ export default function TeacherProfileClient({
       setError('Please select a date and time slot before booking.');
       return;
     }
+    console.log(selectedPackage);
 
     let priceId = null;
     if (selectedPackage) {
       const participantCount = participants;
       priceId = priceIdMap[selectedPackage][participantCount] || null;
     }
+    console.log(priceId);
 
     if (!priceId) {
       setError('Could not determine price for selected options.');
@@ -168,15 +104,8 @@ export default function TeacherProfileClient({
 
     router.push(`/booking/checkout?${query}`);
   };
-  const packageTitles: Record<'single' | 'bundle5' | 'bundle10', string> = {
-    single: 'Choose Your Date & Time',
-    bundle5: 'Choose Your First Class Date & Time',
-    bundle10: 'Choose Your First Class Date & Time',
-  };
 
-  const handlePackageSelect = (
-    packageType: 'single' | 'bundle5' | 'bundle10'
-  ) => {
+  const handlePackageSelect = (packageType: PackageType) => {
     setSelectedPackage(packageType);
     setBookingTitle(packageTitles[packageType]);
     setShowNote(packageType !== 'single');
@@ -285,7 +214,7 @@ export default function TeacherProfileClient({
                   onClick={() => handlePackageSelect(pkg.id)}
                   className={`cursor-pointer p-6 rounded-2xl border shadow-sm transition relative
           ${selectedPackage === pkg.id ? 'border-orange-500 ring-2 ring-orange-400' : 'border-gray-200 hover:shadow-md'}
-          ${pkg.id === 'bundle5' ? 'shadow-md hover:shadow-lg' : ''}
+          ${pkg.id === BUNDLE3 ? 'shadow-md hover:shadow-lg' : ''}
         `}
                 >
                   {/* Badge */}
@@ -293,8 +222,8 @@ export default function TeacherProfileClient({
                     <Badge
                       className={`
       absolute top-2 right-2 text-xs px-2 py-1 rounded-full
-      ${pkg.id === 'bundle5' ? 'bg-orange-500 text-white' : ''}
-      ${pkg.id === 'bundle10' ? 'bg-green-500 text-white' : ''}
+      ${pkg.id === BUNDLE3 ? 'bg-orange-500 text-white' : ''}
+      ${pkg.id === BUNDLE6 ? 'bg-green-500 text-white' : ''}
       ${pkg.id === 'single' ? 'bg-gray-300 text-gray-800' : ''}
     `}
                     >

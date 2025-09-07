@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 export default function BookingSuccessClient() {
   const searchParams = useSearchParams();
@@ -146,30 +147,46 @@ export default function BookingSuccessClient() {
 
       {/* Contact Info */}
       <div className="bg-gray-50 border border-gray-100 text-gray-500 p-5 rounded-lg text-left text-sm">
-        <h3 className="text-base font-semibold text-gray-600 mb-2">
+        <h3 className="text-base font-semibold text-gray-600 mb-4">
           Have questions?
         </h3>
-        <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-start">
-          <p>
-            📞 <strong>Line | WhatsApp | Phone:</strong>
-          </p>
-          <p> +66-95-047-4936 </p>
+
+        {/* QR codes section */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6 justify-items-center">
+          {/* Line */}
+          <div className="flex flex-col items-center">
+            <p className="mb-2 font-semibold text-gray-600">Line</p>
+            <Image
+              src="/line.JPG"
+              alt="Line QR Code"
+              width={250}
+              height={250}
+              className="w-24 h-24 rounded-md border"
+            />
+          </div>
+
+          {/* WhatsApp */}
+          <div className="flex flex-col items-center">
+            <p className="mb-2 font-semibold text-gray-600">WhatsApp</p>
+            <Image
+              src="/whatsapp.JPG"
+              alt="WhatsApp QR Code"
+              width={250}
+              height={250}
+              className="w-24 h-24 rounded-md border"
+            />
+          </div>
         </div>
-        <p className="mb-2 flex items-center gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="#07C160"
-          >
-            <path d="M17.5 3C21.09 3 24 5.69 24 9.01c0 2.23-1.34 4.19-3.39 5.27l.84 2.96-3.12-1.7a8.43 8.43 0 0 1-2.83.47c-3.59 0-6.5-2.69-6.5-6.01C9 5.69 12 3 15.5 3zm-10 5C11.09 8 14 10.69 14 14.01c0 2.23-1.34 4.19-3.39 5.27l.84 2.96-3.12-1.7A8.43 8.43 0 0 1 5.5 21C1.91 21-1 18.31-1 15c0-3.32 2.91-6 6.5-6z" />
-          </svg>
-          <strong>WeChat ID:</strong> OneClassYoga
-        </p>
-        <p className="flex items-center gap-2">
-          📧 <strong>Email:</strong> support@oneclass.yoga
-        </p>
+
+        {/* WeChat and Email */}
+        <div className="flex flex-col sm:items-center gap-4 justify-center text-center">
+          <p>
+            <strong>WeChat ID:</strong> OneClassYoga
+          </p>
+          <p>
+            📧 <strong>Email:</strong> support@oneclass.yoga
+          </p>
+        </div>
       </div>
 
       <div className="mt-8 text-center">

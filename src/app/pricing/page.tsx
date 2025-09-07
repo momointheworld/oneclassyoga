@@ -47,8 +47,8 @@ const pricingOptions = [
     badgeVariant: undefined,
   },
   {
-    id: 'bundle5',
-    title: 'Bundle of 5',
+    id: 'bundle3',
+    title: 'Bundle of 3',
     description:
       'Save 6,500฿ vs single sessions! Perfect for regular practice.',
     friendNote:
@@ -58,8 +58,8 @@ const pricingOptions = [
     badgeVariant: 'destructive',
   },
   {
-    id: 'bundle10',
-    title: 'Bundle of 10',
+    id: 'bundle6',
+    title: 'Bundle of 6',
     description:
       'Biggest savings — 15,000฿ off singles! Commit to your growth.',
     friendNote: 'Double the fun! Add a friend for +800฿ per class!',
@@ -103,15 +103,15 @@ export default function PricingPage() {
             <div
               key={option.id}
               className={`relative flex flex-col justify-between border rounded-xl p-6 shadow text-center hover:shadow-lg transition ${
-                option.id === 'bundle5' ? 'bg-blue-50' : ''
+                option.id === 'bundle3' ? 'bg-blue-50' : ''
               }`}
             >
               {option.badge && (
                 <Badge
                   className={`
                     absolute top-2 right-2 text-xs px-2 py-1 rounded-full
-                    ${option.id === 'bundle5' ? 'bg-orange-500 text-white' : ''}
-                    ${option.id === 'bundle10' ? 'bg-green-500 text-white' : ''}
+                    ${option.id === 'bundle3' ? 'bg-orange-500 text-white' : ''}
+                    ${option.id === 'bundle6' ? 'bg-green-500 text-white' : ''}
                     ${option.id === 'single' ? 'bg-gray-300 text-gray-800' : ''}
                   `}
                 >
@@ -205,14 +205,14 @@ export default function PricingPage() {
                 withFriend: { total: '4,300 THB', per: '2,150 THB each' },
               },
               {
-                package: 'Bundle of 5',
-                onePerson: { total: '11,000 THB', per: '2,200 THB' },
-                withFriend: { total: '15,000 THB', per: '1,500 THB each' },
+                package: 'Bundle of 3',
+                onePerson: { total: '7,000 THB', per: '2,200 THB' },
+                withFriend: { total: '9,400 THB', per: '1,500 THB each' },
               },
               {
-                package: 'Bundle of 10',
-                onePerson: { total: '20,000 THB', per: '2,000 THB' },
-                withFriend: { total: '28,000 THB', per: '1,400 THB each' },
+                package: 'Bundle of 6',
+                onePerson: { total: '13,000 THB', per: '2,000 THB' },
+                withFriend: { total: '17,800 THB', per: '1,400 THB each' },
               },
             ].map((item) => (
               <div

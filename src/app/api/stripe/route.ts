@@ -84,11 +84,11 @@ export async function POST(req: Request) {
           adjustable_quantity: {
             enabled: true,
             minimum: 1,
-            maximum: 4,
+            maximum: 2,
           },
         },
       ];
-    } else if (booking_type === 'bundle5' || booking_type === 'bundle10') {
+    } else if (booking_type.startsWith('bundle')) {
       sessionOptions.line_items = [
         {
           price: priceId,
