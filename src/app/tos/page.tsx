@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     title: 'Terms of Service | OneClass',
     description:
       'Review the OneClass Terms of Service, including booking and cancellation policies.',
-    images: ['https://oneromeo.com/logos/og-image.png'],
+    images: ['https://oneromeo.com/images/logos/og-image.png'],
   },
   alternates: {
     canonical: 'https://oneromeo.com/tos',
@@ -61,34 +61,34 @@ export default function TermsPage() {
         Payment confirmation is required to secure your booking slot. We are not
         responsible for missed sessions due to payment issues.
       </p>
+      <p className="mb-4">
+        <strong>Studio, yoga mat, and props</strong> are included in your
+        payment.
+      </p>
 
       <h2 className="text-2xl font-semibold mt-8 mb-4">
-        Cancellations, Refunds, and Rescheduling
+        Cancellation and Rescheduling Policy
       </h2>
+
       <p className="mb-4">
-        <strong>No refunds</strong> are provided for either single-session or
-        bundle purchases under any circumstances.
-      </p>
-      <p className="mb-4">
-        Rescheduling is permitted with the same teacher, subject to
-        availability. You may also add additional participants (up to 5 in
-        total) to your session for an additional fee.
+        All bookings are <strong>non-refundable</strong>. However, you may
+        reschedule or transfer your class to another person under the conditions
+        below.
       </p>
 
-      <h2 className="text-2xl font-semibold mt-8 mb-4">Class Location</h2>
-      <p className="mb-4">
-        If a studio is required, the studio will be selected by us and will be
-        within a 20-minute distance of Chiang Mai Old Town. You may also choose
-        your own location for the class (e.g., your condo garden, a park, or
-        another suitable space). However, if more than 2 participants attend, a
-        studio is required.
-      </p>
-
-      <h2 className="text-2xl font-semibold mt-8 mb-4">Equipment</h2>
-      <p className="mb-4">
-        A yoga mat can be provided upon request. You are responsible for any
-        additional equipment unless otherwise agreed in advance.
-      </p>
+      <ul className="list-disc ml-6 mb-4">
+        <li>
+          Rescheduling is allowed up to <strong>24 hours before</strong> the
+          class.
+        </li>
+        <li>
+          You may transfer your booking to another person with prior notice.
+        </li>
+        <li>
+          <strong>No rescheduling or transfers</strong> are allowed for late
+          cancellations, no-shows, or arrivals more than 30 minutes late.
+        </li>
+      </ul>
 
       <h2 className="text-2xl font-semibold mt-8 mb-4">User Conduct</h2>
       <p className="mb-4">

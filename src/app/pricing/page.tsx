@@ -3,15 +3,16 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { PageContainer } from '@/components/PageContainer';
 import { Badge } from '@/components/ui/badge';
+import { packages } from '@/lib/packages';
 
 export const metadata = {
   title: 'Yoga Pricing in Chiang Mai | Private Classes & Bundles',
   description:
-    'Explore flexible yoga pricing in Chiang Mai. Book single sessions or bundles with up to 3 different teachers. Transparent rates, no hidden fees, perfect for individuals, friends, or family.',
+    'Explore flexible yoga pricing in Chiang Mai. Book single sessions, share a class with a friend, or choose from class bundles for better value. Transparent rates, no hidden fees.',
   openGraph: {
     title: 'Yoga Pricing in Chiang Mai | Private Classes & Bundles',
     description:
-      'Flexible and transparent yoga pricing in Chiang Mai. Choose single sessions or bundles, explore up to 3 different teachers, and enjoy private classes tailored to your needs.',
+      'Flexible and transparent yoga pricing in Chiang Mai. Choose single sessions, share a class with a friend, or get more value with class bundles tailored to your needs.',
     url: 'https://oneclass.yoga/pricing',
     siteName: 'OneClass Yoga',
     images: [
@@ -29,47 +30,82 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Yoga Pricing in Chiang Mai | Private Classes & Bundles',
     description:
-      'Flexible yoga pricing in Chiang Mai. Single sessions or bundles with up to 3 different teachers. Transparent rates, no hidden fees.',
+      'Flexible yoga pricing in Chiang Mai. Book single sessions, share a class with a friend, or choose from bundles for better value. Transparent rates, no hidden fees.',
     images: ['https://oneclass.yoga/images/logos/pricing-og-image.png'],
   },
 };
 
 export const revalidate = 60;
 
-const pricingOptions = [
-  {
-    id: 'single',
-    title: 'Single Session',
-    description: 'Enjoy a hassle-free yoga session guided by your teacher!',
-    friendNote: 'Bring a friend for just +800฿ — mats & props included!',
-    price: '3,500 THB',
-    badge: null,
-    badgeVariant: undefined,
-  },
-  {
-    id: 'bundle3',
-    title: 'Bundle of 3',
-    description:
-      'Save 6,500฿ vs single sessions! Perfect for regular practice.',
-    friendNote:
-      'Share the joy & save together! Add a friend for +800฿ per class!',
-    price: '11,000 THB',
-    badge: 'Most Popular',
-    badgeVariant: 'destructive',
-  },
-  {
-    id: 'bundle6',
-    title: 'Bundle of 6',
-    description:
-      'Biggest savings — 15,000฿ off singles! Commit to your growth.',
-    friendNote: 'Double the fun! Add a friend for +800฿ per class!',
-    price: '20,000 THB',
-    badge: 'Best Value',
-    badgeVariant: 'secondary',
-  },
-];
-
 export default function PricingPage() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: 'Private Yoga Classes in Chiang Mai',
+    description:
+      'Flexible yoga classes in Chiang Mai. Book a private 1-on-1 session, share with a friend, or purchase a bundle of classes. Transparent pricing, no hidden fees.',
+    brand: {
+      '@type': 'Organization',
+      name: 'OneClass Yoga',
+      url: 'https://oneclass.yoga',
+    },
+    offers: [
+      // Single session
+      {
+        '@type': 'Offer',
+        name: 'Private 1-on-1 Yoga Session (1.5 hours)',
+        priceCurrency: 'THB',
+        price: '3500',
+        url: 'https://oneclass.yoga/pricing',
+        availability: 'https://schema.org/InStock',
+      },
+      {
+        '@type': 'Offer',
+        name: 'Private 1-on-1 Yoga Session with Friend (1.5 hours)',
+        priceCurrency: 'THB',
+        price: '4300', // 3500 + 800
+        url: 'https://oneclass.yoga/pricing',
+        availability: 'https://schema.org/InStock',
+      },
+
+      // 3-class bundle
+      {
+        '@type': 'Offer',
+        name: '3-Class Bundle (1.5 hours per session)',
+        priceCurrency: 'THB',
+        price: '7000',
+        url: 'https://oneclass.yoga/pricing',
+        availability: 'https://schema.org/InStock',
+      },
+      {
+        '@type': 'Offer',
+        name: '3-Class Bundle with Friend (1.5 hours per session)',
+        priceCurrency: 'THB',
+        price: '9400', // 7000 + 2400
+        url: 'https://oneclass.yoga/pricing',
+        availability: 'https://schema.org/InStock',
+      },
+
+      // 6-class bundle
+      {
+        '@type': 'Offer',
+        name: '6-Class Bundle (1.5 hours per session)',
+        priceCurrency: 'THB',
+        price: '13000',
+        url: 'https://oneclass.yoga/pricing',
+        availability: 'https://schema.org/InStock',
+      },
+      {
+        '@type': 'Offer',
+        name: '6-Class Bundle with Friend (1.5 hours per session)',
+        priceCurrency: 'THB',
+        price: '17800', // 13000 + 4800
+        url: 'https://oneclass.yoga/pricing',
+        availability: 'https://schema.org/InStock',
+      },
+    ],
+  };
+
   return (
     <PageContainer>
       <div className="min-h-screen px-4 flex flex-col items-center bg-white text-gray-900">
@@ -99,7 +135,7 @@ export default function PricingPage() {
 
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-4xl">
-          {pricingOptions.map((option) => (
+          {packages.map((option) => (
             <div
               key={option.id}
               className={`relative flex flex-col justify-between border rounded-xl p-6 shadow text-center hover:shadow-lg transition ${
@@ -147,7 +183,6 @@ export default function PricingPage() {
           <h2 className="text-2xl font-semibold mb-6 text-center">
             Price Comparison
           </h2>
-
           {/* Desktop Table */}
           <div className="hidden md:block overflow-x-auto mt-8 w-full">
             <table className="min-w-full border border-gray-200 text-center">
@@ -165,9 +200,9 @@ export default function PricingPage() {
                 </tr>
                 <tr>
                   <th className="px-4 py-2 border">Total Price</th>
-                  <th className="px-4 py-2 border">Price / Person</th>
+                  <th className="px-4 py-2 border">Price / Person / Session</th>
                   <th className="px-4 py-2 border">Total Price</th>
-                  <th className="px-4 py-2 border">Price / Person</th>
+                  <th className="px-4 py-2 border">Price / Person / Session</th>
                 </tr>
               </thead>
               <tbody>
@@ -176,21 +211,21 @@ export default function PricingPage() {
                   <td className="px-4 py-2 border">3,500 THB</td>
                   <td className="px-4 py-2 border">3,500 THB</td>
                   <td className="px-4 py-2 border">4,300 THB</td>
-                  <td className="px-4 py-2 border">2,150 THB each</td>
+                  <td className="px-4 py-2 border">2,150 THB</td>
                 </tr>
                 <tr className="hover:bg-gray-50">
-                  <td className="px-4 py-2 border">Bundle of 5</td>
-                  <td className="px-4 py-2 border">11,000 THB</td>
-                  <td className="px-4 py-2 border">2,200 THB</td>
-                  <td className="px-4 py-2 border">15,000 THB</td>
-                  <td className="px-4 py-2 border">1,500 THB each</td>
+                  <td className="px-4 py-2 border">Bundle of 3</td>
+                  <td className="px-4 py-2 border">7,000 THB</td>
+                  <td className="px-4 py-2 border">2,333 THB</td>
+                  <td className="px-4 py-2 border">9,400 THB</td>
+                  <td className="px-4 py-2 border">1,567 THB</td>
                 </tr>
                 <tr className="hover:bg-gray-50">
-                  <td className="px-4 py-2 border">Bundle of 10</td>
-                  <td className="px-4 py-2 border">20,000 THB</td>
-                  <td className="px-4 py-2 border">2,000 THB</td>
-                  <td className="px-4 py-2 border">28,000 THB</td>
-                  <td className="px-4 py-2 border">1,400 THB each</td>
+                  <td className="px-4 py-2 border">Bundle of 6</td>
+                  <td className="px-4 py-2 border">13,000 THB</td>
+                  <td className="px-4 py-2 border">2,167 THB</td>
+                  <td className="px-4 py-2 border">17,800 THB</td>
+                  <td className="px-4 py-2 border">1,483 THB</td>
                 </tr>
               </tbody>
             </table>
@@ -202,17 +237,17 @@ export default function PricingPage() {
               {
                 package: 'Single',
                 onePerson: { total: '3,500 THB', per: '3,500 THB' },
-                withFriend: { total: '4,300 THB', per: '2,150 THB each' },
+                withFriend: { total: '4,300 THB', per: '2,150 THB' },
               },
               {
                 package: 'Bundle of 3',
-                onePerson: { total: '7,000 THB', per: '2,200 THB' },
-                withFriend: { total: '9,400 THB', per: '1,500 THB each' },
+                onePerson: { total: '7,000 THB', per: '2,333 THB' },
+                withFriend: { total: '9,400 THB', per: '1,567 THB' },
               },
               {
                 package: 'Bundle of 6',
-                onePerson: { total: '13,000 THB', per: '2,000 THB' },
-                withFriend: { total: '17,800 THB', per: '1,400 THB each' },
+                onePerson: { total: '13,000 THB', per: '2,167 THB' },
+                withFriend: { total: '17,800 THB', per: '1,483 THB' },
               },
             ].map((item) => (
               <div
@@ -225,7 +260,7 @@ export default function PricingPage() {
                   <span>{item.onePerson.total}</span>
                 </div>
                 <div className="flex justify-between mb-1">
-                  <span className="text-gray-500">One Person / Each:</span>
+                  <span className="text-gray-500">One Person / Session:</span>
                   <span>{item.onePerson.per}</span>
                 </div>
                 <div className="flex justify-between mb-1">
@@ -233,7 +268,7 @@ export default function PricingPage() {
                   <span>{item.withFriend.total}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">With Friend / Each:</span>
+                  <span className="text-gray-500">With Friend / Session:</span>
                   <span>{item.withFriend.per}</span>
                 </div>
               </div>
@@ -255,6 +290,11 @@ export default function PricingPage() {
           </p>
         </div>
       </div>
+      <script
+        type="application/ld+json"
+        // The JSON must be stringified
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     </PageContainer>
   );
 }

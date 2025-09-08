@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
+import { Button } from '@/components/ui/button';
 
 export default function BookingSuccessClient() {
   const searchParams = useSearchParams();
@@ -15,6 +16,7 @@ export default function BookingSuccessClient() {
   const isBundle = searchParams.get('bundle') === 'true';
 
   const [copied, setCopied] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [emailError, setEmailError] = useState(false);
 
@@ -34,28 +36,32 @@ export default function BookingSuccessClient() {
     }
   };
 
-  // Send booking confirmation email
-  useEffect(() => {
+  // Manual resend email
+  const handleResendEmail = async () => {
     if (!sessionId) return;
+    setLoading(true);
+    setEmailSent(false);
+    setEmailError(false);
 
-    const sendEmail = async () => {
-      try {
-        const res = await fetch('/api/send-confirmation', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionId }),
-        });
-        const data = await res.json();
-        if (data.success) setEmailSent(true);
-        else setEmailError(true);
-      } catch (err) {
-        console.error('Failed to send confirmation email', err);
+    try {
+      const res = await fetch('/api/send-confirmation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEmailSent(true);
+      } else {
         setEmailError(true);
       }
-    };
-
-    sendEmail();
-  }, [sessionId]);
+    } catch (err) {
+      console.error('Failed to send confirmation email', err);
+      setEmailError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto p-8 text-center">
@@ -80,16 +86,29 @@ export default function BookingSuccessClient() {
         </div>
       )}
 
-      {/* Email status */}
-      {emailSent && (
-        <p className="text-sm text-green-600 mb-4">
-          Confirmation email sent! 📧
-        </p>
-      )}
-      {emailError && (
-        <p className="text-sm text-red-600 mb-4">
-          Failed to send confirmation email. Please contact support.
-        </p>
+      {/* Resend button */}
+      {sessionId && (
+        <div className="mb-6">
+          <Button
+            onClick={handleResendEmail}
+            variant="destructive"
+            disabled={loading}
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50"
+          >
+            {loading ? 'Sending...' : 'Resend Confirmation Email'}
+          </Button>
+
+          {emailSent && (
+            <p className="text-sm text-green-600 mt-2">
+              Confirmation email resent! 📧
+            </p>
+          )}
+          {emailError && (
+            <p className="text-sm text-red-600 mt-2">
+              Failed to send email. Please contact support.
+            </p>
+          )}
+        </div>
       )}
 
       {hasBookingDetails ? (

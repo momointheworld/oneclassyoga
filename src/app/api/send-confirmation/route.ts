@@ -3,6 +3,7 @@
 import { Resend } from 'resend';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getBundleSize } from '@/lib/packages';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -34,9 +35,8 @@ export async function POST(req: NextRequest) {
           .replace(/\b\w/g, (char: string) => char.toUpperCase())
       : '';
 
-    const isBundle =
-      booking.booking_type === 'bundle5' || booking.booking_type === 'bundle10';
-    const bundleSize = booking.booking_type === 'bundle5' ? 5 : 10;
+    const isBundle = booking.booking_type.startsWith('bundle');
+    const bundleSize = getBundleSize(booking.booking_type);
 
     const subject = isBundle
       ? 'Your Yoga Class Bundle is Confirmed! 🌸'
@@ -50,47 +50,116 @@ export async function POST(req: NextRequest) {
       : '';
 
     const html = `
-      <div style="font-family:Arial, sans-serif; color:#333; line-height:1.5; font-size:16px;">
-        <h2 style="font-size:22px; color:#222; margin-bottom:16px;">🎉 Booking Confirmed!</h2>
-        
-        <p style="margin-bottom:12px;">Hi ${booking.customer_name},</p>
-        
-        <p style="margin-bottom:16px;">
-          Thank you for booking with OneClass Yoga. We’re excited to welcome you and make your experience enjoyable and relaxing.
-        </p>
-        
-        <h3 style="font-size:18px; color:#222; margin-bottom:12px;">Here are your booking details:</h3>
-        <ul style="margin-bottom:16px; padding-left:20px;">
-          ${teacherName ? `<li><strong>Teacher:</strong> ${teacherName}</li>` : ''}
-          ${booking.date ? `<li><strong>Date:</strong> ${booking.date}</li>` : ''}
-          ${booking.time_slot ? `<li><strong>Time:</strong> ${booking.time_slot}</li>` : ''}
-          ${booking.participants ? `<li><strong>Participants:</strong> ${booking.participants}</li>` : ''}
-          <li><strong>Booking Reference:</strong> ${sessionId}</li>
-        </ul>
+  <div style="font-family:Arial, sans-serif; color:#333; line-height:1.6; font-size:16px; max-width:600px; margin:0 auto; padding:20px;">
+    <!-- Header -->
+    <h2 style="font-size:22px; color:#222; margin-bottom:16px;">🎉 Booking Confirmed!</h2>
+    
+    <!-- Greeting -->
+    <p style="margin-bottom:12px;">Hello ${booking.customer_name},</p>
+    
+    <!-- Intro -->
+    <p style="margin-bottom:16px;">
+      Thank you for booking with OneClass Yoga.
+      ${bundleNote}
+    </p>
+    
+    <!-- Booking Details -->
+    <h3 style="font-size:18px; color:#222; margin-bottom:12px;">Here are your booking details:</h3>
+    <ul style="margin-bottom:16px; padding-left:20px;">
+      ${teacherName ? `<li><strong>Teacher:</strong> ${teacherName}</li>` : ''}
+      ${booking.date ? `<li><strong>Date:</strong> ${booking.date}</li>` : ''}
+      ${booking.time_slot ? `<li><strong>Time:</strong> ${booking.time_slot}</li>` : ''}
+      ${booking.participants ? `<li><strong>Participants:</strong> ${booking.participants}</li>` : ''}
+      <li><strong>Booking Reference:</strong> ${sessionId}</li>
+    </ul>
 
-        ${bundleNote}
+    <!-- Location -->
+    <p style="margin-bottom:16px;">
+      📍 <strong>Location:</strong> 
+      <a href="https://www.google.com/maps/place/The+Bodhi+Tree+House/@18.7890045,98.9883651,17z" 
+         style="color:#1a73e8; text-decoration:none;" target="_blank">
+         The Bodhi Tree House
+      </a>
+    </p>
 
-        <p style="margin-bottom:16px;">
-          If you have any questions or need to make changes, feel free to reach out to us at <strong>support@oneclass.yoga</strong>. We’re happy to help!
-        </p>
-        
-        <p style="margin-bottom:16px;">Looking forward to seeing you on the mat! 🧘‍♀️</p>
-        
-        <p>Warm regards,<br />Lifen Li from OneClass Yoga</p>
-        <p style="color: gray; font-size: 13px">
-          Line | WhatsApp | Phone: +66-95-047-4936 </br>
-          FaceBook: facebook.com/oneclassyoga </br>
-          WeChat ID: OneClassYoga</br>
-          Website: <a href="https://oneclass.yoga" style="color:#1a73e8; text-decoration:none;">oneclass.yoga</a>
-        </p>
-      </div>
-    `;
+    <!-- Closing Note -->
+      <p style="margin-bottom:16px; color:#444;">
+      🔔 Please note: Any changes or rescheduling must be made at least 
+      <strong>48 hours in advance</strong>, as our teachers’ schedules are tight.  
+      We also kindly ask that you arrive on time (or 5–10 minutes earlier) 
+      so you can settle in before class begins.
+    </p>
+
+    
+    <p style="margin-bottom:24px;">Looking forward to seeing you on the mat! 🧘‍♀️</p>
+
+    <!-- Signature -->
+    <div style="border-top:1px solid #ddd; padding-top:16px; margin-top:24px; font-size:14px; color:#555;">
+      <p style="margin:0 0 6px 0;">
+        Warm regards,<br />
+        <strong style="font-size:16px; color:#111;">Lifen Li</strong><br />
+        <span style="color:#666;">OneClass Yoga</span>
+      </p>
+
+      <!-- Website -->
+      <p style="margin:6px 0;">
+        <a href="https://oneclass.yoga" style="color:#1a73e8; text-decoration:none; font-weight:500;">
+          oneclass.yoga
+        </a>
+      </p>
+
+      <!-- Social Icons -->
+      <p style="margin:8px 0 0; padding:0;">
+        <a href="https://youtube.com/@oneclassyoga" style="display:inline-block; margin-right:8px;">
+          <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" width="22" height="22" style="display:block;" />
+        </a>
+        <a href="https://instagram.com/oneclassyoga" style="display:inline-block; margin-right:8px;">
+          <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="22" height="22" style="display:block;" />
+        </a>
+        <a href="https://facebook.com/oneclassyoga" style="display:inline-block;">
+          <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" width="22" height="22" style="display:block;" />
+        </a>
+      </p>
+    </div>
+  </div>
+`;
+
+    const text = `
+🎉 Booking Confirmed!
+
+Hello ${booking.customer_name},
+
+Thank you for booking with OneClass Yoga.
+${isBundle ? `You’ve purchased a ${bundleSize}-class bundle. Your first class is now confirmed, and the rest of your sessions will be scheduled together with your teacher.` : ''}
+
+Here are your booking details:
+${teacherName ? `- Teacher: ${teacherName}\n` : ''}${booking.date ? `- Date: ${booking.date}\n` : ''}${booking.time_slot ? `- Time: ${booking.time_slot}\n` : ''}${booking.participants ? `- Participants: ${booking.participants}\n` : ''}- Booking Reference: ${sessionId}
+
+📍 Location: The Bodhi Tree House
+Google Maps: https://goo.gl/maps/NtM7puFG5Loq5Qwv6
+
+🔔 Please note: Any changes or rescheduling must be made at least 48 hours in advance, as our teachers’ schedules are tight.  
+We also kindly ask that you arrive on time (or 5–10 minutes earlier) so you can settle in before class begins.
+
+Looking forward to seeing you on the mat! 🧘‍♀️
+
+Warm regards,  
+Lifen Li  
+OneClass Yoga  
+https://oneclass.yoga  
+
+Follow us:  
+YouTube: https://youtube.com/oneclassyoga  
+Instagram: https://instagram.com/oneclassyoga  
+Facebook: https://facebook.com/oneclassyoga
+`;
 
     await resend.emails.send({
       from: 'OneClass Yoga <support@oneclass.yoga>',
       to: booking.customer_email,
       subject,
       html,
+      text,
     });
 
     return NextResponse.json({ success: true });

@@ -1,5 +1,36 @@
 import { PageContainer } from '@/components/PageContainer';
 import Image from 'next/image';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Yoga Studio Location in Chiang Mai | OneClass Yoga',
+  description:
+    'Find the OneClass Yoga studio in Chiang Mai Old Town. Private yoga classes in a quiet, airy venue with mats and props provided. Perfect for focused sessions.',
+  openGraph: {
+    title: 'Yoga Studio Location in Chiang Mai | OneClass Yoga',
+    description:
+      'Discover OneClass Yoga’s private studio in Chiang Mai Old Town. Enjoy quiet surroundings, full props, and a comfortable space for yoga sessions.',
+    url: 'https://oneclass.yoga/locations',
+    siteName: 'OneClass Yoga',
+    images: [
+      {
+        url: 'https://oneclass.yoga/images/studio-oneclass.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'OneClass Yoga Studio in Chiang Mai',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Yoga Studio Location in Chiang Mai | OneClass Yoga',
+    description:
+      'Visit OneClass Yoga in Chiang Mai Old Town. Private classes in a quiet venue with mats and props included.',
+    images: ['https://oneclass.yoga/images/studio-oneclass.jpg'],
+  },
+};
 
 export default function LocationPage() {
   return (
@@ -29,6 +60,15 @@ export default function LocationPage() {
           </div>
         </div>
 
+        <div className="flex justify-center">
+          <Image
+            src="/images/studio-oneclass.jpg"
+            alt="Yoga Venue"
+            width={800}
+            height={600}
+            className="h-auto rounded-lg shadow-md"
+          />
+        </div>
         {/* Address */}
         <div className="space-y-2">
           <h2 className="text-lg font-semibold mb-2">Address</h2>

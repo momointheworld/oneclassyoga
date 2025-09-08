@@ -44,6 +44,7 @@ export default function TeacherProfileClient({
   const [selectedPackage, setSelectedPackage] = useState<PackageType | null>(
     null
   );
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const router = useRouter();
 
@@ -273,25 +274,38 @@ export default function TeacherProfileClient({
           )}
 
           {/* FOOTER ACTIONS */}
-          <div className="mt-6 flex justify-between items-center">
-            <Link
-              href="/teachers"
-              className="text-blue-600 hover:underline text-sm font-medium"
-            >
-              ← Back to teachers
-            </Link>
-            <Button
-              onClick={handleBooking}
-              disabled={!selectedPackage}
-              className="bg-orange-600 text-white text-lg font-medium px-4 py-2 rounded-xl hover:bg-orange-700 transition"
-            >
-              Book Now
-            </Button>
-          </div>
+          <div className="mt-6 flex flex-row justify-end items-center flex-wrap gap-4">
+            <div className="flex items-end flex-col gap-2 flex-wrap">
+              <div className="flex flex-row items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="tos"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  className="w-4 h-4 accent-orange-600"
+                />
+                <label htmlFor="tos" className="text-gray-700 text-sm">
+                  I agree to the{' '}
+                  <Link href="/tos" className="text-blue-600 underline">
+                    Terms of Service
+                  </Link>
+                </label>
+              </div>
+              <Button
+                onClick={handleBooking}
+                disabled={!selectedPackage || !agreedToTerms}
+                className="bg-orange-600 text-white text-lg font-medium px-4 py-2 rounded-xl hover:bg-orange-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Book Now
+              </Button>
 
-          {error && (
-            <p className="text-red-600 text-sm mt-2 text-right">{error}</p>
-          )}
+              {error && (
+                <p className="text-red-600 text-sm mt-2 sm:mt-0 text-center sm:text-right w-full sm:w-auto">
+                  {error}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </main>
