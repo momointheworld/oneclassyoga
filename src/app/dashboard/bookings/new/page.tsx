@@ -25,6 +25,10 @@ type Booking = {
   bundle_size?: number;
   bundle_id?: number | null;
   session_id?: string;
+  review_sent: boolean;
+  review_submitted: boolean;
+  review_approved: boolean;
+  review_token: string;
 };
 
 type Teacher = {
@@ -146,7 +150,7 @@ export default function AddBookingPage() {
   }, [teacher, selectedDate]);
 
   const handleSubmit = async () => {
-    if (!selectedDate || !timeSlot || !customerName || !selectedTeacherSlug) {
+    if (!selectedDate || !timeSlot || !selectedTeacherSlug) {
       setMessage('Please fill in all required fields.');
       return;
     }
@@ -173,7 +177,7 @@ export default function AddBookingPage() {
 
     const { error } = await supabase.from('bookings').insert([
       {
-        customer_name: customerName,
+        customer_name: customerName || 'n/a',
         customer_email: customerEmail,
         date: ToBangkokDateOnly(selectedDate),
         time_slot: timeSlot,
@@ -185,6 +189,10 @@ export default function AddBookingPage() {
         amount_total: 0,
         session_id: session_id,
         bundle_id: bundleBooking?.session_id || null,
+        review_sent: false,
+        review_submitted: false,
+        review_approved: false,
+        review_token: null,
       },
     ]);
 

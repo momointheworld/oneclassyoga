@@ -188,6 +188,38 @@ export default function TeacherProfileClient({
             <TeacherGallery galleryImages={galleryImages} />
           )}
 
+          {/* REVIEWS SECTION */}
+          <section className="mt-12">
+            <h2 className="text-2xl font-semibold mb-4">Student Reviews</h2>
+
+            {/* Example: average rating */}
+            <div className="flex items-center gap-2 mb-6">
+              <span className="text-yellow-500 text-xl">★ ★ ★ ★ ☆</span>
+              <span className="text-gray-600 text-sm">
+                (4.5 average, 12 reviews)
+              </span>
+            </div>
+
+            {/* List of reviews */}
+            <div className="space-y-4">
+              {/* Replace with map over fetched reviews */}
+              <div className="p-4 rounded-2xl shadow-sm">
+                <p className="text-gray-800">
+                  &quot;Great teacher, very patient and explained each pose
+                  clearly!&quot;
+                </p>
+                <p className="text-sm text-gray-500 mt-2">— Sarah, Aug 2025</p>
+              </div>
+              <div className="p-4  rounded-2xl shadow-sm">
+                <p className="text-gray-800">
+                  &quot;Loved the class! The flow was smooth and
+                  motivating.&quot;
+                </p>
+                <p className="text-sm text-gray-500 mt-2">— James, Jul 2025</p>
+              </div>
+            </div>
+          </section>
+
           {/* VIDEO PREVIEW */}
           {teacher.videoUrl && (
             <section className="mt-6">

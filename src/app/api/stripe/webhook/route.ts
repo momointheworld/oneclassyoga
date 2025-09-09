@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { randomBytes } from 'crypto';
 
 export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -66,6 +67,10 @@ export async function POST(req: Request) {
         teacherId = teacher.id;
       }
 
+      function generateReviewToken() {
+        return randomBytes(32).toString('hex'); // 64-char hex string
+      }
+
       // ✅ Insert into bookings (same structure for single and bundle)
       const { error: insertError } = await supabase.from('bookings').insert({
         session_id: session.id,
@@ -82,6 +87,10 @@ export async function POST(req: Request) {
         amount_total: session.amount_total ? session.amount_total / 100 : 0,
         createdAt: new Date().toISOString(),
         bundle_id: bundleSize ? session.id : null, // Use session ID as bundle_id for bundles
+        review_sent: false,
+        review_submitted: false,
+        review_approved: false,
+        review_token: generateReviewToken(),
       });
 
       if (insertError) {

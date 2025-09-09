@@ -9,6 +9,8 @@ import Link from 'next/link';
 import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
 import { formatInTimeZone } from 'date-fns-tz';
 import { weekly_schedule } from '@/lib/constants';
+import TeacherReviews from '@/components/TeacherReviews';
+import { Button } from '@/components/ui/button';
 
 const supabase = createClient();
 
@@ -26,11 +28,23 @@ type Booking = {
   bundle_size?: number;
   bundle_id?: string | null;
   bundle_count?: number;
+  review_sent: boolean;
+  review_submitted: boolean;
+  review_approved: boolean;
+  review_token: string;
 };
 
 type Teacher = {
   slug: string;
   weekly_schedule: Record<string, string[]>;
+};
+
+type Review = {
+  id: string;
+  customer_name: string;
+  content: string;
+  rating?: number;
+  created_at: string;
 };
 
 export default function BookingDashboard() {
@@ -46,6 +60,9 @@ export default function BookingDashboard() {
     useState<Record<string, string[]>>(weekly_schedule);
   const [availableDays, setAvailableDays] = useState<string[]>([]);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewStatusMsg, setReviewStatusMsg] = useState<string | null>(null);
+  const [buttonLoading, setButtonLoading] = useState<boolean>(false);
 
   // Add loading state for timeslots
   const [timeSlotsLoading, setTimeSlotsLoading] = useState(false);
@@ -122,6 +139,34 @@ export default function BookingDashboard() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    const fetchReviews = async (slug: string) => {
+      try {
+        const { data, error } = await supabase
+          .from('reviews')
+          .select('*')
+          .eq('teacher_slug', slug)
+          .eq('approved', true)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching reviews:', error.message);
+          setReviews([]);
+          return;
+        }
+
+        setReviews(data || []);
+      } catch (err) {
+        console.error('Error fetching reviews:', err);
+        setReviews([]);
+      }
+    };
+
+    if (editingBooking?.teacher_slug) {
+      fetchReviews(editingBooking.teacher_slug);
+    }
+  }, [editingBooking?.teacher_slug]);
 
   useEffect(() => {
     fetchAllBookings();
@@ -267,8 +312,6 @@ export default function BookingDashboard() {
     }
   }, [editingBooking]);
 
-  console.log(selectedDate);
-
   // Update booking
   const updateBooking = async () => {
     if (!editingBooking) return;
@@ -319,6 +362,29 @@ export default function BookingDashboard() {
   const cancelEditing = () => {
     setEditingBooking(null);
     resetEditingState();
+  };
+  const handleSendReview = async (bookingId: number) => {
+    try {
+      setButtonLoading(true); // ✅ set loading immediately when clicked
+
+      // Call your API to send the review email
+      const res = await fetch('/api/send-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingId }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to send review link');
+
+      setReviewStatusMsg('Review Link Sent successfully');
+      fetchAllBookings(); // Refresh your booking table
+    } catch (err: unknown) {
+      console.error('Failed to send review link', err);
+      setReviewStatusMsg(`Error: ${err}`);
+    } finally {
+      setButtonLoading(false); // ✅ re-enable button after request completes
+    }
   };
 
   return (
@@ -546,13 +612,43 @@ export default function BookingDashboard() {
                   ? `${b.customer_name} | ${b.customer_email}`
                   : '-'}
               </td>
-              <td className="px-3 py-2 border">
-                <button
-                  className="text-blue-600 hover:underline"
+              <td className="px-3 py-2 flex flex-col gap-1 items-center">
+                {/* Edit button */}
+                <Button
+                  variant="ghost"
+                  className="text-blue-600 hover:bg-gray-200"
                   onClick={() => setEditingBooking(b)}
                 >
                   Edit
-                </button>
+                </Button>
+
+                {/* Send Review button */}
+                {b.review_token && (
+                  <div className="flex flex-col items-center">
+                    <Button
+                      variant="ghost"
+                      className="text-green-600 hover:underline"
+                      disabled={buttonLoading}
+                      onClick={() => handleSendReview(b.id)}
+                    >
+                      {buttonLoading ? 'Sending' : 'Send Review'}
+                    </Button>
+                    <p className="text-orange-500 text-sm">
+                      {' '}
+                      {reviewStatusMsg}
+                    </p>
+                  </div>
+                )}
+                {/* Status */}
+                {b.review_sent && (
+                  <p className="text-gray-500 text-sm">
+                    {b.review_submitted
+                      ? b.review_approved
+                        ? 'Approved'
+                        : 'Submitted'
+                      : 'Sent'}
+                  </p>
+                )}
               </td>
             </tr>
           ))}
@@ -647,6 +743,7 @@ export default function BookingDashboard() {
           ))}
         </tbody>
       </table>
+      <TeacherReviews reviews={reviews} />
     </div>
   );
 }
