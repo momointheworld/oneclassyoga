@@ -566,6 +566,17 @@ export default function BookingDashboard() {
         {sortedBookings.length}
       </div>
 
+      {/* review link status */}
+      <div
+        className={`text-sm text-center py-5 my-2 ${
+          reviewStatusMsg?.includes('Error')
+            ? 'text-orange-800 bg-orange-100'
+            : 'text-emerald-800 bg-emerald-100'
+        }`}
+      >
+        {reviewStatusMsg}
+      </div>
+
       <table className="w-full border-collapse border text-sm">
         <thead>
           <tr className="bg-gray-100">
@@ -627,21 +638,17 @@ export default function BookingDashboard() {
                   <div className="flex flex-col items-center">
                     <Button
                       variant="ghost"
-                      className="text-green-600 hover:underline"
+                      className="text-blue-600 hover:underline"
                       disabled={buttonLoading}
                       onClick={() => handleSendReview(b.id)}
                     >
                       {buttonLoading ? 'Sending' : 'Send Review'}
                     </Button>
-                    <p className="text-orange-500 text-sm">
-                      {' '}
-                      {reviewStatusMsg}
-                    </p>
                   </div>
                 )}
                 {/* Status */}
                 {b.review_sent && (
-                  <p className="text-gray-500 text-sm">
+                  <p className="text-emerald-700 text-sm">
                     {b.review_submitted
                       ? b.review_approved
                         ? 'Approved'
