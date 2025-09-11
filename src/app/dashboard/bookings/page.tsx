@@ -41,10 +41,14 @@ type Teacher = {
 
 type Review = {
   id: string;
+  booking_id: string;
   customer_name: string;
-  content: string;
+  email: string;
+  review_text: string;
+  teacher_slug: string;
   rating?: number;
   created_at: string;
+  status: string;
 };
 
 export default function BookingDashboard() {
@@ -141,13 +145,11 @@ export default function BookingDashboard() {
   }
 
   useEffect(() => {
-    const fetchReviews = async (slug: string) => {
+    const fetchReviews = async () => {
       try {
         const { data, error } = await supabase
           .from('reviews')
           .select('*')
-          .eq('teacher_slug', slug)
-          .eq('approved', true)
           .order('created_at', { ascending: false });
 
         if (error) {
@@ -156,17 +158,38 @@ export default function BookingDashboard() {
           return;
         }
 
-        setReviews(data || []);
+        const mapped = (data || []).map((r) => ({
+          id: r.id,
+          booking_id: r.booking_id,
+          customer_name: r.customer_name,
+          review_text: r.review_text,
+          rating: r.rating,
+          created_at: r.created_at,
+          email: r.email,
+          status: r.status,
+          teacher_slug: r.teacher_slug,
+        }));
+
+        setReviews(mapped);
       } catch (err) {
         console.error('Error fetching reviews:', err);
         setReviews([]);
       }
     };
 
-    if (editingBooking?.teacher_slug) {
-      fetchReviews(editingBooking.teacher_slug);
-    }
-  }, [editingBooking?.teacher_slug]);
+    fetchReviews();
+  }, []);
+
+  const groupedReviews = reviews.reduce(
+    (acc, review) => {
+      if (!acc[review.teacher_slug]) {
+        acc[review.teacher_slug] = [];
+      }
+      acc[review.teacher_slug].push(review);
+      return acc;
+    },
+    {} as Record<string, Review[]>
+  );
 
   useEffect(() => {
     fetchAllBookings();
@@ -569,9 +592,11 @@ export default function BookingDashboard() {
       {/* review link status */}
       <div
         className={`text-sm text-center py-5 my-2 ${
-          reviewStatusMsg?.includes('Error')
-            ? 'text-orange-800 bg-orange-100'
-            : 'text-emerald-800 bg-emerald-100'
+          reviewStatusMsg
+            ? reviewStatusMsg.includes('Error')
+              ? 'text-orange-800 bg-orange-100'
+              : 'text-emerald-800 bg-emerald-100'
+            : ''
         }`}
       >
         {reviewStatusMsg}
@@ -637,8 +662,8 @@ export default function BookingDashboard() {
                 {b.review_token && (
                   <div className="flex flex-col items-center">
                     <Button
-                      variant="ghost"
-                      className="text-blue-600 hover:underline"
+                      variant="destructive"
+                      className="text-gray-600 hover:bg-gray-200"
                       disabled={buttonLoading}
                       onClick={() => handleSendReview(b.id)}
                     >
@@ -750,7 +775,14 @@ export default function BookingDashboard() {
           ))}
         </tbody>
       </table>
-      <TeacherReviews reviews={reviews} />
+      <div className="mt-10">
+        <h2 className="text-xl">Reviews</h2>
+        {Object.entries(groupedReviews).map(([slug, teacherReviews]) => (
+          <div key={slug} className="mb-6">
+            <TeacherReviews reviews={teacherReviews} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

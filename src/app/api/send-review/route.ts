@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
 
   // 2. Construct review link
-  const reviewLink = `${process.env.NEXT_PUBLIC_SITE_URL}/review?t=${booking.review_token}`;
+  const reviewLink = `${process.env.NEXT_PUBLIC_SITE_URL}/review?t=${booking.review_token}&teacher=${booking.teacher_slug}`;
   const teacherName = booking.teacher_slug
     ? booking.teacher_slug
         .replace(/-/g, ' ')

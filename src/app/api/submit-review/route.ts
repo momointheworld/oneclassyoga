@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
     }
+
     const teacherName = booking.teacher_slug
       ? booking.teacher_slug
           .replace(/-/g, ' ')
@@ -53,7 +54,8 @@ export async function POST(req: NextRequest) {
       customer_name: booking.customer_name,
       rating,
       review_text,
-      is_approved: false, // default to not approved
+      status: 'pending',
+      token,
     });
 
     console.log('Insert review error:', insertError);
@@ -62,10 +64,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: insertError.message }, { status: 500 });
     }
 
-    // Optional: mark review_sent true on booking
+    // Mark review_sent and review_submitted as true on booking
     const { error: updateError } = await supabase
       .from('bookings')
-      .update({ review_sent: true })
+      .update({ review_sent: true, review_submitted: true })
       .eq('id', booking.id);
 
     console.log('Update booking error:', updateError);
