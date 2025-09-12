@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { ToBangkokDateOnly } from '@/components/BkkTimeConverter';
 import YouTubeVideo from '@/components/YoutubeViedo';
 import { formatInTimeZone } from 'date-fns-tz';
+import { createClient } from '@/utils/supabase/supabaseClient';
 import {
   BUNDLE3,
   BUNDLE6,
@@ -21,6 +22,17 @@ import {
   priceIdMap,
 } from '@/lib/packages';
 import { Teacher } from '@/types/teacher'; // adjust the path
+import ResponsiveReviewCarousel from '@/components/ReviewCard';
+
+type Review = {
+  id: string;
+  customer_name: string;
+  review_text: string;
+  rating?: number;
+  created_at: Date;
+};
+
+const supabase = createClient();
 
 export default function TeacherProfileClient({
   teacher,
@@ -45,6 +57,7 @@ export default function TeacherProfileClient({
     null
   );
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>([]);
 
   const router = useRouter();
 
@@ -68,6 +81,20 @@ export default function TeacherProfileClient({
       return () => clearTimeout(timeout);
     }
   }, []);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      const { data } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('teacher_slug', teacher.slug)
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false });
+
+      setReviews(data || []);
+    };
+    fetchReviews();
+  }, [teacher.slug]);
 
   const handleBooking = () => {
     if (!selectedPackage) {
@@ -189,37 +216,24 @@ export default function TeacherProfileClient({
           )}
 
           {/* REVIEWS SECTION */}
-          <section className="mt-12">
-            <h2 className="text-2xl font-semibold mb-4">Student Reviews</h2>
-
-            {/* Example: average rating */}
-            <div className="flex items-center gap-2 mb-6">
-              <span className="text-yellow-500 text-xl">★ ★ ★ ★ ☆</span>
-              <span className="text-gray-600 text-sm">
-                (4.5 average, 12 reviews)
-              </span>
-            </div>
-
-            {/* List of reviews */}
-            <div className="space-y-4">
-              {/* Replace with map over fetched reviews */}
-              <div className="p-4 rounded-2xl shadow-sm">
-                <p className="text-gray-800">
-                  &quot;Great teacher, very patient and explained each pose
-                  clearly!&quot;
+          {reviews.length > 0 && (
+            <section className="mt-12 mb-5">
+              <div className="max-w-6xl mx-auto">
+                <h1 className="text-2xl font-bold text-center mb-2 text-gray-800">
+                  Student Reviews
+                </h1>
+                <p className="text-center text-gray-600 mb-8">
+                  See what people say about {teacher.slug}
                 </p>
-                <p className="text-sm text-gray-500 mt-2">— Sarah, Aug 2025</p>
-              </div>
-              <div className="p-4  rounded-2xl shadow-sm">
-                <p className="text-gray-800">
-                  &quot;Loved the class! The flow was smooth and
-                  motivating.&quot;
-                </p>
-                <p className="text-sm text-gray-500 mt-2">— James, Jul 2025</p>
-              </div>
-            </div>
-          </section>
 
+                <ResponsiveReviewCarousel
+                  reviews={reviews}
+                  autoPlay={true}
+                  autoPlayInterval={5000}
+                />
+              </div>
+            </section>
+          )}
           {/* VIDEO PREVIEW */}
           {teacher.videoUrl && (
             <section className="mt-6">

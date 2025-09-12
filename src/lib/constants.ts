@@ -45,4 +45,9 @@ export const weekly_schedule: Record<string, string[]> = {
   Sunday: [],
 };
 
-export const categoryOptions = ['Q&A', 'Experiences', 'General', 'Random'];
+export const categoryOptions = [
+  'Q&A',
+  'Experiences',
+  'Upcoming Events',
+  'Random',
+];

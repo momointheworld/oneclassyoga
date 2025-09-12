@@ -11,10 +11,12 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import parse from 'html-react-parser';
 import { Button } from './ui/button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2Icon } from 'lucide-react';
 import { Star } from 'lucide-react';
+import { createClient } from '@/utils/supabase/supabaseClient';
+import ResponsiveReviewCarousel from './ReviewCard';
 
 interface TeacherCardProps {
   teacher: {
@@ -29,10 +31,34 @@ interface TeacherCardProps {
     isFeatured?: boolean;
   };
 }
+type Review = {
+  id: string;
+  customer_name: string;
+  review_text: string;
+  rating?: number;
+  updated_at: Date;
+};
+
+const supabase = createClient();
 
 export default function TeacherCard({ teacher }: TeacherCardProps) {
   const [loading, setLoading] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      const { data } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('teacher_slug', teacher.slug)
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false });
+
+      setReviews(data || []);
+    };
+    fetchReviews();
+  }, [teacher.slug]);
 
   const handleCheckAvailability = async () => {
     setLoading(true);
