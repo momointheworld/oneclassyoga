@@ -22,14 +22,15 @@ import {
   priceIdMap,
 } from '@/lib/packages';
 import { Teacher } from '@/types/teacher'; // adjust the path
-import ResponsiveReviewCarousel from '@/components/ReviewCard';
+import ReviewCarousel from '@/components/ReviewCard';
+import ResponsiveCarouselDemo from '@/components/ReviewCard';
 
 type Review = {
   id: string;
   customer_name: string;
   review_text: string;
   rating?: number;
-  created_at: Date;
+  updated_at: Date;
 };
 
 const supabase = createClient();
@@ -62,21 +63,23 @@ export default function TeacherProfileClient({
   const router = useRouter();
 
   useEffect(() => {
-    if (window.location.hash === '#booking-calendar') {
+    const hash = window.location.hash;
+    if (hash === '#booking-calendar' || hash === '#reviewCarousel') {
       const timeout = setTimeout(() => {
-        const element = document.getElementById('booking-calendar');
+        const element = document.getElementById(hash.substring(1));
         if (element) {
-          const yOffset = -80;
+          const yOffset = -80; // adjust for sticky header if any
           const y =
             element.getBoundingClientRect().top + window.pageYOffset + yOffset;
           window.scrollTo({ top: y, behavior: 'smooth' });
 
+          // Add highlight ring
           element.classList.add('ring-2', 'ring-blue-500');
           setTimeout(() => {
             element.classList.remove('ring-2', 'ring-blue-500');
           }, 2000);
         }
-      }, 300); // wait 300ms for video layout
+      }, 300); // wait for layout
 
       return () => clearTimeout(timeout);
     }
@@ -215,25 +218,6 @@ export default function TeacherProfileClient({
             <TeacherGallery galleryImages={galleryImages} />
           )}
 
-          {/* REVIEWS SECTION */}
-          {reviews.length > 0 && (
-            <section className="mt-12 mb-5">
-              <div className="max-w-6xl mx-auto">
-                <h1 className="text-2xl font-bold text-center mb-2 text-gray-800">
-                  Student Reviews
-                </h1>
-                <p className="text-center text-gray-600 mb-8">
-                  See what people say about {teacher.slug}
-                </p>
-
-                <ResponsiveReviewCarousel
-                  reviews={reviews}
-                  autoPlay={true}
-                  autoPlayInterval={5000}
-                />
-              </div>
-            </section>
-          )}
           {/* VIDEO PREVIEW */}
           {teacher.videoUrl && (
             <section className="mt-6">
@@ -241,6 +225,23 @@ export default function TeacherProfileClient({
                 {teacher.name} on Yoga, Teaching, and Practice
               </h2>
               <YouTubeVideo videoId="dQw4w9WgXcQ" />
+            </section>
+          )}
+
+          {/* REVIEWS SECTION */}
+          {reviews.length > 0 && (
+            <section className="mt-15 mb-5" id="reviewCarousel">
+              <div className="max-w-6xl mx-auto mt-5 font-semibold">
+                <h1 className="text-xl font-bold text-center mb-2 text-gray-800">
+                  Student Reviews
+                </h1>
+                <p className="text-center text-gray-600 mb-8">
+                  Real experiences from those who’ve practiced with{' '}
+                  {teacher.name}
+                </p>
+                <ReviewCarousel reviews={reviews} />
+              </div>
+              {/* <ResponsiveCarouselDemo /> */}
             </section>
           )}
 

@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ToBangkokDateOnly } from './BkkTimeConverter';
 
 type Review = {
   id: string;
@@ -10,189 +11,143 @@ type Review = {
   updated_at: Date;
 };
 
-interface ReviewCardProps {
-  review: Review;
-}
-
-const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
-  // Get customer initials
-  const getInitials = (name: string) => {
-    return name
+const ReviewCard = ({ review }: { review: Review }) => {
+  const getInitials = (name: string) =>
+    name
       .split(' ')
       .map((n) => n[0])
       .join('')
       .toUpperCase();
-  };
 
   return (
-    <div className="border-gray-200 rounded-lg p-4 shadow-sm bg-white min-h-[150px] flex flex-col justify-between">
+    <div className="bg-gray-100 rounded-lg p-4 shadow-sm flex flex-col justify-between text-sm min-h-[100px] max-h-[200px]">
       <div>
         <div className="flex items-center mb-2">
           <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-700 font-bold mr-3">
-            {getInitials(review.customer_name || 'N/A')}
+            {getInitials(review.customer_name || 'Anonymous')}
           </div>
           <div className="text-yellow-500 flex">
             {Array.from({ length: 5 }).map((_, i) => (
-              <span key={i} className="mr-1">
-                ★
-              </span>
+              <span key={i}>★</span>
             ))}
           </div>
         </div>
-        <p className="text-gray-800">{review.review_text}</p>
+        <p className="text-gray-800 line-clamp-3">{review.review_text}</p>
       </div>
+
       <div className="text-sm text-gray-600 mt-3 font-medium">
-        - {review.customer_name} |{' '}
-        {new Date(review.updated_at).toLocaleDateString()}
+        - {review.customer_name || 'Anonymous'},{' '}
+        {ToBangkokDateOnly(new Date(review.updated_at))}
       </div>
     </div>
   );
 };
 
-interface ResponsiveReviewCarouselProps {
-  reviews: Review[];
+interface CarouselProps<T> {
+  items: T[];
+  renderItem: (item: T) => React.ReactNode;
   autoPlay?: boolean;
-  autoPlayInterval?: number;
 }
 
-const ResponsiveReviewCarousel: React.FC<ResponsiveReviewCarouselProps> = ({
-  reviews,
-  autoPlay = true,
-  autoPlayInterval = 5000,
-}) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+export function Carousel<T>({
+  items,
+  renderItem,
+  autoPlay = false,
+}: CarouselProps<T>) {
+  const [current, setCurrent] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(3);
 
-  // Handle screen size changes
+  // Responsive items per view
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setItemsPerView(1); // Mobile
-      } else if (window.innerWidth < 1024) {
-        setItemsPerView(2); // Tablet
-      } else {
-        setItemsPerView(3); // Desktop
-      }
-      // Reset index when screen size changes
-      setCurrentIndex(0);
+      if (window.innerWidth < 768) setItemsPerView(1);
+      else if (window.innerWidth < 1024) setItemsPerView(2);
+      else setItemsPerView(3);
+      setCurrent(0);
     };
-
-    // Set initial value
     handleResize();
-
-    // Add event listener
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Calculate max index based on items per view
-  const maxIndex = Math.max(0, reviews.length - itemsPerView);
+  const maxIndex = Math.max(0, items.length - itemsPerView);
 
-  // Auto-play functionality
+  // Autoplay
   useEffect(() => {
-    if (autoPlay && reviews.length > itemsPerView) {
-      const interval = setInterval(() => {
-        setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-      }, autoPlayInterval);
-      return () => clearInterval(interval);
+    if (autoPlay && items.length > itemsPerView) {
+      const id = setInterval(() =>
+        setCurrent((p) => (p >= maxIndex ? 0 : p + 1))
+      );
+      return () => clearInterval(id);
     }
-  }, [autoPlay, autoPlayInterval, maxIndex, reviews.length, itemsPerView]);
+  }, [autoPlay, items.length, itemsPerView, maxIndex]);
 
-  const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
-  };
-
-  const goToNext = () => {
-    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-  };
+  const goTo = (i: number) => setCurrent(i);
+  const prev = () => setCurrent((p) => (p <= 0 ? maxIndex : p - 1));
+  const next = () => setCurrent((p) => (p >= maxIndex ? 0 : p + 1));
 
   return (
     <div className="w-full max-w-6xl mx-auto">
       <div className="relative overflow-hidden">
-        {/* Navigation Buttons - Hide on mobile if only showing 1 item */}
-        {reviews.length > itemsPerView && (
+        {items.length > itemsPerView && (
           <>
             <button
-              onClick={goToPrevious}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow border-gray-200 md:flex hidden"
-              aria-label="Previous reviews"
+              onClick={prev}
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition"
             >
               <ChevronLeft className="w-5 h-5 text-gray-600" />
             </button>
             <button
-              onClick={goToNext}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow border-gray-200 md:flex hidden"
-              aria-label="Next reviews"
+              onClick={next}
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition"
             >
               <ChevronRight className="w-5 h-5 text-gray-600" />
             </button>
           </>
         )}
 
-        {/* Carousel Container */}
-        <div className="px-0 md:px-12">
+        <div className="px-6">
           <div
             className="flex transition-transform duration-300 ease-in-out gap-4"
             style={{
-              transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)`,
-              width: `${(reviews.length / itemsPerView) * 100}%`,
+              transform: `translateX(-${current * (100 / itemsPerView)}%)`,
+              width: `${(items.length / itemsPerView) * 100}%`,
             }}
           >
-            {reviews.map((review) => (
+            {items.map((item, idx) => (
               <div
-                key={review.id}
-                className="flex-shrink-0"
-                style={{ width: `${100 / reviews.length}%` }}
+                key={idx}
+                className="flex-shrink-0 w-full"
+                style={{ flex: `0 0 ${100 / itemsPerView}%` }}
               >
-                <ReviewCard review={review} />
+                {renderItem(item)}
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Dots Indicator */}
-      {reviews.length > itemsPerView && (
+      {items.length > itemsPerView && (
         <div className="flex justify-center mt-4 space-x-2">
-          {Array.from({ length: maxIndex + 1 }, (_, index) => (
+          {Array.from({ length: maxIndex + 1 }, (_, i) => (
             <button
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`w-3 h-3 rounded-full transition-colors ${
-                currentIndex === index
-                  ? 'bg-blue-500'
-                  : 'bg-gray-300 hover:bg-gray-400'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
+              key={i}
+              onClick={() => goTo(i)}
+              className={`w-3 h-3 rounded-full ${current === i ? 'bg-blue-500' : 'bg-gray-300 hover:bg-gray-400'}`}
             />
           ))}
         </div>
       )}
-
-      {/* Mobile Navigation Buttons (Bottom) */}
-      {reviews.length > itemsPerView && (
-        <div className="flex justify-center mt-4 space-x-4 md:hidden">
-          <button
-            onClick={goToPrevious}
-            className="bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow border"
-            aria-label="Previous reviews"
-          >
-            <ChevronLeft className="w-5 h-5 text-gray-600" />
-          </button>
-          <button
-            onClick={goToNext}
-            className="bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow border"
-            aria-label="Next reviews"
-          >
-            <ChevronRight className="w-5 h-5 text-gray-600" />
-          </button>
-        </div>
-      )}
     </div>
   );
-};
+}
 
-export default ResponsiveReviewCarousel;
+// Example usage
+export default function ReviewCarousel({ reviews }: { reviews: Review[] }) {
+  return (
+    <Carousel items={reviews} renderItem={(r) => <ReviewCard review={r} />} />
+  );
+}
 
 // // Demo component with sample data
 // const ResponsiveCarouselDemo = () => {
@@ -203,6 +158,7 @@ export default ResponsiveReviewCarousel;
 //       review_text:
 //         'Amazing service! The team went above and beyond to deliver exactly what we needed. Highly recommended!',
 //       rating: 5,
+//       updated_at: new Date(),
 //     },
 //     {
 //       id: '2',
@@ -210,6 +166,7 @@ export default ResponsiveReviewCarousel;
 //       review_text:
 //         'Professional, timely, and excellent quality. Will definitely work with them again.',
 //       rating: 5,
+//       updated_at: new Date(),
 //     },
 //     {
 //       id: '3',
@@ -217,6 +174,7 @@ export default ResponsiveReviewCarousel;
 //       review_text:
 //         'Great experience from start to finish. Communication was clear and results exceeded expectations.',
 //       rating: 4,
+//       updated_at: new Date(),
 //     },
 //     {
 //       id: '4',
@@ -224,6 +182,7 @@ export default ResponsiveReviewCarousel;
 //       review_text:
 //         'Outstanding work! Very impressed with the attention to detail and customer service.',
 //       rating: 5,
+//       updated_at: new Date(),
 //     },
 //     {
 //       id: '5',
@@ -231,6 +190,7 @@ export default ResponsiveReviewCarousel;
 //       review_text:
 //         'Reliable and professional. They delivered on time and within budget.',
 //       rating: 4,
+//       updated_at: new Date(),
 //     },
 //     {
 //       id: '6',
@@ -238,11 +198,12 @@ export default ResponsiveReviewCarousel;
 //       review_text:
 //         'Fantastic results! The team was responsive and easy to work with throughout the project.',
 //       rating: 5,
+//       updated_at: new Date(),
 //     },
 //   ];
 
 //   return (
-//     <div className="max-w-6xl mx-auto">
+//     <div className="max-w-6xl mx-auto mt-5">
 //       <h1 className="text-2xl font-bold text-center mb-8 text-gray-800">
 //         Student Reviews
 //       </h1>
@@ -250,11 +211,7 @@ export default ResponsiveReviewCarousel;
 //         Resize your browser to see the responsive behavior
 //       </p>
 
-//       <ResponsiveReviewCarousel
-//         reviews={sampleReviews}
-//         autoPlay={true}
-//         autoPlayInterval={5000}
-//       />
+//       <ReviewCarousel reviews={sampleReviews} />
 //     </div>
 //   );
 // };

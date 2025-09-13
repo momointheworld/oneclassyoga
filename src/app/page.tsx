@@ -7,6 +7,7 @@ import BookingSteps from '@/components/BookingSteps';
 import FAQSection from '@/components/FAQSection';
 import { Metadata } from 'next';
 import YouTubeVideo from '@/components/YoutubeViedo';
+import ReviewCarousel from '@/components/ReviewCard';
 
 export const metadata: Metadata = {
   title:
@@ -54,6 +55,16 @@ export default async function HomePage() {
   if (error) {
     console.error(error);
   }
+
+  // Fetch reviews
+  const { data: reviews, error: reviewError } = await (await supabase)
+    .from('reviews')
+    .select('id, customer_name, review_text, rating, updated_at, teacher_slug')
+    .eq('status', 'approved')
+    .order('created_at', { ascending: false })
+    .limit(6); // show latest 6 reviews
+
+  if (reviewError) console.error(reviewError);
 
   return (
     <PageContainer>
@@ -212,6 +223,21 @@ export default async function HomePage() {
             ))}
           </div>
         </section>
+
+        {/* Featured Reviews Section */}
+        {reviews && reviews.length > 0 && (
+          <section className="mt-15 space-y-6">
+            <div className="max-w-6xl mx-auto mt-5 font-semibold">
+              <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
+                Student Reviews
+              </h1>
+              <p className="text-center text-gray-600 mb-8">
+                Real experiences from those who’ve practiced with our teachers
+              </p>
+              <ReviewCarousel reviews={reviews} />
+            </div>
+          </section>
+        )}
 
         {/* Contact CTA */}
         <section className="text-center space-y-6">
