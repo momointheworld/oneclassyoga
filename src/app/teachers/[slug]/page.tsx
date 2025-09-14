@@ -79,7 +79,9 @@ export default async function TeacherProfilePage({
 
   const { data: teacher, error } = await (await supabase)
     .from('teachers')
-    .select('*')
+    .select(
+      'id, name, slug, bio, photo, gallery, styles, levels,videoUrl,weekly_schedule'
+    )
     .eq('slug', slug)
     .single();
 

@@ -23,7 +23,6 @@ import {
 } from '@/lib/packages';
 import { Teacher } from '@/types/teacher'; // adjust the path
 import ReviewCarousel from '@/components/ReviewCard';
-import ResponsiveCarouselDemo from '@/components/ReviewCard';
 
 type Review = {
   id: string;
@@ -231,7 +230,7 @@ export default function TeacherProfileClient({
           {/* REVIEWS SECTION */}
           {reviews.length > 0 && (
             <section className="mt-15 mb-5" id="reviewCarousel">
-              <div className="max-w-6xl mx-auto mt-5 font-semibold">
+              <div className="mt-5 font-semibold">
                 <h1 className="text-xl font-bold text-center mb-2 text-gray-800">
                   Student Reviews
                 </h1>

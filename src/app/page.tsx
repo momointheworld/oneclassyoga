@@ -226,8 +226,8 @@ export default async function HomePage() {
 
         {/* Featured Reviews Section */}
         {reviews && reviews.length > 0 && (
-          <section className="mt-15 space-y-6">
-            <div className="max-w-6xl mx-auto mt-5 font-semibold">
+          <section className="mt-15 space-y-6 mx-auto">
+            <div className="mt-5 font-semibold">
               <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
                 Student Reviews
               </h1>

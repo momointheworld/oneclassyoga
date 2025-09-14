@@ -20,10 +20,10 @@ const ReviewCard = ({ review }: { review: Review }) => {
       .toUpperCase();
 
   return (
-    <div className="bg-gray-100 rounded-lg p-4 shadow-sm flex flex-col justify-between text-sm min-h-[100px] max-h-[200px]">
+    <div className="bg-gray-100 rounded-lg p-4 shadow-sm flex flex-col justify-between text-sm h-full">
       <div>
         <div className="flex items-center mb-2">
-          <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-700 font-bold mr-3">
+          <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-700 font-bold">
             {getInitials(review.customer_name || 'Anonymous')}
           </div>
           <div className="text-yellow-500 flex">
@@ -32,7 +32,7 @@ const ReviewCard = ({ review }: { review: Review }) => {
             ))}
           </div>
         </div>
-        <p className="text-gray-800 line-clamp-3">{review.review_text}</p>
+        <p className="text-gray-800 line-clamp-3 px-2">{review.review_text}</p>
       </div>
 
       <div className="text-sm text-gray-600 mt-3 font-medium">
@@ -106,7 +106,7 @@ export function Carousel<T>({
           </>
         )}
 
-        <div className="px-6">
+        <div>
           <div
             className="flex transition-transform duration-300 ease-in-out gap-4"
             style={{
@@ -117,7 +117,7 @@ export function Carousel<T>({
             {items.map((item, idx) => (
               <div
                 key={idx}
-                className="flex-shrink-0 w-full"
+                className="flex-shrink-0 w-full flex"
                 style={{ flex: `0 0 ${100 / itemsPerView}%` }}
               >
                 {renderItem(item)}
@@ -148,72 +148,3 @@ export default function ReviewCarousel({ reviews }: { reviews: Review[] }) {
     <Carousel items={reviews} renderItem={(r) => <ReviewCard review={r} />} />
   );
 }
-
-// // Demo component with sample data
-// const ResponsiveCarouselDemo = () => {
-//   const sampleReviews: Review[] = [
-//     {
-//       id: '1',
-//       customer_name: 'John Smith',
-//       review_text:
-//         'Amazing service! The team went above and beyond to deliver exactly what we needed. Highly recommended!',
-//       rating: 5,
-//       updated_at: new Date(),
-//     },
-//     {
-//       id: '2',
-//       customer_name: 'Sarah Johnson',
-//       review_text:
-//         'Professional, timely, and excellent quality. Will definitely work with them again.',
-//       rating: 5,
-//       updated_at: new Date(),
-//     },
-//     {
-//       id: '3',
-//       customer_name: 'Mike Davis',
-//       review_text:
-//         'Great experience from start to finish. Communication was clear and results exceeded expectations.',
-//       rating: 4,
-//       updated_at: new Date(),
-//     },
-//     {
-//       id: '4',
-//       customer_name: 'Emily Wilson',
-//       review_text:
-//         'Outstanding work! Very impressed with the attention to detail and customer service.',
-//       rating: 5,
-//       updated_at: new Date(),
-//     },
-//     {
-//       id: '5',
-//       customer_name: 'David Brown',
-//       review_text:
-//         'Reliable and professional. They delivered on time and within budget.',
-//       rating: 4,
-//       updated_at: new Date(),
-//     },
-//     {
-//       id: '6',
-//       customer_name: 'Lisa Anderson',
-//       review_text:
-//         'Fantastic results! The team was responsive and easy to work with throughout the project.',
-//       rating: 5,
-//       updated_at: new Date(),
-//     },
-//   ];
-
-//   return (
-//     <div className="max-w-6xl mx-auto mt-5">
-//       <h1 className="text-2xl font-bold text-center mb-8 text-gray-800">
-//         Student Reviews
-//       </h1>
-//       <p className="text-center text-gray-600 mb-8">
-//         Resize your browser to see the responsive behavior
-//       </p>
-
-//       <ReviewCarousel reviews={sampleReviews} />
-//     </div>
-//   );
-// };
-
-// export default ResponsiveCarouselDemo;

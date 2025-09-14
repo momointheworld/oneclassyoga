@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 
 export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
 type Teacher = {
@@ -52,18 +52,25 @@ type Teacher = {
 export const revalidate = 60; // cache for 60 seconds
 
 export default async function TeachersPage() {
-  const { data: teachers, error } = await supabase
+  // const { data: teachers, error } = await supabase
+  //   .from('teachers')
+  //   .select('id, name, slug, photo, styles, levels, bio,  isFeatured')
+  //   .eq('isActive', true);
+
+  const { data: sortedTeachers, error } = await supabase
     .from('teachers')
-    .select('id, name, slug, photo, styles, levels, bio,  isFeatured')
-    .eq('isActive', true);
+    .select('id, name, slug, photo, styles, levels, bio, isFeatured')
+    .eq('isActive', true)
+    .order('isFeatured', { ascending: false })
+    .order('id', { ascending: false }); // fallback ordering
 
   if (error) {
     throw new Error(error.message);
   }
 
-  const sortedTeachers = teachers.slice().sort((a, b) => {
-    return (b.isFeatured === true ? 1 : 0) - (a.isFeatured === true ? 1 : 0);
-  });
+  // const sortedTeachers = teachers.slice().sort((a, b) => {
+  //   return (b.isFeatured === true ? 1 : 0) - (a.isFeatured === true ? 1 : 0);
+  // });
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-16 flex-grow">
