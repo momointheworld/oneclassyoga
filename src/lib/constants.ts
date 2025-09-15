@@ -21,7 +21,6 @@ export const styleOptions = [
 export const timeSlotOptions = [
   '11:00 - 12:30',
   '13:00 - 14:30',
-  '14:00 - 15:30',
   '15:00 - 16:30',
 ];
 

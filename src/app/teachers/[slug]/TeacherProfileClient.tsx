@@ -19,7 +19,6 @@ import {
   PackageType,
   packageTitles,
   packages,
-  priceIdMap,
 } from '@/lib/packages';
 import { Teacher } from '@/types/teacher'; // adjust the path
 import ReviewCarousel from '@/components/ReviewCard';
@@ -44,7 +43,6 @@ export default function TeacherProfileClient({
   const [participants, setParticipants] = useState<number>(1);
   // const [participantsCount, setParticipantsCount] = useState(1);
   const [rate, setRate] = useState<number | null>(null);
-  const [selectedPriceId, setSelectedPriceId] = useState<string | null>(null);
   const [bookingTitle, setBookingTitle] = useState<string>(
     'Choose Your Date & Time'
   );
@@ -107,29 +105,41 @@ export default function TeacherProfileClient({
       setError('Please select a date and time slot before booking.');
       return;
     }
-    console.log(selectedPackage);
 
-    let priceId = null;
-    if (selectedPackage) {
-      const participantCount = participants;
-      priceId = priceIdMap[selectedPackage][participantCount] || null;
+    let basePrice = 0;
+    switch (selectedPackage) {
+      case 'single':
+        basePrice = teacher.rates.single;
+        break;
+      case BUNDLE3:
+        basePrice = teacher.rates.bundle3;
+        break;
+      case BUNDLE6:
+        basePrice = teacher.rates.bundle6;
+        break;
+      default:
+        setError('Invalid package selected.');
+        return;
     }
-    console.log(priceId);
 
-    if (!priceId) {
-      setError('Could not determine price for selected options.');
-      return;
+    // Add participant extra fee
+    if (participants === 2) {
+      basePrice +=
+        selectedPackage === 'single'
+          ? 800
+          : selectedPackage === BUNDLE3
+            ? 2400
+            : 4800;
     }
 
     setError('');
     const query = new URLSearchParams({
       teacher: teacher.slug,
-      priceId,
+      unitAmount: basePrice.toString(),
       date: ToBangkokDateOnly(selectedDate),
       timeSlot: selectedTimeSlot,
       participants: participants.toString(),
       booking_type: selectedPackage,
-      package: selectedPackage,
     }).toString();
 
     router.push(`/booking/checkout?${query}`);
@@ -143,10 +153,36 @@ export default function TeacherProfileClient({
 
   const handleRateChange = (newRate: number) => {
     setRate(newRate);
-    if (selectedPackage) {
-      const priceId = priceIdMap[selectedPackage][participants];
-      setSelectedPriceId(priceId || null);
+
+    if (!selectedPackage) return;
+
+    let calculatedRate = 0;
+
+    if (teacher.rates) {
+      switch (selectedPackage) {
+        case 'single':
+          calculatedRate = teacher.rates.single;
+          break;
+        case BUNDLE3:
+          calculatedRate = teacher.rates.bundle3;
+          break;
+        case BUNDLE6:
+          calculatedRate = teacher.rates.bundle6;
+          break;
+      }
     }
+
+    // Add extra participant fee
+    if (participants === 2) {
+      calculatedRate +=
+        selectedPackage === 'single'
+          ? 800
+          : selectedPackage === BUNDLE3
+            ? 2400
+            : 4800;
+    }
+
+    setRate(calculatedRate);
   };
 
   const galleryImages = teacher.gallery || [];
@@ -287,9 +323,13 @@ export default function TeacherProfileClient({
                   <p className="text-xs text-gray-500 mb-4 text-center">
                     {pkg.friendNote}
                   </p>
-                  <p className="text-xl font-bold text-gray-800 text-center">
-                    {pkg.price}
-                  </p>
+                  {teacher.rates && (
+                    <p className="text-xl font-bold text-gray-800 text-center">
+                      {pkg.id === 'single' && `${teacher.rates.single}฿`}
+                      {pkg.id === BUNDLE3 && `${teacher.rates.bundle3}฿`}
+                      {pkg.id === BUNDLE6 && `${teacher.rates.bundle6}฿`}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
@@ -315,6 +355,7 @@ export default function TeacherProfileClient({
                 onRateChange={handleRateChange}
                 availableDays={availableDays}
                 selectedPackage={selectedPackage}
+                rates={teacher.rates}
               />
             </div>
           )}

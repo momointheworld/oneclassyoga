@@ -5,18 +5,14 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
-import parse from 'html-react-parser';
 import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
 
 type Teacher = {
   id: number;
   name: string;
-  bio: string;
   slug: string;
-  photo?: string;
   styles: string[];
   levels: string[];
-  gallery?: string[];
   videoUrl?: string;
   isActive: boolean;
   isFeatured: boolean;
@@ -125,18 +121,6 @@ export default function TeachersDashboardPage() {
               </p>
             </CardHeader>
             <CardContent>
-              <div className="mb-3">
-                <Image
-                  src={teacher.photo || '/placeholder.png'}
-                  alt={teacher.name}
-                  width={400}
-                  height={260}
-                  className="rounded-xl object-cover w-full h-52"
-                />
-              </div>
-              <div className="tiptap prose max-w-none">
-                {parse(teacher.bio)}
-              </div>
               <p className="text-sm mb-2">
                 <strong>Styles:</strong> {teacher.styles.join(', ')}
               </p>

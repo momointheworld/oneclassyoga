@@ -21,22 +21,6 @@ export const packageTitles: Record<PackageType, string> = {
   [BUNDLE6]: 'Choose Your First Class Date & Time',
 };
 
-// ✅ Stripe Price IDs
-export const priceIdMap: Record<PackageType, Record<number, string>> = {
-  single: {
-    1: process.env.NEXT_PUBLIC_STRIPE_SINGLE_1 || '',
-    2: process.env.NEXT_PUBLIC_STRIPE_SINGLE_2 || '',
-  },
-  [BUNDLE3]: {
-    1: process.env.NEXT_PUBLIC_STRIPE_BUNDLE3_1 || '',
-    2: process.env.NEXT_PUBLIC_STRIPE_BUNDLE3_2 || '',
-  },
-  [BUNDLE6]: {
-    1: process.env.NEXT_PUBLIC_STRIPE_BUNDLE6_1 || '',
-    2: process.env.NEXT_PUBLIC_STRIPE_BUNDLE6_2 || '',
-  },
-};
-
 // ✅ UI packages list
 export const packages: Array<{
   id: PackageType;

@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { Loader2Icon } from 'lucide-react';
 import { Star } from 'lucide-react';
 import ReviewStars from './ReviewStars';
+import { TeacherRates } from '@/types/teacher';
 
 interface TeacherCardProps {
   teacher: {
@@ -25,6 +26,7 @@ interface TeacherCardProps {
     slug?: string;
     photo?: string;
     styles: string[];
+    rates: TeacherRates;
     levels: string[];
     isActive?: boolean;
     isFeatured?: boolean;
@@ -87,6 +89,18 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
                 </Badge>
               ))}
             </span>
+          </p>
+        </div>
+        <div className="text-sm text-gray-800 space-y-2 mt-5">
+          <p className="mt-1 font-semibold text-blue-600 flex justify-between">
+            <span className="text-gray-700">Rates:</span>
+            From{' '}
+            {teacher.rates.bundle6
+              ? `${Math.round(teacher.rates.bundle6 / 6)}฿`
+              : teacher.rates.single
+                ? `${teacher.rates.single}฿`
+                : 'N/A'}
+            {' / session'}
           </p>
         </div>
       </CardContent>

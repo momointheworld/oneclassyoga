@@ -70,12 +70,16 @@ export default function FAQSection() {
       </div>
       <div className="mt-6 text-center">
         <p className="text-gray-400 text-sm">
-          Have more questions? Visit our{' '}
-          <Link href="/community" className="text-blue-600 underline">
-            Community Q&A
-          </Link>{' '}
+          <span className="block sm:inline">Have more questions?</span>{' '}
+          <span className="block sm:inline">
+            Visit our{' '}
+            <Link href="/community" className="text-blue-600 underline">
+              Community Q&A
+            </Link>
+          </span>
         </p>
       </div>
+
       <Script
         id="faq-schema"
         type="application/ld+json"

@@ -14,22 +14,44 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const {
-    email,
-    priceId,
-    teacher_slug,
-    date,
-    time_slot,
-    participants,
-    booking_type,
-  } = body;
+  const { email, teacher_slug, date, time_slot, participants, booking_type } =
+    body;
 
-  if (!priceId || !booking_type) {
+  if (!booking_type) {
     return NextResponse.json(
       { error: 'Missing required fields' },
       { status: 400 }
     );
   }
+  // Fetch teacher rates from your DB (Supabase example)
+  const { data: teacher } = await supabase
+    .from('teachers')
+    .select('id, name, rates, stripe_product_id')
+    .eq('slug', teacher_slug)
+    .single();
+
+  if (!teacher)
+    return NextResponse.json({ error: 'Teacher not found' }, { status: 400 });
+
+  // Calculate dynamic total
+  const rates = teacher.rates;
+  let total = 0;
+  if (booking_type === 'single') total = rates.single;
+  if (booking_type === 'bundle3') total = rates.bundle3;
+  if (booking_type === 'bundle6') total = rates.bundle6;
+
+  // Extra participant
+  if (participants === 2) {
+    total +=
+      booking_type === 'single'
+        ? 800
+        : booking_type === 'bundle3'
+          ? 2400
+          : 4800;
+  }
+
+  // Convert to smallest currency unit (THB -> satang)
+  const unitAmount = total * 100;
 
   // Base session config
   const sessionOptions: Stripe.Checkout.SessionCreateParams = {
@@ -49,6 +71,7 @@ export async function POST(req: Request) {
     payment_method_options: {
       wechat_pay: { client: 'web' },
     },
+
     mode: 'payment',
     customer_email: email,
     customer_creation: 'always',
@@ -79,7 +102,11 @@ export async function POST(req: Request) {
     if (booking_type === 'single') {
       sessionOptions.line_items = [
         {
-          price: priceId,
+          price_data: {
+            currency: 'hkd',
+            product: teacher.stripe_product_id,
+            unit_amount: unitAmount,
+          },
           quantity: 1,
           adjustable_quantity: {
             enabled: true,
@@ -91,7 +118,11 @@ export async function POST(req: Request) {
     } else if (booking_type.startsWith('bundle')) {
       sessionOptions.line_items = [
         {
-          price: priceId,
+          price_data: {
+            currency: 'hkd',
+            product: teacher.stripe_product_id,
+            unit_amount: unitAmount,
+          },
           quantity: 1,
         },
       ];

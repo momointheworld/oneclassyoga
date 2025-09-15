@@ -15,6 +15,7 @@ import { Loader2 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/supabaseClient';
 import TipTapEditor from '@/components/TipTapEditor';
 import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
+import { TeacherRates } from '@/types/teacher';
 
 export default function NewTeacherPage() {
   const [name, setName] = useState('');
@@ -29,9 +30,20 @@ export default function NewTeacherPage() {
   const [isActive, setIsActive] = useState(true);
   const [isFeatured, setIsFeatured] = useState(false);
   const supabase = createClient();
+  const [stripeProductId, setStripeProductId] = useState('');
   const [weeklySchedule, setWeeklySchedule] = useState<{
     [key: string]: string[];
   }>(weekly_schedule);
+  const [rates, setRates] = useState<TeacherRates>({
+    single: null,
+    bundle3: null,
+    bundle6: null,
+    extra: {
+      single: null,
+      bundle3: null,
+      bundle6: null,
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +61,8 @@ export default function NewTeacherPage() {
       gallery: galleryUrls,
       slug: name.toLowerCase().replace(/\s+/g, '-'), // add slug here
       weekly_schedule: weeklySchedule,
+      rates: rates,
+      stripe_product_id: stripeProductId,
     });
 
     setButtonLoading(false);
@@ -140,6 +154,7 @@ export default function NewTeacherPage() {
             ))}
           </div>
         </div>
+
         {/* Styles Checkboxes */}
         <div>
           <p className="font-semibold mb-2">Styles</p>
@@ -191,6 +206,126 @@ export default function NewTeacherPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* // inside your form, for example after rates or before submit button */}
+        <div>
+          <p className="font-semibold mb-2">Stripe Product ID</p>
+          <Input
+            placeholder="Enter Stripe Product ID"
+            value={stripeProductId}
+            onChange={(e) => setStripeProductId(e.target.value)}
+            required
+          />
+        </div>
+
+        {/* Rates */}
+        <div className="space-y-4">
+          <p className="font-semibold mb-2">Rates (฿)</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Single Session
+              </label>
+              <Input
+                type="number"
+                min={0}
+                value={rates.single}
+                onChange={(e) =>
+                  setRates({ ...rates, single: parseInt(e.target.value) || 0 })
+                }
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                3-Session Bundle
+              </label>
+              <Input
+                type="number"
+                min={0}
+                value={rates.bundle3}
+                onChange={(e) =>
+                  setRates({ ...rates, bundle3: parseInt(e.target.value) || 0 })
+                }
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                6-Session Bundle
+              </label>
+              <Input
+                type="number"
+                min={0}
+                value={rates.bundle6}
+                onChange={(e) =>
+                  setRates({ ...rates, bundle6: parseInt(e.target.value) || 0 })
+                }
+              />
+            </div>
+          </div>
+
+          <p className="font-semibold mt-4 mb-2">Extra Participant Rates (฿)</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Single Session Extra
+              </label>
+              <Input
+                type="number"
+                min={0}
+                value={rates.extra.single}
+                onChange={(e) =>
+                  setRates({
+                    ...rates,
+                    extra: {
+                      ...rates.extra,
+                      single: parseInt(e.target.value) || 0,
+                    },
+                  })
+                }
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                3-Session Bundle Extra
+              </label>
+              <Input
+                type="number"
+                min={0}
+                value={rates.extra.bundle3}
+                onChange={(e) =>
+                  setRates({
+                    ...rates,
+                    extra: {
+                      ...rates.extra,
+                      bundle3: parseInt(e.target.value) || 0,
+                    },
+                  })
+                }
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                6-Session Bundle Extra
+              </label>
+              <Input
+                type="number"
+                min={0}
+                value={rates.extra.bundle6}
+                onChange={(e) =>
+                  setRates({
+                    ...rates,
+                    extra: {
+                      ...rates.extra,
+                      bundle6: parseInt(e.target.value) || 0,
+                    },
+                  })
+                }
+              />
+            </div>
+          </div>
         </div>
 
         {/* Profile Photo Upload */}

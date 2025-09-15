@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
   const teacherSlug = searchParams.get('teacher');
-  const priceId = searchParams.get('priceId');
+  // const priceId = searchParams.get('priceId');
   const timeSlot = searchParams.get('timeSlot');
   const participants = searchParams.get('participants');
   const booking_type = searchParams.get('booking_type');
@@ -28,7 +28,6 @@ export default function CheckoutPage() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            priceId,
             teacher_slug: teacherSlug,
             time_slot: timeSlot,
             date,
@@ -53,7 +52,7 @@ export default function CheckoutPage() {
     }
 
     createCheckout();
-  }, [priceId, teacherSlug, timeSlot, date, participants, booking_type]); // More specific dependencies
+  }, [teacherSlug, timeSlot, date, participants, booking_type]); // More specific dependencies
 
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-4">

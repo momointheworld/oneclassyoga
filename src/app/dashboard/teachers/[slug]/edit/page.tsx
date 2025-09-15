@@ -17,6 +17,7 @@ import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
 import TipTapEditor from '@/components/TipTapEditor';
 import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
+import { TeacherRates } from '@/types/teacher';
 
 export default function EditTeacherProfilePage() {
   const router = useRouter();
@@ -36,9 +37,20 @@ export default function EditTeacherProfilePage() {
   const [isActive, setIsActive] = useState(false);
   const [isFeatured, setIsFeatured] = useState(false);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
+  const [stripeProductId, setStripeProductId] = useState('');
   const [weeklySchedule, setWeeklySchedule] = useState<{
     [key: string]: string[];
   }>(weekly_schedule);
+  const [rates, setRates] = useState<TeacherRates>({
+    single: null,
+    bundle3: null,
+    bundle6: null,
+    extra: {
+      single: null,
+      bundle3: null,
+      bundle6: null,
+    },
+  });
 
   useEffect(() => {
     const fetchTeacher = async () => {
@@ -66,6 +78,8 @@ export default function EditTeacherProfilePage() {
           ...weekly_schedule, // template with all days
           ...(data.weekly_schedule || {}), // overwrite with saved teacher slots
         });
+        setRates(data.rates);
+        setStripeProductId(data.stripe_product_id);
       }
 
       setLoading(false);
@@ -106,8 +120,8 @@ export default function EditTeacherProfilePage() {
         gallery: galleryUrls,
         updatedAt: new Date().toISOString(),
         weekly_schedule: weeklySchedule,
-        // timeSlots,
-        // available_days: availableDays,
+        stripe_product_id: stripeProductId,
+        rates: rates,
       })
       .eq('id', teacherId);
 
@@ -228,6 +242,126 @@ export default function EditTeacherProfilePage() {
             </div>
           ))}
         </div>
+
+        {/* stripe product id */}
+        <section>
+          <Label className="block mb-2">
+            Stripe Product ID
+            <Input
+              placeholder="stripe product id"
+              value={stripeProductId}
+              onChange={(e) => setStripeProductId(e.target.value)}
+            />
+          </Label>
+        </section>
+
+        {/* Rates */}
+        <section>
+          <p className="font-semibold mb-2">Rates (฿)</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Single Session
+              </label>
+              <Input
+                type="text"
+                min={0}
+                value={rates.single ?? ''}
+                onChange={(e) =>
+                  setRates({ ...rates, single: parseInt(e.target.value) || 0 })
+                }
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                3-Session Bundle
+              </label>
+              <Input
+                type="text"
+                min={0}
+                value={rates.bundle3 ?? ''}
+                onChange={(e) =>
+                  setRates({ ...rates, bundle3: parseInt(e.target.value) || 0 })
+                }
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                6-Session Bundle
+              </label>
+              <Input
+                type="text"
+                min={0}
+                value={rates.bundle6 ?? ''}
+                onChange={(e) =>
+                  setRates({ ...rates, bundle6: parseInt(e.target.value) || 0 })
+                }
+              />
+            </div>
+          </div>
+
+          <p className="font-semibold mt-4 mb-2">Extra Participant Rates (฿)</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Single Session Extra
+              </label>
+              <Input
+                type="text"
+                min={0}
+                value={rates.extra.single ?? ''}
+                onChange={(e) =>
+                  setRates({
+                    ...rates,
+                    extra: {
+                      ...rates.extra,
+                      single: parseInt(e.target.value) || 0,
+                    },
+                  })
+                }
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                3-Session Bundle Extra
+              </label>
+              <Input
+                type="text"
+                min={0}
+                value={rates.extra.bundle3 ?? ''}
+                onChange={(e) =>
+                  setRates({
+                    ...rates,
+                    extra: {
+                      ...rates.extra,
+                      bundle3: parseInt(e.target.value) || 0,
+                    },
+                  })
+                }
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                6-Session Bundle Extra
+              </label>
+              <Input
+                type="text"
+                min={0}
+                value={rates.extra.bundle6 ?? ''}
+                onChange={(e) =>
+                  setRates({
+                    ...rates,
+                    extra: {
+                      ...rates.extra,
+                      bundle6: parseInt(e.target.value) || 0,
+                    },
+                  })
+                }
+              />
+            </div>
+          </div>
+        </section>
 
         {/* PROFILE PHOTO UPLOAD */}
         <section>

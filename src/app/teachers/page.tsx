@@ -2,6 +2,7 @@ import React from 'react';
 import TeacherCard from '@/components/TeacherCard';
 import { createClient } from '@supabase/supabase-js';
 import { Metadata } from 'next';
+import { TeacherRates } from '@/types/teacher';
 
 export const metadata: Metadata = {
   title: 'Chiang Mai Yoga Teachers | Private 1-on-1 Classes',
@@ -44,6 +45,7 @@ type Teacher = {
   photo: string | null;
   styles: string[];
   levels: string[];
+  rates: TeacherRates;
   slug: string;
   bio: string | null;
   isFeatured: boolean;
@@ -52,14 +54,9 @@ type Teacher = {
 export const revalidate = 60; // cache for 60 seconds
 
 export default async function TeachersPage() {
-  // const { data: teachers, error } = await supabase
-  //   .from('teachers')
-  //   .select('id, name, slug, photo, styles, levels, bio,  isFeatured')
-  //   .eq('isActive', true);
-
   const { data: sortedTeachers, error } = await supabase
     .from('teachers')
-    .select('id, name, slug, photo, styles, levels, bio, isFeatured')
+    .select('id, name, slug, photo, styles, levels, rates, bio, isFeatured')
     .eq('isActive', true)
     .order('isFeatured', { ascending: false })
     .order('id', { ascending: false }); // fallback ordering
@@ -67,10 +64,6 @@ export default async function TeachersPage() {
   if (error) {
     throw new Error(error.message);
   }
-
-  // const sortedTeachers = teachers.slice().sort((a, b) => {
-  //   return (b.isFeatured === true ? 1 : 0) - (a.isFeatured === true ? 1 : 0);
-  // });
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-16 flex-grow">
@@ -96,6 +89,7 @@ export default async function TeachersPage() {
               bio: teacher.bio || '',
               styles: teacher.styles,
               levels: teacher.levels,
+              rates: teacher.rates,
               isFeatured: teacher.isFeatured,
             }}
           />

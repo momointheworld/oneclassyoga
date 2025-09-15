@@ -6,6 +6,7 @@ import { TimeSlotPicker } from './TimeSlot';
 import ParticipantsCount from './ParticipantsCount';
 import { ToBangkokDateOnly } from './BkkTimeConverter';
 import { BUNDLE3, BUNDLE6, PackageType } from '@/lib/packages';
+import { TeacherRates } from '@/types/teacher';
 
 interface BookingCalendarProps {
   onSelect: (date: Date | null, timeSlot: string | null) => void;
@@ -22,6 +23,7 @@ interface BookingCalendarProps {
     packageType: string | null
   ) => void;
   onRateChange?: (rate: number) => void;
+  rates: TeacherRates;
 }
 
 export default function BookingCalendar({
@@ -34,6 +36,7 @@ export default function BookingCalendar({
   selectedPackage = 'single',
   onReadyForCheckout,
   onRateChange,
+  rates,
 }: BookingCalendarProps) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [timeSlot, setTimeSlot] = useState<string | null>(null);
@@ -44,20 +47,20 @@ export default function BookingCalendar({
     let total = 0;
 
     // Base rate based on selected package
-    if (selectedPackage === 'single') total = 3500;
-    if (selectedPackage === BUNDLE3) total = 7000;
-    if (selectedPackage === BUNDLE6) total = 13000;
+    if (selectedPackage === 'single') total = rates.single;
+    if (selectedPackage === BUNDLE3) total = rates.bundle3;
+    if (selectedPackage === BUNDLE6) total = rates.bundle6;
 
     // Extra for second participant
     if (participants === 2) {
-      if (selectedPackage === 'single') total += 800;
-      if (selectedPackage === BUNDLE3) total += 2400;
-      if (selectedPackage === BUNDLE6) total += 4800;
+      if (selectedPackage === 'single') total += rates.extra.single;
+      if (selectedPackage === BUNDLE3) total += rates.extra.bundle3;
+      if (selectedPackage === BUNDLE6) total += rates.extra.bundle6;
     }
 
     setRate(total);
-    if (onRateChange) onRateChange(total);
-  }, [participants, selectedPackage, onRateChange]);
+    onRateChange?.(total);
+  }, [participants, selectedPackage, rates, onRateChange]);
 
   useEffect(() => {
     calculateRate();
