@@ -1,3 +1,5 @@
+import { TeacherRates } from '@/types/teacher';
+
 // ✅ Bundle identifiers
 export const BUNDLE3 = 'bundle3' as const;
 export const BUNDLE6 = 'bundle6' as const;
@@ -21,47 +23,43 @@ export const packageTitles: Record<PackageType, string> = {
   [BUNDLE6]: 'Choose Your First Class Date & Time',
 };
 
-// ✅ UI packages list
-export const packages: Array<{
-  id: PackageType;
-  title: string;
-  description: string;
-  friendNote: string;
-  price: string;
-  badge: string | null;
-  badgeVariant: BadgeVariant;
-}> = [
-  {
-    id: 'single',
-    title: 'Single Session',
-    description:
-      'Enjoy a hassle-free 1.5-hour yoga session guided by your teacher!',
-    friendNote: 'Bring a friend for just +800฿ — mats & props included!',
-    price: '3,500 THB',
-    badge: null,
-    badgeVariant: undefined,
-  },
-  {
-    id: 'bundle3',
-    title: 'Bundle of 3',
-    description:
-      'Save 3,500฿ — only 2,333฿ per session! Perfect for regular practice.',
-    friendNote: 'Add a friend for only +800฿ per class — share the joy!',
-    price: '7,000 THB',
-    badge: 'Most Popular',
-    badgeVariant: 'destructive',
-  },
-  {
-    id: 'bundle6',
-    title: 'Bundle of 6',
-    description:
-      'Save 8,000฿ — only 2,167฿ per session! Commit to your growth.',
-    friendNote: 'Bring a friend for +800฿ each session — double the fun!',
-    price: '13,000 THB',
-    badge: 'Best Value',
-    badgeVariant: 'secondary',
-  },
-];
+export const getPackages = (rates: TeacherRates) => {
+  const singlePrice = rates.single ?? 0;
+  const bundle3Price = rates.bundle3 ?? 0;
+  const bundle6Price = rates.bundle6 ?? 0;
+  const extraPerson = rates.extra.single ?? 0;
+
+  return [
+    {
+      id: 'single' as PackageType,
+      title: 'Single Session',
+      description:
+        'Enjoy a hassle-free 1.5-hour yoga session guided by your teacher!',
+      friendNote: `Bring a friend for just +${extraPerson}฿ — mats & props included!`,
+      price: singlePrice.toString(),
+      badge: null,
+      badgeVariant: undefined as BadgeVariant | undefined,
+    },
+    {
+      id: 'bundle3' as PackageType,
+      title: 'Bundle of 3',
+      description: `Save ${singlePrice * 3 - bundle3Price}฿ — only ${Math.round(bundle3Price / 3)}฿ per session! Perfect for regular practice.`,
+      friendNote: `Add a friend for only +${extraPerson}฿ per class — share the joy!`,
+      price: bundle3Price.toString(),
+      badge: 'Most Popular',
+      badgeVariant: 'destructive' as BadgeVariant,
+    },
+    {
+      id: 'bundle6' as PackageType,
+      title: 'Bundle of 6',
+      description: `Save ${singlePrice * 6 - bundle6Price}฿ — only ${Math.round(bundle6Price / 6)}฿ per session! Commit to your growth.`,
+      friendNote: `Bring a friend for ${extraPerson}฿ each session — double the fun!`,
+      price: bundle6Price.toString(),
+      badge: 'Best Value',
+      badgeVariant: 'secondary' as BadgeVariant,
+    },
+  ];
+};
 
 // ✅ Helper: get bundle size (e.g. "bundle3" → 3)
 export function getBundleSize(bookingType: PackageType): number {

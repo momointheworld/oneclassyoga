@@ -19,6 +19,7 @@ export type Teacher = {
   gallery: string[];
   videoUrl: string;
   slug: string;
+  isFeatured: boolean;
   weekly_schedule: Record<string, string[]>; // e.g., { Monday: ["10:00", "14:00"], ... }
   rates: TeacherRates;
   stripe_product_id?: string;

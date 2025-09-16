@@ -17,8 +17,8 @@ import {
   BUNDLE3,
   BUNDLE6,
   PackageType,
+  getPackages,
   packageTitles,
-  packages,
 } from '@/lib/packages';
 import { Teacher } from '@/types/teacher'; // adjust the path
 import ReviewCarousel from '@/components/ReviewCard';
@@ -56,8 +56,8 @@ export default function TeacherProfileClient({
   );
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
-
   const router = useRouter();
+  const packages = getPackages(teacher.rates);
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -109,13 +109,13 @@ export default function TeacherProfileClient({
     let basePrice = 0;
     switch (selectedPackage) {
       case 'single':
-        basePrice = teacher.rates.single;
+        basePrice = teacher.rates.single ?? 0;
         break;
       case BUNDLE3:
-        basePrice = teacher.rates.bundle3;
+        basePrice = teacher.rates.bundle3 ?? 0;
         break;
       case BUNDLE6:
-        basePrice = teacher.rates.bundle6;
+        basePrice = teacher.rates.bundle6 ?? 0;
         break;
       default:
         setError('Invalid package selected.');
@@ -123,13 +123,13 @@ export default function TeacherProfileClient({
     }
 
     // Add participant extra fee
-    if (participants === 2) {
+    if (participants === 2 && teacher.rates?.extra) {
       basePrice +=
         selectedPackage === 'single'
-          ? 800
+          ? (teacher.rates.extra.single ?? 0)
           : selectedPackage === BUNDLE3
-            ? 2400
-            : 4800;
+            ? (teacher.rates.extra.bundle3 ?? 0)
+            : (teacher.rates.extra.bundle6 ?? 0);
     }
 
     setError('');
@@ -161,13 +161,13 @@ export default function TeacherProfileClient({
     if (teacher.rates) {
       switch (selectedPackage) {
         case 'single':
-          calculatedRate = teacher.rates.single;
+          calculatedRate = teacher.rates.single ?? 0;
           break;
         case BUNDLE3:
-          calculatedRate = teacher.rates.bundle3;
+          calculatedRate = teacher.rates.bundle3 ?? 0;
           break;
         case BUNDLE6:
-          calculatedRate = teacher.rates.bundle6;
+          calculatedRate = teacher.rates.bundle6 ?? 0;
           break;
       }
     }
@@ -184,6 +184,8 @@ export default function TeacherProfileClient({
 
     setRate(calculatedRate);
   };
+
+  const extraRate = teacher.rates.extra.single;
 
   const galleryImages = teacher.gallery || [];
   // Get days that have at least one time slot
@@ -286,7 +288,7 @@ export default function TeacherProfileClient({
               Select Your Package & Time Slot
               <br />
               <span className="text-md text-orange-500">
-                Add a Friend for 800฿ more only!
+                Add a Friend for {extraRate}฿ more only!
               </span>
             </h2>
 
