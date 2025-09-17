@@ -16,6 +16,7 @@ export type Teacher = {
   bio: string;
   styles: string[];
   levels: string[];
+  strengths: Record<string, string[]>; // e.g., { Movement: ["Backbends", "Twists"], ... }
   gallery: string[];
   videoUrl: string;
   slug: string;

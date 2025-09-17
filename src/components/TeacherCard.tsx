@@ -25,9 +25,8 @@ interface TeacherCardProps {
     bio?: string;
     slug?: string;
     photo?: string;
-    styles: string[];
     rates: TeacherRates;
-    levels: string[];
+    strengths: Record<string, string[]>;
     isActive?: boolean;
     isFeatured?: boolean;
   };
@@ -74,26 +73,24 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
         <div className="text-sm text-gray-600 mb-4 line-clamp-3">
           {parse(teacher.bio || '')}
         </div>
-
-        <div className="text-sm text-gray-800 space-y-1">
-          <p>
-            <span className="font-semibold text-gray-700">Styles:</span>{' '}
-            <span className="flex flex-wrap gap-2 mt-2">
-              {teacher.styles.slice(0, 3).map((style) => (
-                <Badge
-                  key={style}
-                  variant="secondary"
-                  className="bg-blue-200 dark:bg-blue-600 text-sm"
-                >
-                  {style}
-                </Badge>
-              ))}
-            </span>
-          </p>
+        {/* make the strength the same height to align horizontally */}
+        <div className="text-gray-600 mb-4 h-[90px]">
+          <p className="font-semibold text-gray-600 mb-2">Strengths</p>
+          <div className="flex flex-wrap gap-2">
+            {teacher.strengths?.Movement?.slice(0, 3).map((strength) => (
+              <Badge
+                key={strength}
+                variant="secondary"
+                className="text-sm px-2 py-1 font-semibold border-emerald-500 text-emerald-600"
+              >
+                {strength}
+              </Badge>
+            ))}
+          </div>
         </div>
-        <div className="text-sm text-gray-800 space-y-2 mt-5">
-          <p className="mt-1 font-semibold text-blue-600 flex justify-between">
-            <span className="text-gray-700">Rates:</span>
+
+        <div className="space-y-2 ">
+          <p className="mt-5 text-sm font-semibold text-gray-600 flex justify-end">
             From{' '}
             {teacher.rates.bundle6
               ? `${Math.round(teacher.rates.bundle6 / 6)}฿`

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
   levelOptions,
+  strengthsOptions,
   styleOptions,
   timeSlotOptions,
   weekly_schedule,
@@ -29,6 +30,7 @@ export default function EditTeacherProfilePage() {
   const [videoUrl, setVideoUrl] = useState('');
   const [levels, setLevels] = useState<string[]>([]);
   const [styles, setStyles] = useState<string[]>([]);
+  const [strengths, setStrengths] = useState<Record<string, string[]>>({});
   const [profilePhoto, setProfilePhoto] = useState('');
   const [galleryUrls, setGalleryUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,6 +71,7 @@ export default function EditTeacherProfilePage() {
         setVideoUrl(data.videoUrl || '');
         setLevels(data.levels || []);
         setStyles(data.styles || []);
+        setStrengths(data.strengths || {});
         setProfilePhoto(data.photo || '');
         setGalleryUrls(data.gallery || []);
         setIsActive(data.isActive ?? true);
@@ -116,6 +119,7 @@ export default function EditTeacherProfilePage() {
         isActive,
         isFeatured,
         styles,
+        strengths,
         photo: profilePhoto,
         gallery: galleryUrls,
         updatedAt: new Date().toISOString(),
@@ -192,7 +196,7 @@ export default function EditTeacherProfilePage() {
         </div>
 
         {/* Styles Checkboxes */}
-        <div>
+        <div className="border bg-gray-100 p-2">
           <p className="font-semibold mb-2">Styles</p>
           <div className="grid grid-cols-2 gap-3">
             {styleOptions.map((style) => (
@@ -210,6 +214,48 @@ export default function EditTeacherProfilePage() {
               </label>
             ))}
           </div>
+        </div>
+
+        {/* Strength Checkboxes */}
+        <div className="border p-2 bg-gray-100">
+          <p className="font-semibold mb-2">Strengths</p>
+
+          {Object.entries(strengthsOptions).map(([category, options]) => (
+            <div key={category} className="mb-4">
+              <p className="font-medium">{category}</p>
+              <div className="grid grid-cols-2 gap-3">
+                {options.map((strength) => (
+                  <label key={strength} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      value={strength}
+                      checked={strengths[category]?.includes(strength) ?? false}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setStrengths({
+                            ...strengths,
+                            [category]: [
+                              ...(strengths[category] ?? []),
+                              strength,
+                            ],
+                          });
+                        } else {
+                          setStrengths({
+                            ...strengths,
+                            [category]:
+                              strengths[category]?.filter(
+                                (s) => s !== strength
+                              ) ?? [],
+                          });
+                        }
+                      }}
+                    />
+                    {strength}
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* weekly schedule */}

@@ -216,38 +216,69 @@ export default function TeacherProfileClient({
 
           <div className="tiptap prose max-w-none">{parse(teacher.bio)}</div>
 
-          <div className="grid grid-cols-2 gap-4 text-sm text-gray-800 mt-4">
+          <div className="grid grid-cols-2 gap-4 text-gray-800 mt-6">
+            {/* Styles */}
             <div>
-              <p>
-                <span className="font-semibold text-gray-700">Styles:</span>{' '}
-                <span className="flex flex-wrap gap-2 mt-2">
-                  {teacher.styles.map((style) => (
-                    <Badge
-                      key={style}
-                      variant="secondary"
-                      className="bg-blue-200 dark:bg-blue-600 text-sm"
-                    >
-                      {style}
-                    </Badge>
-                  ))}
-                </span>
-              </p>
+              <p className="font-semibold text-gray-700 mb-2">Styles</p>
+              <div className="flex flex-wrap gap-2">
+                {teacher.styles.map((style) => (
+                  <Badge
+                    key={style}
+                    variant="secondary"
+                    className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-xs px-2 py-1"
+                  >
+                    {style}
+                  </Badge>
+                ))}
+              </div>
             </div>
+
+            {/* Levels */}
             <div>
-              <p>
-                <span className="font-semibold text-gray-700">Levels:</span>{' '}
-                <span className="flex flex-wrap gap-2 mt-2">
-                  {teacher.levels.map((level) => (
-                    <Badge
-                      key={level}
-                      variant="secondary"
-                      className="bg-emerald-200 dark:bg-emerald-600 text-sm"
-                    >
-                      {level}
-                    </Badge>
-                  ))}
-                </span>
-              </p>
+              <p className="font-semibold text-gray-700 mb-2">Levels</p>
+              <div className="flex flex-wrap gap-2">
+                {teacher.levels.map((level) => (
+                  <Badge
+                    key={level}
+                    variant="secondary"
+                    className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-xs px-2 py-1"
+                  >
+                    {level}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Strengths */}
+          <div className="my-8">
+            <p className="font-semibold text-gray-700 mb-2">Strengths</p>
+            <div className="flex flex-col gap-3">
+              {teacher.strengths &&
+                Object.entries(teacher.strengths).map(([category, items]) => (
+                  <div key={category} className="px-3">
+                    <p className="font-medium text-gray-500 text-sm mb-1">
+                      {category}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {items.map((strength) => (
+                        <Badge
+                          key={`${category}-${strength}`}
+                          variant="secondary"
+                          className={`text-xs px-2 py-1 font-semibold ${
+                            category === 'Movement'
+                              ? 'border-orange-600 dark:bg-orange-700 text-orange-600'
+                              : category === 'Mind & Body'
+                                ? 'border-blue-600 dark:bg-blue-700 text-blue-600'
+                                : 'border-emerald-600 dark:bg-green-700 text-emerald-600'
+                          }`}
+                        >
+                          {strength}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
 

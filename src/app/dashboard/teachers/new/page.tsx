@@ -10,6 +10,7 @@ import {
   levelOptions,
   timeSlotOptions,
   weekly_schedule,
+  strengthsOptions,
 } from '@/lib/constants';
 import { Loader2 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/supabaseClient';
@@ -22,6 +23,7 @@ export default function NewTeacherPage() {
   const [bio, setBio] = useState('');
   const [styles, setStyles] = useState<string[]>([]);
   const [levels, setLevels] = useState<string[]>([]);
+  const [strengths, setStrengths] = useState<Record<string, string[]>>({});
   const [videoUrl, setVideoUrl] = useState('');
   const [profilePhoto, setProfilePhoto] = useState('');
   const [galleryUrls, setGalleryUrls] = useState<string[]>([]);
@@ -63,6 +65,7 @@ export default function NewTeacherPage() {
       weekly_schedule: weeklySchedule,
       rates: rates,
       stripe_product_id: stripeProductId,
+      strengths,
     });
 
     setButtonLoading(false);
@@ -176,6 +179,49 @@ export default function NewTeacherPage() {
           </div>
         </div>
 
+        {/* Strength Checkboxes */}
+        <div className="border p-2 bg-gray-100">
+          <p className="font-semibold mb-2">Strengths</p>
+
+          {Object.entries(strengthsOptions).map(([category, options]) => (
+            <div key={category} className="mb-4">
+              <p className="font-medium">{category}</p>
+              <div className="grid grid-cols-2 gap-3">
+                {options.map((strength) => (
+                  <label key={strength} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      value={strength}
+                      checked={strengths[category]?.includes(strength) ?? false}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setStrengths({
+                            ...strengths,
+                            [category]: [
+                              ...(strengths[category] ?? []),
+                              strength,
+                            ],
+                          });
+                        } else {
+                          const updated = (strengths[category] ?? []).filter(
+                            (s) => s !== strength
+                          );
+                          const newStrengths = { ...strengths };
+                          if (updated.length > 0)
+                            newStrengths[category] = updated;
+                          else delete newStrengths[category]; // remove empty category
+                          setStrengths(newStrengths);
+                        }
+                      }}
+                    />
+                    {strength}
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
         {/* Weekly Schedule */}
 
         <div>
@@ -229,11 +275,14 @@ export default function NewTeacherPage() {
                 Single Session
               </label>
               <Input
-                type="number"
+                type="text"
                 min={0}
-                value={rates.single}
+                value={rates.single || 0}
                 onChange={(e) =>
-                  setRates({ ...rates, single: parseInt(e.target.value) || 0 })
+                  setRates({
+                    ...rates,
+                    single: e.target.value ? parseInt(e.target.value) : null,
+                  })
                 }
               />
             </div>
@@ -242,11 +291,14 @@ export default function NewTeacherPage() {
                 3-Session Bundle
               </label>
               <Input
-                type="number"
+                type="text"
                 min={0}
-                value={rates.bundle3}
+                value={rates.bundle3 || 0}
                 onChange={(e) =>
-                  setRates({ ...rates, bundle3: parseInt(e.target.value) || 0 })
+                  setRates({
+                    ...rates,
+                    bundle3: e.target.value ? parseInt(e.target.value) : null,
+                  })
                 }
               />
             </div>
@@ -255,11 +307,14 @@ export default function NewTeacherPage() {
                 6-Session Bundle
               </label>
               <Input
-                type="number"
+                type="text"
                 min={0}
-                value={rates.bundle6}
+                value={rates.bundle6 ?? 0}
                 onChange={(e) =>
-                  setRates({ ...rates, bundle6: parseInt(e.target.value) || 0 })
+                  setRates({
+                    ...rates,
+                    bundle6: e.target.value ? parseInt(e.target.value) : null,
+                  })
                 }
               />
             </div>
@@ -273,15 +328,15 @@ export default function NewTeacherPage() {
                 Single Session Extra
               </label>
               <Input
-                type="number"
+                type="text"
                 min={0}
-                value={rates.extra.single}
+                value={rates.extra.single || 0}
                 onChange={(e) =>
                   setRates({
                     ...rates,
                     extra: {
                       ...rates.extra,
-                      single: parseInt(e.target.value) || 0,
+                      single: parseInt(e.target.value) || null,
                     },
                   })
                 }
@@ -292,15 +347,15 @@ export default function NewTeacherPage() {
                 3-Session Bundle Extra
               </label>
               <Input
-                type="number"
+                type="text"
                 min={0}
-                value={rates.extra.bundle3}
+                value={rates.extra.bundle3 || 0}
                 onChange={(e) =>
                   setRates({
                     ...rates,
                     extra: {
                       ...rates.extra,
-                      bundle3: parseInt(e.target.value) || 0,
+                      bundle3: parseInt(e.target.value) || null,
                     },
                   })
                 }
@@ -311,15 +366,15 @@ export default function NewTeacherPage() {
                 6-Session Bundle Extra
               </label>
               <Input
-                type="number"
+                type="text"
                 min={0}
-                value={rates.extra.bundle6}
+                value={rates.extra.bundle6 || 0}
                 onChange={(e) =>
                   setRates({
                     ...rates,
                     extra: {
                       ...rates.extra,
-                      bundle6: parseInt(e.target.value) || 0,
+                      bundle6: parseInt(e.target.value) || null,
                     },
                   })
                 }

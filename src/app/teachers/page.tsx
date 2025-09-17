@@ -43,8 +43,7 @@ type Teacher = {
   id: number;
   name: string;
   photo: string | null;
-  styles: string[];
-  levels: string[];
+  strengths: Record<string, string[]>;
   rates: TeacherRates;
   slug: string;
   bio: string | null;
@@ -56,7 +55,7 @@ export const revalidate = 60; // cache for 60 seconds
 export default async function TeachersPage() {
   const { data: sortedTeachers, error } = await supabase
     .from('teachers')
-    .select('id, name, slug, photo, styles, levels, rates, bio, isFeatured')
+    .select('id, name, slug, photo, strengths, rates, bio, isFeatured')
     .eq('isActive', true)
     .order('isFeatured', { ascending: false })
     .order('id', { ascending: false }); // fallback ordering
@@ -87,8 +86,7 @@ export default async function TeachersPage() {
               slug: teacher.name.toLowerCase().replace(/\s+/g, '-'),
               photo: teacher.photo || '/placeholder.png',
               bio: teacher.bio || '',
-              styles: teacher.styles,
-              levels: teacher.levels,
+              strengths: teacher.strengths,
               rates: teacher.rates,
               isFeatured: teacher.isFeatured,
             }}

@@ -123,16 +123,16 @@ export default function PricingPage() {
 
       {/* Badges */}
       <div className="flex flex-col sm:flex-row items-center sm:justify-center gap-2 mb-6 flex-wrap">
-        <span className="text-blue-700 text-md font-semibold px-3 py-1 rounded-full flex items-center gap-2">
+        <span className="text-emerald-700 text-md font-semibold px-3 py-1 rounded-full flex items-center gap-2">
           ⏱️ 1.5 hrs/session
         </span>
         <Link
           href="/location"
-          className="text-blue-700 text-md font-semibold underline px-3 py-1 rounded-full hover:text-blue-500 transition flex items-center gap-2"
+          className="text-emerald-700 text-md font-semibold underline px-3 py-1 rounded-full hover:text-emerald-500 transition flex items-center gap-2"
         >
           🏢 Studio included (usually 500฿)
         </Link>
-        <span className="text-blue-700 text-md font-semibold px-3 py-1 rounded-full flex items-center gap-2">
+        <span className="text-emerald-700 text-md font-semibold px-3 py-1 rounded-full flex items-center gap-2">
           👯 Add a friend +800฿
         </span>
       </div>
@@ -153,7 +153,7 @@ export default function PricingPage() {
           getPackages(teachers[0].rates).map((pkg) => (
             <div
               key={pkg.id}
-              className="border rounded-xl p-6 shadow hover:shadow-lg transition text-center relative"
+              className="border border-gray-200 rounded-xl p-6 shadow  text-center relative"
             >
               {pkg.badge && (
                 <span
@@ -268,7 +268,12 @@ export default function PricingPage() {
                           height={40}
                           className="rounded-full object-cover"
                         />
-                        <span className="font-medium">{teacher.name}</span>
+                        <Link
+                          href={`/teachers/${teacher.slug}`}
+                          className="hover:underline transition hover:text-gray-500"
+                        >
+                          <span className="font-medium">{teacher.name}</span>
+                        </Link>
                       </td>
 
                       {/* Bundle 3 */}

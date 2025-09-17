@@ -45,19 +45,17 @@ export default function BookingCalendar({
 
   const calculateRate = useCallback(() => {
     let total = 0;
-
     // Base rate based on selected package
-    if (selectedPackage === 'single') total = rates.single;
-    if (selectedPackage === BUNDLE3) total = rates.bundle3;
-    if (selectedPackage === BUNDLE6) total = rates.bundle6;
+    if (selectedPackage === 'single') total = rates.single ?? 0;
+    else if (selectedPackage === BUNDLE3) total = rates.bundle3 ?? 0;
+    else if (selectedPackage === BUNDLE6) total = rates.bundle6 ?? 0;
 
     // Extra for second participant
     if (participants === 2) {
-      if (selectedPackage === 'single') total += rates.extra.single;
-      if (selectedPackage === BUNDLE3) total += rates.extra.bundle3;
-      if (selectedPackage === BUNDLE6) total += rates.extra.bundle6;
+      if (selectedPackage === 'single') total += rates.extra.single ?? 0;
+      else if (selectedPackage === BUNDLE3) total += rates.extra.bundle3 ?? 0;
+      else if (selectedPackage === BUNDLE6) total += rates.extra.bundle6 ?? 0;
     }
-
     setRate(total);
     onRateChange?.(total);
   }, [participants, selectedPackage, rates, onRateChange]);

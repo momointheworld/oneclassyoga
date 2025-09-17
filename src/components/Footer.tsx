@@ -15,18 +15,24 @@ const paymentMethods = [
 
 export function PaymentIcons() {
   return (
-    <div className="flex flex-wrap gap-2 sm:gap-3 items-center justify-center md:justify-start ">
+    <div className="flex flex-wrap gap-2 sm:gap-3 items-center justify-center md:justify-start">
       {paymentMethods.map((method) => (
-        // To contain the 30px width with auto height
-        <div className="relative w-[30px] h-[30px]" key={method.alt}>
+        <div className="relative group w-[30px] h-[30px]" key={method.alt}>
           <Image
-            key={method.alt}
             src={method.src}
             alt={method.alt}
             fill
             style={{ objectFit: 'contain' }}
             className="opacity-80"
           />
+          {/* Tooltip */}
+          <span
+            className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 
+                       whitespace-nowrap px-2 py-1 text-xs rounded bg-gray-800 
+                       text-white opacity-0 group-hover:opacity-100 transition"
+          >
+            {method.alt}
+          </span>
         </div>
       ))}
     </div>
