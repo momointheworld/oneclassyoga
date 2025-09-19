@@ -414,7 +414,7 @@ export default function TeacherProfileClient({
               <Button
                 onClick={handleBooking}
                 disabled={!selectedPackage || !agreedToTerms}
-                className="bg-orange-600 text-white text-lg font-medium px-4 py-2 rounded-xl hover:bg-orange-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-orange-600 text-white text-lg font-medium px-4 py-2 rounded-xl hover:bg-orange-700 transition disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Book Now
               </Button>

@@ -8,6 +8,8 @@ import FAQSection from '@/components/FAQSection';
 import { Metadata } from 'next';
 import YouTubeVideo from '@/components/YoutubeViedo';
 import ReviewCarousel from '@/components/ReviewCard';
+import { Badge } from '@/components/ui/badge';
+import { getPackages } from '@/lib/packages';
 
 export const metadata: Metadata = {
   title:
@@ -49,12 +51,14 @@ export default async function HomePage() {
 
   const { data: teachers, error } = await (await supabase)
     .from('teachers')
-    .select('slug, name, photo, bio, styles')
+    .select('slug, name, photo, bio, styles, strengths, rates')
+    .order('isFeatured', { ascending: false })
     .limit(6);
 
   if (error) {
     console.error(error);
   }
+  const topTeachers = teachers?.slice(0, 3) || [];
 
   // Fetch reviews
   const { data: reviews, error: reviewError } = await (await supabase)
@@ -108,15 +112,16 @@ export default async function HomePage() {
             Hand-Picked Teachers for Personalized Yoga Sessions
           </h2>
           <p className="text-center text-gray-600 max-w-2xl mx-auto">
-            Our teachers specialize in a variety of yoga styles and levels, each
-            bringing their unique approach and knowledge. They provide hands-on
-            guidance to help you safely explore advanced movements such as
-            handstands, backbends, and inversions, while also tailoring sessions
-            for beginners or those looking to deepen their practice.
+            Our teachers specialize in a variety of yoga styles, levels, and
+            strengths, each bringing their unique approach and knowledge. They
+            provide hands-on guidance to help you safely explore advanced
+            movements such as handstands, backbends, and inversions, while also
+            tailoring sessions for beginners or those looking to deepen their
+            practice.
           </p>
 
           <div className="grid gap-6 md:grid-cols-3">
-            {teachers?.slice(0, 3).map((teacher) => (
+            {topTeachers?.slice(0, 3).map((teacher) => (
               <div
                 key={teacher.slug}
                 className="bg-white rounded-2xl p-6 shadow border border-gray-100 text-center"
@@ -132,12 +137,38 @@ export default async function HomePage() {
                 <h3 className="text-xl font-medium capitalize">
                   {teacher.name}
                 </h3>
-                <div className="text-gray-600 text-sm mb-4">
-                  <strong>Specializes in:</strong>{' '}
-                  {teacher.styles?.slice(0, 3).join(', ')}
-                  {teacher.styles && teacher.styles.length > 3 ? ', ...' : ''}
+                {/* Display top 3 strengths */}
+
+                <div className="h-[60px]">
+                  <div className="flex flex-wrap gap-2 justify-center my-4">
+                    {teacher.strengths?.Movement?.slice(0, 3).map(
+                      (strength: string) => (
+                        <Badge
+                          key={strength}
+                          variant="secondary"
+                          className="border border-gray-300 text-emerald-600"
+                        >
+                          {strength}
+                        </Badge>
+                      )
+                    )}
+                  </div>
                 </div>
 
+                {/* Display styles */}
+                <div className="h-[70px]">
+                  <div className="flex flex-wrap gap-2 justify-center my-4">
+                    {teacher.styles?.slice(0, 3).map((style: string) => (
+                      <Badge
+                        key={style}
+                        variant="outline"
+                        className="border border-gray-300 text-gray-600"
+                      >
+                        {style}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
                 <Link href={`/teachers/${teacher.slug}`}>
                   <Button
                     variant="outline"
@@ -170,25 +201,37 @@ export default async function HomePage() {
             environment.
           </p>
 
-          <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
-            <div className="p-6 border border-gray-200 rounded-2xl shadow">
-              {' '}
-              <h3 className="text-xl font-semibold">Single Session</h3>{' '}
-              <p className="text-gray-500 mt-2">
-                ฿3,400 per 1.5-hour session
-              </p>{' '}
-            </div>{' '}
-            <div className="p-6 border border-gray-200 rounded-2xl shadow">
-              {' '}
-              <h3 className="text-xl font-semibold">3-Session Bundle</h3>{' '}
-              <p className="text-gray-500 mt-2">฿7,000 – Save ฿3,250</p>{' '}
-            </div>
+          <div className="grid gap-6 md:grid-cols-3 max-w-4xl mx-auto">
+            {topTeachers &&
+              getPackages(topTeachers[0].rates).map((pkg) => (
+                <div
+                  key={pkg.id}
+                  className="p-6 border border-gray-200 rounded-2xl shadow relative"
+                >
+                  <h3 className="text-xl font-semibold">{pkg.title}</h3>
+                  <p className="text-gray-500 mt-2">฿{pkg.price}</p>
+                  <p className="text-gray-600 mt-2 text-sm h-[70px]">
+                    {pkg.description}
+                  </p>
+                  {pkg.friendNote && (
+                    <p className="text-gray-400 mt-1 text-xs italic">
+                      {pkg.friendNote}
+                    </p>
+                  )}
+                </div>
+              ))}
           </div>
-          <Link href="/pricing">
-            <Button className="bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-emerald-700 transition">
-              Compare Pricing Options
-            </Button>
-          </Link>
+          <p className="text-gray-500 text-sm max-w-xl mx-auto italic">
+            Prices are based on each teacher’s rates. What you see here is
+            illustrative—actual rates may vary per teacher.
+          </p>
+          <div className="mt-6">
+            <Link href="/pricing">
+              <Button className="bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-emerald-700 transition">
+                View All Teacher Rates
+              </Button>
+            </Link>
+          </div>
         </section>
 
         {/* Trust Section */}
@@ -227,8 +270,8 @@ export default async function HomePage() {
         {/* Featured Reviews Section */}
         {reviews && reviews.length > 0 && (
           <section className="mt-15 space-y-6 mx-auto">
-            <div className="mt-5 font-semibold">
-              <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
+            <div className="mt-5">
+              <h1 className="text-3xl font-semibold text-center mb-2 text-gray-800">
                 Student Reviews
               </h1>
               <p className="text-center text-gray-600 mb-8">

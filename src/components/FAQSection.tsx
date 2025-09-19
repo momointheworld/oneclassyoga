@@ -29,16 +29,17 @@ export default function FAQSection() {
     {
       q: 'Are your yoga teachers certified?',
       aDisplay:
-        'Yes! All teachers featured here are certified and bring years of experience. Each one has been carefully chosen for their quality of teaching and ability to create meaningful, personalized sessions.',
+        'Yes! All teachers featured here are certified and bring years of experience. Each one has been carefully chosen for their quality of teaching and ability to create meaningful, personalized sessions. Additionally, teachers have different strengths and areas of expertise, so you can find one that best matches your practice goals.',
       aSchema:
-        'Yes! All teachers featured here are certified and bring years of experience. Each one has been carefully chosen for their quality of teaching and ability to create meaningful, personalized sessions.',
+        'Yes! All teachers featured here are certified and bring years of experience. Each one has been carefully chosen for their quality of teaching and ability to create meaningful, personalized sessions. Additionally, teachers have different strengths and areas of expertise, so you can find one that best matches your practice goals.',
     },
+
     {
-      q: 'How do I book a private yoga class?',
+      q: 'How far in advance do I need to book a private yoga class?',
       aDisplay:
-        'Booking is simple: choose a teacher, pick a time, and confirm online. This hassle-free process lets teachers focus on giving you a high-quality, personalized class.',
+        'Private yoga classes can be booked 7 to 30 days in advance. This allows both the teacher and the studio to be scheduled ahead, ensuring availability and a smooth experience.',
       aSchema:
-        'Booking is simple: choose a teacher, pick a time, and confirm online. This hassle-free process lets teachers focus on giving you a high-quality, personalized class.',
+        'Private yoga classes can be booked 7 to 30 days in advance to ensure teacher and studio availability.',
     },
   ];
 
@@ -73,7 +74,10 @@ export default function FAQSection() {
           <span className="block sm:inline">Have more questions?</span>{' '}
           <span className="block sm:inline">
             Visit our{' '}
-            <Link href="/community" className="text-blue-600 underline">
+            <Link
+              href="/community?category=Q%26A"
+              className="text-blue-600 underline"
+            >
               Community Q&A
             </Link>
           </span>

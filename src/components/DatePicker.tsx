@@ -38,7 +38,7 @@ export function DatePicker({
   );
 
   const today = startOfDay(new Date());
-  const from = addDays(today, 1);
+  const from = addDays(today, 7);
   const to = addDays(from, 30);
 
   return (

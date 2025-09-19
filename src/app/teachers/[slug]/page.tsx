@@ -1,13 +1,8 @@
 // app/teacher/[slug]/page.tsx
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import TeacherProfileClient from './TeacherProfileClient';
 import type { Metadata } from 'next';
 import { createClient } from '@/utils/supabase/supabaseServer';
-
-// Helper to strip HTML tags
-function stripHtml(html: string) {
-  return html.replace(/<[^>]+>/g, '');
-}
 
 export async function generateMetadata({
   params,
@@ -19,7 +14,7 @@ export async function generateMetadata({
 
   const { data: teacher } = await (await supabase)
     .from('teachers')
-    .select('name, styles, bio, photo')
+    .select('name, photo, strengths')
     .eq('slug', slug)
     .single();
 
@@ -31,12 +26,9 @@ export async function generateMetadata({
     };
   }
 
-  const plainBio = teacher.bio ? stripHtml(teacher.bio) : '';
-  const description =
-    plainBio.slice(0, 150) ||
-    `Learn yoga in Chiang Mai with ${teacher.name}, specializing in ${teacher.styles?.join(
-      ', '
-    )}. Offering private 1-on-1 classes.`;
+  const description = `Learn yoga in Chiang Mai with ${teacher.name}, specializing in ${teacher.strengths[
+    'Movement'
+  ]?.join(', ')}. Offering private 1-on-1 classes.`;
 
   const imageUrl =
     teacher.photo || 'https://oneclass.yoga/logos/default-teacher-image.png'; // fallback image
@@ -69,6 +61,8 @@ export async function generateMetadata({
   };
 }
 
+export const revalidate = 60; // cache for 60 seconds
+
 export default async function TeacherProfilePage({
   params,
 }: {
@@ -83,10 +77,11 @@ export default async function TeacherProfilePage({
       'id, name, slug, bio, isFeatured, photo, gallery, styles, strengths, rates, levels, videoUrl, weekly_schedule'
     )
     .eq('slug', slug)
+    .eq('isActive', true)
     .single();
 
   if (error || !teacher) {
-    return notFound();
+    redirect('/teachers');
   }
 
   return <TeacherProfileClient teacher={teacher} />;
