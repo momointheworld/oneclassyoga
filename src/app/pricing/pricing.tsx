@@ -443,7 +443,8 @@ export default function Pricing() {
                       <span>{singleAlone}฿ / person</span>
                       {singleFriend ? (
                         <span className="bg-yellow-100 text-yellow-800 text-sm px-2 py-1 rounded">
-                          With friend: {singleAlone + singleFriend}฿
+                          With friend:{' '}
+                          {Math.round((singleAlone + singleFriend) / 2)}฿
                         </span>
                       ) : null}
                     </div>

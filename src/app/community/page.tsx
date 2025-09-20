@@ -6,11 +6,11 @@ import { createClient } from '@/utils/supabase/supabaseServer';
 export const metadata: Metadata = {
   title: 'Community | OneClass',
   description:
-    'Explore curated posts on Q&A, Experiences, General insights, and Random thoughts — shared by OneClass.',
+    'Explore curated posts on Q&A, Experiences, Upcoming events, and Random thoughts — shared by OneClass.',
   openGraph: {
     title: 'OneClass Community',
     description:
-      'Discover curated posts in Q&A, Experiences, General insights, and Random categories — shared by OneClass.',
+      'Discover curated posts in Q&A, Experiences, Upcoming events, and Random categories — shared by OneClass.',
     url: 'https://oneromeo.com/community',
     siteName: 'OneClass',
     images: [
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'OneClass Community',
     description:
-      'Curated posts on Q&A, Experiences, General insights, and Random topics — shared by OneClass.',
+      'Curated posts on Q&A, Experiences, Upcoming events, and Random topics — shared by OneClass.',
     images: ['https://oneromeo.com/logos/og-image.png'],
     creator: '@oneromeo',
   },

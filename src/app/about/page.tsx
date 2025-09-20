@@ -8,7 +8,7 @@ import Link from 'next/link';
 export const metadata = {
   title: 'About | Chiang Mai Yoga Teachers',
   description:
-    'Discover the story behind this platform — created to help yogis in Chiang Mai find the right teachers, support local instructors, and grow a connected yoga community.',
+    'Discover the story behind OneClass Yoga — created to help yogis in Chiang Mai find the right teachers, support local instructors, and grow a connected yoga community.',
 };
 
 export default function AboutPage() {
@@ -18,7 +18,7 @@ export default function AboutPage() {
         {/* Hero Section with Video */}
         <section className="space-y-6 text-center">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-800">
-            About This Platform
+            About OneClass Yoga and Me
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             A community-driven project created by a long-term yoga practitioner
@@ -120,7 +120,7 @@ export default function AboutPage() {
           <h2 className="text-3xl font-semibold text-gray-800">Our Vision</h2>
           <p className="text-gray-700 max-w-3xl mx-auto leading-relaxed">
             Yoga is more than postures. It’s about self-discovery, connection,
-            and growth. This platform is a living hub where teachers and
+            and growth. OneClass Yoga is a living hub where teachers and
             practitioners can meet, learn, and support each other. Together, we
             can make Chiang Mai’s yoga scene more vibrant, accessible, and
             supportive.
