@@ -11,6 +11,7 @@ import {
   MenubarItem,
 } from '@/components/ui/menubar';
 import { Menu } from 'lucide-react';
+import Image from 'next/image';
 
 const links = [
   { label: 'Home', href: '/' },
@@ -66,7 +67,18 @@ export default function MainMenu() {
   return (
     <div className="w-full shadow-sm bg-white z-50 relative">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <div className="text-lg font-semibold">OneClass Yoga</div>
+        <div className="text-lg font-semibold">
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src="/images/oneclass-logo.svg"
+              alt="OneClass Yoga"
+              width={50}
+              height={50}
+              priority
+            />
+            <span className="inline text-lg font-semibold">OneClass Yoga</span>
+          </Link>
+        </div>
 
         <div className="hidden md:flex gap-6">
           {links.map(({ label, href }) => (

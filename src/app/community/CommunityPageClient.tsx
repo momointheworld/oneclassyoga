@@ -126,7 +126,7 @@ export default function CommunityPageClient({ user, posts }: Props) {
   };
 
   return (
-    <main className="max-w-3xl mx-auto p-6 space-y-8">
+    <main className="max-w-3xl mx-auto p-6 space-y-8 min-h-screen">
       <h1 className="text-4xl font-bold text-gray-900 mb-8">Asana Journal</h1>
 
       {/* Category Buttons */}

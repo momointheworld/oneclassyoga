@@ -49,7 +49,17 @@ export function Footer() {
           <div className="flex flex-col items-center md:items-start gap-4">
             {/* Logo & Site Name */}
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
+              <div className="w-8 h-8 bg-gray-900">
+                {' '}
+                <Image
+                  src="/images/oneclass-logo-gray.svg"
+                  alt="OneClass Yoga"
+                  width={50}
+                  height={50}
+                  priority
+                  className=""
+                />
+              </div>
               <span className="font-semibold text-lg">OneClass Yoga</span>
             </div>
 
