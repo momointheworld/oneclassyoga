@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     siteName: 'OneClass Yoga',
     images: [
       {
-        url: 'https://oneclass.yoga/logos/teachers-og-image.png',
+        url: '/images/ogs/teachers-og.jpg',
         width: 1200,
         height: 630,
         alt: 'Private yoga classes in Chiang Mai with experienced teachers',
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     title: 'Chiang Mai Yoga Teachers | Private 1-on-1 Classes',
     description:
       'Discover top yoga teachers in Chiang Mai. Book private 1-on-1 classes tailored to your level and schedule, with the option to share the session with a friend.',
-    images: ['https://oneclass.yoga/logos/teachers-og-image.png'],
+    images: ['images/ogs/teachers-og.jpg'],
   },
 };
 

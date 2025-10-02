@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     siteName: 'OneClass Yoga',
     images: [
       {
-        url: 'https://oneclass.yoga/logos/home-og-image.png',
+        url: '/images/ogs/home-og.jpg',
         width: 1200,
         height: 630,
         alt: 'Handpicked private yoga classes in Chiang Mai – share a class with a friend for more fun and savings',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
       'Handpicked Private Yoga in Chiang Mai | Share a Class with a Friend for More Fun & Savings',
     description:
       'Book a private yoga class with handpicked teachers, or share it with a friend in Chiang Mai for a fun and cost-effective experience. Personalized sessions for all levels.',
-    images: ['https://oneclass.yoga/logos/home-og-image.png'],
+    images: ['/images/ogs/home-og.png'],
   },
 };
 

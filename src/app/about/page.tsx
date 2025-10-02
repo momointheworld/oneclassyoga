@@ -2,13 +2,38 @@
 import { PageContainer } from '@/components/PageContainer';
 import YouTubeVideo from '@/components/YoutubeViedo';
 import { Users, Heart, Globe, Sparkles } from 'lucide-react';
+import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'About | Chiang Mai Yoga Teachers',
   description:
     'Discover the story behind OneClass Yoga — created to help yogis in Chiang Mai find the right teachers, support local instructors, and grow a connected yoga community.',
+  openGraph: {
+    title: 'About | Chiang Mai Yoga Teachers',
+    description:
+      'Discover the story behind OneClass Yoga — created to help yogis in Chiang Mai find the right teachers, support local instructors, and grow a connected yoga community.',
+    url: 'https://oneclass.yoga/about',
+    siteName: 'OneClass Yoga',
+    images: [
+      {
+        url: '/images/ogs/about-og.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'About OneClass Yoga — community-driven yoga teachers in Chiang Mai',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About | Chiang Mai Yoga Teachers',
+    description:
+      'Discover the story behind OneClass Yoga — created to help yogis in Chiang Mai find the right teachers, support local instructors, and grow a connected yoga community.',
+    images: ['/images/ogs/about-og.jpg'],
+  },
 };
 
 export default function AboutPage() {

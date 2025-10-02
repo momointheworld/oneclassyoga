@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     siteName: 'OneClass',
     images: [
       {
-        url: 'https://oneromeo.com/logos/og-image.png',
+        url: '/images/ogs/community-og.jpg',
         width: 1200,
         height: 630,
         alt: 'OneClass Community',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     title: 'OneClass Community',
     description:
       'Curated posts on Q&A, Experiences, Upcoming events, and Random topics — shared by OneClass.',
-    images: ['https://oneromeo.com/logos/og-image.png'],
+    images: ['/images/ogs/community-og.jpg'],
     creator: '@oneromeo',
   },
   alternates: {

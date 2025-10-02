@@ -7,30 +7,6 @@ export const metadata: Metadata = {
   title: 'Terms of Service | OneClass',
   description:
     'Read the Terms of Service for OneClass — including booking, payments, cancellations, rescheduling, class locations, and equipment policies.',
-  openGraph: {
-    title: 'Terms of Service | OneClass',
-    description:
-      'Understand our policies on bookings, payments, cancellations, rescheduling, and class locations.',
-    url: 'https://oneromeo.com/tos',
-    siteName: 'OneClass',
-    images: [
-      {
-        url: 'https://oneromeo.com/logos/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'OneClass Terms of Service',
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Terms of Service | OneClass',
-    description:
-      'Review the OneClass Terms of Service, including booking and cancellation policies.',
-    images: ['https://oneromeo.com/images/logos/og-image.png'],
-  },
   alternates: {
     canonical: 'https://oneromeo.com/tos',
   },

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     siteName: 'OneClass Yoga',
     images: [
       {
-        url: 'https://oneclass.yoga/logos/pricing-og-image.png',
+        url: '/images/ogs/pricing-og.jpg',
         width: 1200,
         height: 630,
         alt: 'Yoga class pricing and packages in Chiang Mai',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     title: 'Chiang Mai Yoga Classes Pricing | OneClass Yoga',
     description:
       'Compare private 1-on-1 yoga class rates in Chiang Mai. Explore single sessions, bundle options, and experienced yoga teachers. Book your first class online now!',
-    images: ['https://oneclass.yoga/logos/pricing-og-image.png'],
+    images: ['/images/ogs/pricing-og.jpg'],
   },
 };
 

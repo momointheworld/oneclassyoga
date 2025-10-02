@@ -1,5 +1,4 @@
 // app/teacher/[slug]/page.tsx
-import { notFound, redirect } from 'next/navigation';
 import TeacherProfileClient from './TeacherProfileClient';
 import type { Metadata } from 'next';
 import { createClient } from '@/utils/supabase/supabaseServer';
@@ -30,8 +29,7 @@ export async function generateMetadata({
     'Movement'
   ]?.join(', ')}. Offering private 1-on-1 classes.`;
 
-  const imageUrl =
-    teacher.photo || 'https://oneclass.yoga/logos/default-teacher-image.png'; // fallback image
+  const imageUrl = teacher.photo || '/images/ogs/teacher-og.jpg'; // fallback image
 
   return {
     title: `${teacher.name} | Experienced Private Yoga Teacher in Chiang Mai`,
