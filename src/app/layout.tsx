@@ -15,8 +15,19 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'OneClass Yoga',
-  description: 'Find Your First Class Yoga Teachers',
+  metadataBase: new URL('https://oneclass.yoga'),
+  title: {
+    default: 'OneClass Yoga Chiang Mai',
+    template: '%s | OneClass Yoga Chiang Mai',
+  },
+  description:
+    'Discover private and shared yoga sessions in Chiang Mai with experienced teachers. Book classes, explore pricing, and connect with the OneClass Yoga community.',
+  openGraph: {
+    images: ['/images/ogs/home-og.jpg'],
+  },
+  twitter: {
+    images: ['/images/ogs/home-og.jpg'],
+  },
 };
 
 export default function RootLayout({

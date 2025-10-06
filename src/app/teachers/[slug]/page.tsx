@@ -2,6 +2,7 @@
 import TeacherProfileClient from './TeacherProfileClient';
 import type { Metadata } from 'next';
 import { createClient } from '@/utils/supabase/supabaseServer';
+import { redirect } from 'next/navigation';
 
 export async function generateMetadata({
   params,

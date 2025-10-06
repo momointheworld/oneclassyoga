@@ -60,7 +60,7 @@ export default function AboutPage() {
           <div className="flex flex-col items-center space-y-4">
             <div className="relative w-32 h-32 rounded-full overflow-hidden shadow-md">
               <Image
-                src="/images/placeholder.png" // replace with your actual profile photo
+                src="/images/about.jpeg" // replace with your actual profile photo
                 alt="Your Name"
                 fill
                 className="object-cover"
