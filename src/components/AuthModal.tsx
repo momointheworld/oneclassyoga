@@ -110,6 +110,7 @@ export default function AuthModal({ onClose, onAuthSuccess }: AuthModalProps) {
           }
 
           // Check if profile exists in users table
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { data: profile, error: profileError } = await supabase
             .from('users')
             .select('*')

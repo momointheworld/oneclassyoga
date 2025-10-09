@@ -12,6 +12,7 @@ interface DeleteImageProps {
 
 export default function DeleteImage({
   publicUrl,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   bucket = 'teachers',
   onDeleted,
 }: DeleteImageProps) {

@@ -1,7 +1,7 @@
 import { PageContainer } from '@/components/PageContainer';
 import { Metadata } from 'next';
 
-export const cache = 'force-cache';
+export const revalidate = false;
 
 export const metadata: Metadata = {
   title: 'Terms of Service | OneClass',

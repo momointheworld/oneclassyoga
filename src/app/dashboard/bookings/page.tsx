@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -58,6 +60,7 @@ export default function BookingDashboard() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [timeSlot, setTimeSlot] = useState<string | null>(null);
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
+
   const [teacher, setTeacher] = useState<Teacher | null>(null);
   const [initialBooking, setInitialBooking] = useState<Booking | null>(null);
   const [weeklySchedule, setWeeklySchedule] =
@@ -333,6 +336,7 @@ export default function BookingDashboard() {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingBooking]);
 
   // Update booking

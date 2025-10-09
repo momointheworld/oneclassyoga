@@ -12,7 +12,7 @@ export default function AuthCallbackPage() {
     supabase.auth.getSession().then(() => {
       router.push('/community/');
     });
-  }, [router]);
+  }, [router, supabase.auth]);
 
   return <p>Signing you in...</p>;
 }

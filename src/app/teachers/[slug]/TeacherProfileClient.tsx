@@ -41,7 +41,7 @@ export default function TeacherProfileClient({
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
   const [participants, setParticipants] = useState<number>(1);
-  // const [participantsCount, setParticipantsCount] = useState(1);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [rate, setRate] = useState<number | null>(null);
   const [bookingTitle, setBookingTitle] = useState<string>(
     'Choose Your Date & Time'
@@ -191,6 +191,7 @@ export default function TeacherProfileClient({
   // Get days that have at least one time slot
   const weeklySchedule = teacher.weekly_schedule || {};
   const availableDays = Object.entries(weeklySchedule)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([day, slots]) => slots.length > 0)
     .map(([day]) => day); // ["Monday", "Tuesday", "Thursday", "Friday"]
 

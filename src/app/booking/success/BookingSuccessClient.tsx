@@ -67,6 +67,7 @@ export default function BookingSuccessClient() {
     if (!sessionId) return;
 
     handleResendEmail();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId]);
 
   return (
