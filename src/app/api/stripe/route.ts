@@ -62,11 +62,8 @@ export async function POST(req: Request) {
       'naver_pay',
       'kakao_pay',
       'kr_card',
-      'sepa_debit',
       'eps',
       'ideal',
-      'sofort',
-      'giropay',
     ],
     payment_method_options: {
       wechat_pay: { client: 'web' },
