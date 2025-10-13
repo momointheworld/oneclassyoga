@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ToBangkokDateOnly } from '@/components/BkkTimeConverter';
 import YouTubeVideo from '@/components/YoutubeViedo';
-import { formatInTimeZone } from 'date-fns-tz';
+import { format } from 'date-fns-tz';
 import { createClient } from '@/utils/supabase/supabaseClient';
 import {
   BUNDLE3,
@@ -196,8 +196,9 @@ export default function TeacherProfileClient({
     .map(([day]) => day); // ["Monday", "Tuesday", "Thursday", "Friday"]
 
   const selectedDay = selectedDate
-    ? formatInTimeZone(selectedDate, 'Asia/Bangkok', 'EEEE') // "Monday", "Tuesday", ...
+    ? format(selectedDate, 'EEEE') // no time zone conversion
     : null;
+
   const timeSlots = selectedDay ? weeklySchedule[selectedDay] || [] : [];
 
   return (
