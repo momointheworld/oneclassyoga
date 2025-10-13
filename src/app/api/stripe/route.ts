@@ -57,8 +57,8 @@ export async function POST(req: Request) {
   const sessionOptions: Stripe.Checkout.SessionCreateParams = {
     payment_method_types: [
       'card',
-      'wechat_pay',
-      'alipay',
+      // 'wechat_pay',
+      // 'alipay',
       'naver_pay',
       'kakao_pay',
       'kr_card',
