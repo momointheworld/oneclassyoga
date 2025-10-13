@@ -94,13 +94,13 @@ export const availableDaysOptions = [
 ];
 
 export const weekly_schedule: Record<string, string[]> = {
+  Sunday: [],
   Monday: [],
   Tuesday: [],
   Wednesday: [],
   Thursday: [],
   Friday: [],
   Saturday: [],
-  Sunday: [],
 };
 
 export const categoryOptions = [
