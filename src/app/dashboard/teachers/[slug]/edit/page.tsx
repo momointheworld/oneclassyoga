@@ -53,6 +53,15 @@ export default function EditTeacherProfilePage() {
       bundle6: null,
     },
   });
+  const dayOrder = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
 
   useEffect(() => {
     const fetchTeacher = async () => {
@@ -261,7 +270,7 @@ export default function EditTeacherProfilePage() {
         {/* weekly schedule */}
         <div>
           <p className="font-semibold mb-2">Weekly Schedule</p>
-          {Object.entries(weeklySchedule).map(([day, slots]) => (
+          {dayOrder.map((day) => (
             <div key={day} className="mb-4 border p-3 rounded-lg">
               <p className="font-medium mb-1">{day}</p>
               <div className="grid grid-cols-2 gap-2">
@@ -270,11 +279,14 @@ export default function EditTeacherProfilePage() {
                     <input
                       type="checkbox"
                       value={timeSlot}
-                      checked={slots.includes(timeSlot)}
+                      checked={weeklySchedule[day]?.includes(timeSlot) || false}
                       onChange={(e) => {
                         const newSlots = e.target.checked
-                          ? [...slots, timeSlot]
-                          : slots.filter((s) => s !== timeSlot);
+                          ? [...(weeklySchedule[day] || []), timeSlot]
+                          : (weeklySchedule[day] || []).filter(
+                              (s) => s !== timeSlot
+                            );
+
                         setWeeklySchedule({
                           ...weeklySchedule,
                           [day]: newSlots,
