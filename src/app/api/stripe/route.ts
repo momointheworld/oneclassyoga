@@ -103,12 +103,12 @@ export async function POST(req: Request) {
         const data = await res.json();
         const rate = data?.info?.rate;
         if (!rate) throw new Error('Failed to get conversion rate');
-        // Convert to HKD and multiply by 100 for Stripe cents
-        return Math.round((amountInTHB / rate) * 100);
+        // Multiply by rate, then convert to cents for Stripe
+        return Math.round(amountInTHB * rate * 100);
       } catch (err) {
         console.error('Currency conversion error:', err);
-        const fallbackRate = 4.5;
-        return Math.round((amountInTHB / fallbackRate) * 100);
+        const fallbackRate = 0.23; // ~1 THB = 0.23 HKD (approx)
+        return Math.round(amountInTHB * fallbackRate * 100);
       }
     }
 
