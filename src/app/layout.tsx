@@ -28,6 +28,10 @@ export const metadata: Metadata = {
   twitter: {
     images: ['/images/ogs/home-og.jpg'],
   },
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
