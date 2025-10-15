@@ -101,20 +101,19 @@ export async function POST(req: Request) {
           'https://api.exchangerate.host/convert?from=THB&to=HKD'
         );
         const data = await res.json();
-        const rate = data?.info?.rate || 0;
+        const rate = data?.info?.rate;
         if (!rate) throw new Error('Failed to get conversion rate');
-        // Convert and round to nearest integer (Stripe expects cents)
-        return Math.round(amountInTHB / rate);
+        // Convert to HKD and multiply by 100 for Stripe cents
+        return Math.round((amountInTHB / rate) * 100);
       } catch (err) {
         console.error('Currency conversion error:', err);
-        // Fallback: assume a fixed rate if API fails
         const fallbackRate = 4.5;
-        return Math.round(amountInTHB / fallbackRate);
+        return Math.round((amountInTHB / fallbackRate) * 100);
       }
     }
 
     // Before setting unit_amount, convert the price
-    const unitAmountInHKD = await convertThbToHkd(unitAmount); // unitAmount is in THB
+    const unitAmountInHKDCents = await convertThbToHkd(unitAmount); // unitAmount in THB
 
     // Line items differ based on booking_type
     if (booking_type === 'single') {
@@ -123,7 +122,7 @@ export async function POST(req: Request) {
           price_data: {
             currency: 'hkd',
             product: teacher.stripe_product_id,
-            unit_amount: unitAmountInHKD * 100, // Stripe expects cents
+            unit_amount: unitAmountInHKDCents,
           },
           quantity: 1,
           adjustable_quantity: {
@@ -139,7 +138,7 @@ export async function POST(req: Request) {
           price_data: {
             currency: 'hkd',
             product: teacher.stripe_product_id,
-            unit_amount: unitAmountInHKD * 100, // Stripe expects cents
+            unit_amount: unitAmountInHKDCents,
           },
           quantity: 1,
         },
