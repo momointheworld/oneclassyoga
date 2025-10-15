@@ -94,26 +94,34 @@ export async function POST(req: Request) {
     }
 
     const formattedDate = date ? format(new Date(date), 'MMMM d, yyyy') : '';
-
-    async function convertThbToHkd(amountInTHB: number) {
+    async function convertThbToHkd(amountInTHBCents: number) {
       try {
         const res = await fetch(
-          'https://api.exchangerate.host/convert?from=THB&to=HKD'
+          'https://api.exchangerate-api.com/v4/latest/THB'
         );
         const data = await res.json();
-        const rate = data?.info?.rate;
+        const rate = data?.rates?.HKD;
         if (!rate) throw new Error('Failed to get conversion rate');
-        // Multiply by rate, then convert to cents for Stripe
-        return Math.round(amountInTHB * rate * 100);
+
+        // Convert cents to THB, multiply by rate, then convert back to cents
+        const thbAmount = amountInTHBCents / 100;
+        const hkdAmount = thbAmount * rate;
+        return Math.round(hkdAmount * 100);
       } catch (err) {
         console.error('Currency conversion error:', err);
         const fallbackRate = 0.23; // ~1 THB = 0.23 HKD (approx)
-        return Math.round(amountInTHB * fallbackRate * 100);
+        const thbAmount = amountInTHBCents / 100;
+        const hkdAmount = thbAmount * fallbackRate;
+        return Math.round(hkdAmount * 100);
       }
     }
 
-    // Before setting unit_amount, convert the price
-    const unitAmountInHKDCents = await convertThbToHkd(unitAmount); // unitAmount in THB
+    // unitAmount is in THB cents (e.g., 350000 = 3500 THB)
+    const unitAmountInHKDCents = await convertThbToHkd(unitAmount);
+
+    console.log(
+      `Converting ${unitAmount} THB cents (${unitAmount / 100} THB) to HKD cents: ${unitAmountInHKDCents} (${unitAmountInHKDCents / 100} HKD)`
+    );
 
     // Line items differ based on booking_type
     if (booking_type === 'single') {
@@ -149,7 +157,6 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-
     // ✅ Metadata is now always stored, regardless of type
     sessionOptions.metadata = {
       teacher_slug: teacher_slug || '',
