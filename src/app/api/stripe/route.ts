@@ -119,10 +119,6 @@ export async function POST(req: Request) {
     // unitAmount is in THB cents (e.g., 350000 = 3500 THB)
     const unitAmountInHKDCents = await convertThbToHkd(unitAmount);
 
-    console.log(
-      `Converting ${unitAmount} THB cents (${unitAmount / 100} THB) to HKD cents: ${unitAmountInHKDCents} (${unitAmountInHKDCents / 100} HKD)`
-    );
-
     // Line items differ based on booking_type
     if (booking_type === 'single') {
       sessionOptions.line_items = [
