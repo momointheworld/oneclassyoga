@@ -10,7 +10,6 @@ const paymentMethods = [
   { src: '/payments/kakao_pay.svg', alt: 'Kakao Pay' },
   { src: '/payments/kr_card.svg', alt: 'KR Card' },
   { src: '/payments/ideal.svg', alt: 'iDEAL' },
-  { src: '/payments/giropay.svg', alt: 'GiroPay' },
 ];
 
 export function PaymentIcons() {
