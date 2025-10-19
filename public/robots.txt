@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.oneclass.yoga
+
+# Sitemaps
+Sitemap: https://www.oneclass.yoga/sitemap.xml
