@@ -6,6 +6,9 @@ module.exports = {
   exclude: [
     '/dashboard',      // exact route
     '/dashboard/*',    // all nested routes inside dashboard
+    '/auth/*',
+  '/login',
+  '/api/*',
     '/api/*',          
   ],
 };
