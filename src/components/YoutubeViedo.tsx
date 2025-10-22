@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 interface YouTubeVideoProps {
-  videoId: string;
+  youtubeId: string;
   bilibiliId?: string;
   teacherName?: string;
   maxDescriptionLength?: number; // optional, default 200
@@ -30,7 +30,7 @@ function truncateBySentence(text: string, maxLength: number) {
 }
 
 export default function YouTubeVideo({
-  videoId,
+  youtubeId,
   bilibiliId,
   maxDescriptionLength = 200,
 }: YouTubeVideoProps) {
@@ -61,7 +61,7 @@ export default function YouTubeVideo({
 
       try {
         const res = await fetch(
-          `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+          `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${youtubeId}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
         );
         const data = await res.json();
 
@@ -83,7 +83,7 @@ export default function YouTubeVideo({
     }
 
     fetchVideo();
-  }, [videoId, maxDescriptionLength, isChina]);
+  }, [youtubeId, maxDescriptionLength, isChina]);
 
   const embedUrl = isChina
     ? `https://player.bilibili.com/player.html?bvid=${bilibiliId}&page=1`

@@ -51,7 +51,7 @@ export default function AboutPage() {
             for instructors, and cultivating a shared space for growth.
           </p>
           <div className="mt-8">
-            <YouTubeVideo videoId="dQw4w9WgXcQ" maxDescriptionLength={180} />
+            <YouTubeVideo youtubeId="dQw4w9WgXcQ" maxDescriptionLength={180} />
             {/* Replace with your real YouTube videoId or bilibiliId */}
           </div>
         </section>
