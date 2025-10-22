@@ -294,7 +294,7 @@ export default function TeacherProfileClient({
               <h2 className="font-semibold my-5 text-xl text-center">
                 {teacher.name} on Yoga, Teaching, and Practice
               </h2>
-              <YouTubeVideo videoId="dQw4w9WgXcQ" />
+              <YouTubeVideo videoId={teacher.videoUrl} />
             </section>
           )}
 
