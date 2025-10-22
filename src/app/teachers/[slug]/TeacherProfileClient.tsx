@@ -187,6 +187,17 @@ export default function TeacherProfileClient({
 
   const extraRate = teacher.rates.extra.single;
 
+  function parseVideoIds(input: string) {
+    if (!input) return { youtubeId: '', bilibiliId: '' };
+
+    const [youtubeRaw, bilibiliRaw] = input.split('|').map((str) => str.trim());
+    const youtubeId = youtubeRaw.split('?')[0]; // remove ?si=... if present
+    const bilibiliId = bilibiliRaw || '';
+
+    return { youtubeId, bilibiliId };
+  }
+  const { youtubeId, bilibiliId } = parseVideoIds(teacher.videoUrl || '');
+
   const galleryImages = teacher.gallery || [];
   // Get days that have at least one time slot
   const weeklySchedule = teacher.weekly_schedule || {};
@@ -294,7 +305,7 @@ export default function TeacherProfileClient({
               <h2 className="font-semibold my-5 text-xl text-center">
                 {teacher.name} on Yoga, Teaching, and Practice
               </h2>
-              <YouTubeVideo videoId={teacher.videoUrl} />
+              <YouTubeVideo videoId={youtubeId} bilibiliId={bilibiliId} />
             </section>
           )}
 

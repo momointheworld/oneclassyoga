@@ -87,7 +87,7 @@ export default function YouTubeVideo({
 
   const embedUrl = isChina
     ? `https://player.bilibili.com/player.html?bvid=${bilibiliId}&page=1`
-    : `https://www.youtube.com/embed/${videoId}`;
+    : `https://www.youtube.com/embed/${youtubeId}`;
 
   return (
     <section className="mt-6">
