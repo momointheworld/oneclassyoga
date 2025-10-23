@@ -39,7 +39,7 @@ export function DatePicker({
 
   const today = startOfDay(new Date());
   const from = addDays(today, 7);
-  const to = addDays(from, 30);
+  const to = addDays(from, 60);
 
   return (
     <div className={cn('flex flex-col gap-2 w-full max-w-sm', className)}>
@@ -79,10 +79,12 @@ export function DatePicker({
               return isOutsideRange || isUnavailable;
             }}
             weekStartsOn={0}
-            startMonth={from}
-            endMonth={to}
+            // startMonth={from}
+            // endMonth={to}
+            defaultMonth={from}
             captionLayout="dropdown"
             numberOfMonths={1}
+            showOutsideDays={false}
           />
         </PopoverContent>
       </Popover>
