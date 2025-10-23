@@ -209,25 +209,29 @@ export function MenuBar({
 
   const addYoutubeVideo = () => {
     const url = prompt('Enter YouTube URL');
-    // Extract the video ID
-    const match = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+    if (!url) return;
+
+    // Extract the 11-character YouTube video ID from any URL type
+    const match = url.match(
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([\w-]{11})/
+    );
+
     if (!match) return alert('Invalid YouTube URL');
 
     const videoId = match[1];
     const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+
     const width = Math.max(320, parseInt(videoWidth, 10) || 640);
     const height = Math.max(
       180,
       parseInt(videoHeight, 10) || Math.floor((width * 9) / 16)
     );
 
-    if (url) {
-      editor.commands.setYoutubeVideo({
-        src: embedUrl,
-        width: Math.max(320, parseInt(width.toString(), 10)) || 640,
-        height: Math.max(180, parseInt(height.toString(), 10)) || 480,
-      });
-    }
+    editor.commands.setYoutubeVideo({
+      src: embedUrl,
+      width,
+      height,
+    });
   };
 
   const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
