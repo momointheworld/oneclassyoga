@@ -138,6 +138,7 @@ export default function BookingSuccessClient() {
                   month: 'long',
                   day: 'numeric',
                   year: 'numeric',
+                  timeZone: 'Asia/Bangkok',
                 })}
               </li>
             )}
@@ -183,7 +184,7 @@ export default function BookingSuccessClient() {
           <div className="flex flex-col items-center">
             <p className="mb-2 font-semibold text-gray-600">Line</p>
             <Image
-              src="/line.JPG"
+              src="/images/line.JPG"
               alt="Line QR Code"
               width={250}
               height={250}
@@ -195,7 +196,7 @@ export default function BookingSuccessClient() {
           <div className="flex flex-col items-center">
             <p className="mb-2 font-semibold text-gray-600">WhatsApp</p>
             <Image
-              src="/whatsapp.JPG"
+              src="/images/whatsapp.JPG"
               alt="WhatsApp QR Code"
               width={250}
               height={250}
