@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+// import { format } from 'date-fns';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
@@ -98,6 +98,7 @@ export async function POST(req: Request) {
     const formattedDate = date
       ? formatInTimeZone(new Date(date), 'Asia/Bangkok', 'MMMM d, yyyy')
       : '';
+
     async function convertThbToHkd(amountInTHBCents: number) {
       try {
         const res = await fetch(
