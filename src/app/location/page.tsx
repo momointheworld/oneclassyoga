@@ -55,7 +55,7 @@ export default function LocationPage() {
         </div>
         <div className="flex justify-center">
           <Image
-            src="/location-map.png"
+            src="/images/location-map.png"
             alt="Yoga Venue"
             width={400}
             height={300}
