@@ -1,8 +1,8 @@
-// import { format } from 'date-fns';
+import { format } from 'date-fns';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
-import { formatInTimeZone } from 'date-fns-tz';
+// import { formatInTimeZone } from 'date-fns-tz';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -94,10 +94,10 @@ export async function POST(req: Request) {
       }
     }
 
-    // const formattedDate = date ? format(new Date(date), 'MMMM d, yyyy') : '';
-    const formattedDate = date
-      ? formatInTimeZone(new Date(date), 'Asia/Bangkok', 'MMMM d, yyyy')
-      : '';
+    const formattedDate = date ? format(new Date(date), 'MMMM d, yyyy') : '';
+    // const formattedDate = date
+    //   ? formatInTimeZone(new Date(date), 'Asia/Bangkok', 'MMMM d, yyyy')
+    //   : '';
 
     async function convertThbToHkd(amountInTHBCents: number) {
       try {

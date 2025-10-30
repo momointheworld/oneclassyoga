@@ -82,6 +82,8 @@ export default function TeacherProfileClient({
     }
   }, []);
 
+  const formattedDate = selectedDate ? format(selectedDate, 'MMM d, yyyy') : '';
+
   useEffect(() => {
     const fetchReviews = async () => {
       const { data } = await supabase
@@ -136,7 +138,7 @@ export default function TeacherProfileClient({
     const query = new URLSearchParams({
       teacher: teacher.slug,
       unitAmount: basePrice.toString(),
-      date: ToBangkokDateOnly(selectedDate),
+      date: formattedDate,
       timeSlot: selectedTimeSlot,
       participants: participants.toString(),
       booking_type: selectedPackage,
@@ -144,6 +146,8 @@ export default function TeacherProfileClient({
 
     router.push(`/booking/checkout?${query}`);
   };
+
+  console.log(selectedDate, selectedDate && ToBangkokDateOnly(selectedDate));
 
   const handlePackageSelect = (packageType: PackageType) => {
     setSelectedPackage(packageType);
