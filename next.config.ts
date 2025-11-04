@@ -8,8 +8,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        // hostname: 'phnxzjmjiigzudrdxfmi.supabase.co', // production
-        hostname: 'hjlenhletxsqwiiqxbti.supabase.co', // development
+        hostname: 'phnxzjmjiigzudrdxfmi.supabase.co', // production
+        // hostname: 'hjlenhletxsqwiiqxbti.supabase.co', // development
         pathname: '**',
       },
     ],
