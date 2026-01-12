@@ -15,6 +15,7 @@ import Image from 'next/image';
 
 const links = [
   { label: 'Home', href: '/' },
+  { label: 'Programs', href: '/programs' },
   { label: 'Teachers', href: '/teachers' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'About', href: '/about' },
