@@ -1,262 +1,87 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Minus } from 'lucide-react';
-import { TeacherRates } from '@/types/teacher';
-import { createClient } from '@supabase/supabase-js';
+import { ProgramListRow } from '@/components/ProgramListRow';
+import { PROGRAMS, programTeachers } from '@/lib/packages';
+import { createClient } from '@/utils/supabase/supabaseClient';
 
-type Teacher = {
-  id: number;
-  name: string;
-  rates: TeacherRates;
-  slug: string;
-};
+const supabase = createClient();
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-export default function ProgramsPage() {
+const ProgramsPage = () => {
   const router = useRouter();
   const [openId, setOpenId] = useState<string | null>(null);
-  const [teachers, setTeachers] = useState<Record<string, Teacher>>({});
-  const programTeachers = {
-    'foundations-3': 'toon',
-    'mobility-6': 'toon',
-    'inversions-3': 'patrick',
-    'arm-balance-3': 'patrick',
-  };
-
-  const captizalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [teacherRates, setTeacherRates] = useState<Record<string, any>>({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchTeachers = async () => {
-      // Removing .in() fetches all rows from the 'teachers' table
+    const fetchRates = async () => {
+      // Get all teachers who are linked to programs
+      const slugs = Object.values(programTeachers);
+
       const { data, error } = await supabase
         .from('teachers')
-        .select('id, name, slug, rates');
+        .select('slug, rates')
+        .in('slug', slugs);
 
-      if (error) {
-        console.error('Error fetching teachers:', error.message);
-      } else if (data) {
-        // Create a map where the slug is the key for easy lookup
-        const teacherMap = data.reduce(
-          (acc, curr) => {
-            acc[curr.slug] = curr as unknown as Teacher;
-            return acc;
-          },
-          {} as Record<string, Teacher>
+      if (!error && data) {
+        // Create a lookup object: { toon: { bundle3: 4500, ... }, patrick: { ... } }
+        const ratesMap = data.reduce(
+          (acc, curr) => ({
+            ...acc,
+            [curr.slug]: curr.rates,
+          }),
+          {}
         );
-
-        setTeachers(teacherMap);
+        setTeacherRates(ratesMap);
       }
+      setLoading(false);
     };
-    fetchTeachers();
+
+    fetchRates();
   }, []);
 
-  // Helper to get the price dynamically
-  const getProgramPrice = (slug: string, sessions: number) => {
-    const teacherData = teachers[slug];
-    if (!teacherData) return 'Loading...';
-
-    // Match the session count to your TeacherRates type keys
-    if (sessions === 3) return `${teacherData.rates.bundle3}฿`;
-    if (sessions === 6) return `${teacherData.rates.bundle6}฿`;
-    if (sessions === 1) return `${teacherData.rates.single}฿`;
-
-    return 'Price on request';
-  };
-
-  const programs = [
-    {
-      id: 'foundations-3',
-      title: 'Yoga Foundations Intensive',
-      price: getProgramPrice(programTeachers['foundations-3'], 3),
-      suitableFor: 'Beginners • No experience required',
-      instructor: captizalize(programTeachers['foundations-3']),
-      instructorSlug: programTeachers['foundations-3'],
-      duration: '3 Sessions • 90 Min',
-      description:
-        'A comprehensive entry point into yoga. We focus on breath-to-movement connection and spinal safety to build a safe, lifelong foundation.',
-      syllabus: [
-        'Session 1: Breath & Spine Mechanics',
-        'Session 2: Standing Poses & Warrior Alignment',
-        'Session 3: Introduction to Sun Salutations',
-      ],
-    },
-    {
-      id: 'mobility-6',
-      title: 'Core & Mobility Series',
-      price: getProgramPrice(programTeachers['mobility-6'], 6),
-      instructor: captizalize(programTeachers['mobility-6']),
-      suitableFor: 'Intermediate • Stable Downward Dog required',
-      instructorSlug: programTeachers['mobility-6'],
-      duration: '6 Sessions • 90 Min',
-      description:
-        'Designed to unlock tight hips and shoulders while building deep abdominal stability and functional range of motion.',
-      syllabus: [
-        'Sessions 1-2: Pelvic Floor & Hip Mobility',
-        'Sessions 3-4: Thoracic Opening & Posture',
-        'Sessions 5-6: Total Body Integration',
-      ],
-    },
-    {
-      id: 'inversions-3',
-      title: 'The Art of Inversion',
-      price: getProgramPrice(programTeachers['inversions-3'], 3),
-      suitableFor: 'Intermediate • Stable Downward Dog required',
-      instructor: captizalize(programTeachers['inversions-3']),
-      instructorSlug: programTeachers['inversions-3'],
-      duration: '3 Sessions • 90 Min',
-      description:
-        'A technical workshop series designed to conquer the fear of going upside down. Focus on shoulder stability, wrist health, and core control.',
-      syllabus: [
-        'Session 1: Foundation & Wall-Supported L-Stands',
-        'Session 2: Finding your Center (Headstand Mechanics)',
-        'Session 3: Kick-up Techniques & Forearm Stands',
-      ],
-    },
-    {
-      id: 'arm-balance-3',
-      title: 'Arm Balances & Twists',
-      price: getProgramPrice(programTeachers['arm-balance-3'], 3),
-      suitableFor: 'All Levels • Some yoga experience recommended',
-      instructor: captizalize(programTeachers['arm-balance-3']),
-      instructorSlug: programTeachers['arm-balance-3'],
-      duration: '3 Sessions • 90 Min',
-      description:
-        'Explore the harmony of strength and flexibility. We combine deep spinal rotations with gentle introductions to balancing on the hands, finding lightness through technique.',
-      syllabus: [
-        {
-          title: 'Session 1: Finding Balance & Stability',
-          poses: 'Crow Pose, Plank variations, Garland Pose',
-        },
-        {
-          title: 'Session 2: Mobility & Deep Rotations',
-          poses: 'Side Crow, Revolved Chair, Revolved Triangle',
-        },
-        {
-          title: 'Session 3: Integration & Lift',
-          poses: 'Flying Splits prep, Lizard Pose, Eight-Angle Pose',
-        },
-      ],
-    },
-  ];
-
-  const toggle = (id: string) => setOpenId(openId === id ? null : id);
+  if (loading)
+    return (
+      <div className="py-20 text-center text-gray-400">Loading programs...</div>
+    );
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-16 bg-white">
-      <header className="mb-12 border-b border-gray-100 pb-8 text-center md:text-left">
+      <header className="mb-12 border-b border-gray-100 pb-8">
         <h1 className="text-3xl font-light text-gray-900 tracking-tight">
           Programs
         </h1>
-        <p className="text-gray-500 mt-2 text-sm">
-          Select a structured path led by our expert teachers.
-        </p>
       </header>
 
       <div className="divide-y divide-gray-100 border-t border-gray-100">
-        {programs.map((p) => (
-          <div key={p.id} className="py-8">
-            <button
-              onClick={() => toggle(p.id)}
-              className="w-full flex justify-between items-start text-left group"
-            >
-              <div className="pr-4">
-                <h2 className="text-xl font-medium text-gray-900 group-hover:text-emerald-600 transition-colors leading-tight">
-                  {p.title}
-                </h2>
-                <p className="text-xs font-bold text-emerald-600 uppercase tracking-wide mt-2">
-                  {p.suitableFor}
-                </p>
-                <p className="text-sm text-gray-400 mt-2">
-                  {p.duration} — Led by{' '}
-                  <span className="text-gray-600 font-medium">
-                    {p.instructor}
-                  </span>
-                </p>
-              </div>
-              <div className="flex-shrink-0 text-gray-300 group-hover:text-emerald-500 transition-colors mt-1">
-                {openId === p.id ? (
-                  <Minus className="h-6 w-6" />
-                ) : (
-                  <Plus className="h-6 w-6" />
-                )}
-              </div>
-            </button>
+        {PROGRAMS.map((p) => {
+          const instructorSlug = programTeachers[p.id];
+          const rates = teacherRates[instructorSlug];
 
-            <div
-              className={`overflow-hidden transition-all duration-300 ease-in-out ${openId === p.id ? 'max-h-[800px] opacity-100 mt-6' : 'max-h-0 opacity-0'}`}
-            >
-              <div className="space-y-6">
-                <p className="text-gray-600 leading-relaxed italic border-l-2 border-emerald-500 pl-4">
-                  &quot;{p.description}&quot;
-                </p>
+          // Determine if we need bundle3 or bundle6 price
+          const bundleKey = p.id.endsWith('-6') ? 'bundle6' : 'bundle3';
+          const price = rates ? rates[bundleKey] : '—';
 
-                <div className="bg-gray-50 p-6 rounded-2xl">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4">
-                    Curriculum Outline
-                  </p>
-                  <ul className="space-y-4">
-                    {p.syllabus.map((step, i) => (
-                      <li
-                        key={i}
-                        className="flex items-start gap-3 text-sm text-gray-700"
-                      >
-                        <span className="text-emerald-500 font-bold tabular-nums">
-                          {i + 1}.
-                        </span>
-                        <div>
-                          {typeof step === 'string' ? (
-                            <p className="font-medium">{step}</p>
-                          ) : (
-                            <>
-                              <p className="font-medium">{step.title}</p>
-                              <p className="text-xs text-gray-400 italic mt-0.5 leading-relaxed">
-                                Includes: {step.poses}
-                              </p>
-                            </>
-                          )}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+          const instructorName =
+            instructorSlug.charAt(0).toUpperCase() + instructorSlug.slice(1);
 
-                {/* Price and Button Footer */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-gray-100">
-                  <div>
-                    <p className="text-xs text-gray-400 uppercase font-bold tracking-widest">
-                      Program Investment
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {p.price}
-                    </p>
-                  </div>
-
-                  <button
-                    onClick={() =>
-                      router.push(
-                        p.instructorSlug
-                          ? `/teachers/${p.instructorSlug}`
-                          : '/teachers'
-                      )
-                    }
-                    className="inline-flex items-center justify-center bg-emerald-600 text-white px-10 py-4 rounded-full text-sm font-semibold hover:bg-emerald-700 transition-all active:scale-95 shadow-md shadow-emerald-100"
-                  >
-                    {p.instructor.includes('or')
-                      ? 'Choose Instructor'
-                      : `Book with ${p.instructor.split(' ')[0]}`}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
+          return (
+            <ProgramListRow
+              key={p.id}
+              program={p}
+              price={price}
+              instructor={instructorName}
+              isOpen={openId === p.id}
+              onToggle={() => setOpenId(openId === p.id ? null : p.id)}
+              onBook={() => router.push(`/teachers/${instructorSlug}`)}
+            />
+          );
+        })}
       </div>
     </div>
   );
-}
+};
+
+export default ProgramsPage;
