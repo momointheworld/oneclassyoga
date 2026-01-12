@@ -1,21 +1,82 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, Minus } from 'lucide-react';
+import { TeacherRates } from '@/types/teacher';
+import { createClient } from '@supabase/supabase-js';
 
-const ProgramsPage = () => {
+type Teacher = {
+  id: number;
+  name: string;
+  rates: TeacherRates;
+  slug: string;
+};
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+export default function ProgramsPage() {
   const router = useRouter();
   const [openId, setOpenId] = useState<string | null>(null);
+  const [teachers, setTeachers] = useState<Record<string, Teacher>>({});
+  const programTeachers = {
+    'foundations-3': 'toon',
+    'mobility-6': 'toon',
+    'inversions-3': 'patrick',
+    'arm-balance-3': 'patrick',
+  };
+
+  const captizalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+  useEffect(() => {
+    const fetchTeachers = async () => {
+      // Removing .in() fetches all rows from the 'teachers' table
+      const { data, error } = await supabase
+        .from('teachers')
+        .select('id, name, slug, rates');
+
+      if (error) {
+        console.error('Error fetching teachers:', error.message);
+      } else if (data) {
+        // Create a map where the slug is the key for easy lookup
+        const teacherMap = data.reduce(
+          (acc, curr) => {
+            acc[curr.slug] = curr as unknown as Teacher;
+            return acc;
+          },
+          {} as Record<string, Teacher>
+        );
+
+        setTeachers(teacherMap);
+      }
+    };
+    fetchTeachers();
+  }, []);
+
+  // Helper to get the price dynamically
+  const getProgramPrice = (slug: string, sessions: number) => {
+    const teacherData = teachers[slug];
+    if (!teacherData) return 'Loading...';
+
+    // Match the session count to your TeacherRates type keys
+    if (sessions === 3) return `${teacherData.rates.bundle3}฿`;
+    if (sessions === 6) return `${teacherData.rates.bundle6}฿`;
+    if (sessions === 1) return `${teacherData.rates.single}฿`;
+
+    return 'Price on request';
+  };
 
   const programs = [
     {
       id: 'foundations-3',
       title: 'Yoga Foundations Intensive',
-      price: '4,500฿',
+      price: getProgramPrice(programTeachers['foundations-3'], 3),
       suitableFor: 'Beginners • No experience required',
-      instructor: 'Toon',
-      instructorSlug: 'toon',
+      instructor: captizalize(programTeachers['foundations-3']),
+      instructorSlug: programTeachers['foundations-3'],
       duration: '3 Sessions • 90 Min',
       description:
         'A comprehensive entry point into yoga. We focus on breath-to-movement connection and spinal safety to build a safe, lifelong foundation.',
@@ -28,10 +89,10 @@ const ProgramsPage = () => {
     {
       id: 'mobility-6',
       title: 'Core & Mobility Series',
-      price: '8,400฿',
-      instructor: 'Toon',
+      price: getProgramPrice(programTeachers['mobility-6'], 6),
+      instructor: captizalize(programTeachers['mobility-6']),
       suitableFor: 'Intermediate • Stable Downward Dog required',
-      instructorSlug: 'toon',
+      instructorSlug: programTeachers['mobility-6'],
       duration: '6 Sessions • 90 Min',
       description:
         'Designed to unlock tight hips and shoulders while building deep abdominal stability and functional range of motion.',
@@ -44,10 +105,10 @@ const ProgramsPage = () => {
     {
       id: 'inversions-3',
       title: 'The Art of Inversion',
-      price: '5,400฿',
+      price: getProgramPrice(programTeachers['inversions-3'], 3),
       suitableFor: 'Intermediate • Stable Downward Dog required',
-      instructor: 'Patrick',
-      instructorSlug: 'patrick',
+      instructor: captizalize(programTeachers['inversions-3']),
+      instructorSlug: programTeachers['inversions-3'],
       duration: '3 Sessions • 90 Min',
       description:
         'A technical workshop series designed to conquer the fear of going upside down. Focus on shoulder stability, wrist health, and core control.',
@@ -60,10 +121,10 @@ const ProgramsPage = () => {
     {
       id: 'arm-balance-3',
       title: 'Arm Balances & Twists',
-      price: '4,500฿',
+      price: getProgramPrice(programTeachers['arm-balance-3'], 3),
       suitableFor: 'All Levels • Some yoga experience recommended',
-      instructor: 'Patrick',
-      instructorSlug: 'patrick',
+      instructor: captizalize(programTeachers['arm-balance-3']),
+      instructorSlug: programTeachers['arm-balance-3'],
       duration: '3 Sessions • 90 Min',
       description:
         'Explore the harmony of strength and flexibility. We combine deep spinal rotations with gentle introductions to balancing on the hands, finding lightness through technique.',
@@ -198,6 +259,4 @@ const ProgramsPage = () => {
       </div>
     </div>
   );
-};
-
-export default ProgramsPage;
+}
