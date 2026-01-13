@@ -9,16 +9,16 @@ import BookingCalendar from '@/components/BookingCalendar';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ToBangkokDateOnly } from '@/components/BkkTimeConverter';
 import YouTubeVideo from '@/components/YoutubeViedo';
 import { format } from 'date-fns-tz';
 import { createClient } from '@/utils/supabase/supabaseClient';
 import {
   BUNDLE3,
   BUNDLE6,
+  PROGRAMS,
   PackageType,
-  getPackages,
   packageTitles,
+  programTeachers,
 } from '@/lib/packages';
 import { Teacher } from '@/types/teacher'; // adjust the path
 import ReviewCarousel from '@/components/ReviewCard';
@@ -57,7 +57,7 @@ export default function TeacherProfileClient({
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
   const router = useRouter();
-  const packages = getPackages(teacher.rates);
+  // const packages = getPackages(teacher.rates);
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -147,12 +147,30 @@ export default function TeacherProfileClient({
     router.push(`/booking/checkout?${query}`);
   };
 
-  console.log(selectedDate, selectedDate && ToBangkokDateOnly(selectedDate));
+  // console.log(selectedDate, selectedDate && ToBangkokDateOnly(selectedDate));
 
   const handlePackageSelect = (packageType: PackageType) => {
     setSelectedPackage(packageType);
     setBookingTitle(packageTitles[packageType]);
     setShowNote(packageType !== 'single');
+  };
+
+  // Inside TeacherProfileClient
+  const [activeProgramId, setActiveProgramId] = useState<string | null>(null);
+
+  // Filter the shared constant for this teacher
+  const teacherPrograms = PROGRAMS.filter(
+    (p) => programTeachers[p.id] === teacher.slug
+  );
+
+  const onSelectProgram = (
+    progId: string,
+    bundleType: PackageType,
+    title: string
+  ) => {
+    setActiveProgramId(progId);
+    handlePackageSelect(bundleType);
+    setBookingTitle(title); // Updates the title above the calendar
   };
 
   const handleRateChange = (newRate: number) => {
@@ -330,58 +348,104 @@ export default function TeacherProfileClient({
             </section>
           )}
 
-          {/* PACKAGES */}
-          <section className="grid grid-cols-1 gap-6" id="booking-calendar">
-            <h2 className="text-xl text-center font-semibold mt-12 mb-4">
-              Select Your Package & Time Slot
-              <br />
-              <span className="text-md text-orange-500">
+          {/* PROGRAMS RADIO SELECTION */}
+          <section className="space-y-6" id="booking-calendar">
+            <div className="text-center mt-12 mb-8">
+              <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
+                Select Your Program
+              </h2>
+              <p className="text-emerald-600 font-semibold mt-1 text-sm uppercase tracking-wider">
                 Add a Friend for {extraRate}฿ more only!
-              </span>
-            </h2>
+              </p>
+            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {packages.map((pkg) => (
-                <div
-                  key={pkg.id}
-                  onClick={() => handlePackageSelect(pkg.id)}
-                  className={`cursor-pointer p-6 rounded-2xl border shadow-sm transition relative
-          ${selectedPackage === pkg.id ? 'border-orange-500 ring-2 ring-orange-400' : 'border-gray-200 hover:shadow-md'}
-          ${pkg.id === BUNDLE3 ? 'shadow-md hover:shadow-lg' : ''}
-        `}
-                >
-                  {/* Badge */}
-                  {pkg.badge && (
-                    <Badge
-                      className={`
-      absolute top-2 right-2 text-xs px-2 py-1 rounded-full
-      ${pkg.id === BUNDLE3 ? 'bg-orange-500 text-white' : ''}
-      ${pkg.id === BUNDLE6 ? 'bg-green-500 text-white' : ''}
-      ${pkg.id === 'single' ? 'bg-gray-300 text-gray-800' : ''}
-    `}
-                    >
-                      {pkg.badge}
-                    </Badge>
-                  )}
-
-                  <h3 className="text-lg font-semibold my-3 text-center">
-                    {pkg.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-2 text-center">
-                    {pkg.description}
-                  </p>
-                  <p className="text-xs text-gray-500 mb-4 text-center">
-                    {pkg.friendNote}
-                  </p>
-                  {teacher.rates && (
-                    <p className="text-xl font-bold text-gray-800 text-center">
-                      {pkg.id === 'single' && `${teacher.rates.single}฿`}
-                      {pkg.id === BUNDLE3 && `${teacher.rates.bundle3}฿`}
-                      {pkg.id === BUNDLE6 && `${teacher.rates.bundle6}฿`}
-                    </p>
-                  )}
+            <div className="space-y-3">
+              {/* SINGLE SESSION RADIO */}
+              <label
+                className={`relative flex flex-col p-5 rounded-3xl border cursor-pointer transition-all duration-200 ${
+                  selectedPackage === 'single'
+                    ? 'border-emerald-500 bg-emerald-50/30 ring-1 ring-emerald-500'
+                    : 'border-gray-100 hover:border-gray-200'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="radio"
+                      name="program-select"
+                      checked={selectedPackage === 'single'}
+                      onChange={() =>
+                        onSelectProgram(
+                          'single',
+                          'single',
+                          'Single Trial Session'
+                        )
+                      }
+                      className="w-5 h-5 accent-emerald-600"
+                    />
+                    <div>
+                      <span className="block font-bold text-gray-900">
+                        Single Trial Session
+                      </span>
+                      <span className="block text-xs text-gray-500">
+                        90 Min • Personal Consultation
+                      </span>
+                    </div>
+                  </div>
+                  <span className="font-bold text-lg text-gray-900">
+                    {teacher.rates.single}฿
+                  </span>
                 </div>
-              ))}
+              </label>
+
+              {/* DYNAMIC TEACHER PROGRAMS */}
+              {teacherPrograms.map((p) => {
+                const isSelected = activeProgramId === p.id;
+                const price =
+                  p.bundleType === 'bundle6'
+                    ? teacher.rates.bundle6
+                    : teacher.rates.bundle3;
+
+                return (
+                  <label
+                    key={p.id}
+                    className={`relative flex flex-col p-5 rounded-3xl border cursor-pointer transition-all duration-300 ${
+                      isSelected
+                        ? 'border-emerald-500 bg-white shadow-md ring-1 ring-emerald-500'
+                        : 'border-gray-100 hover:border-gray-200'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <input
+                          type="radio"
+                          name="program-select"
+                          checked={isSelected}
+                          onChange={() =>
+                            onSelectProgram(
+                              p.id,
+                              p.bundleType as PackageType,
+                              p.title
+                            )
+                          }
+                          className="w-5 h-5 accent-emerald-600"
+                        />
+                        <div>
+                          <span className="block font-bold text-gray-900">
+                            {p.title}
+                          </span>
+                          <span className="block text-xs font-bold text-emerald-600 uppercase mt-0.5">
+                            {p.duration}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="font-bold text-lg text-gray-900">
+                        {price}฿
+                      </span>
+                    </div>
+                  </label>
+                );
+              })}
             </div>
           </section>
 

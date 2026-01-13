@@ -67,7 +67,7 @@ export const packageTitles: Record<PackageType, string> = {
 export const programTeachers: Record<string, string> = {
   'foundations-3': 'toon',
   'mobility-6': 'toon',
-  'inversions-3': 'patrick', // or 'toon or patrick'
+  'inversions-3': 'patrick',
   'arm-balance-3': 'patrick',
 };
 
