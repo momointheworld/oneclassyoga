@@ -4,42 +4,51 @@ import Script from 'next/script';
 export default function FAQSection() {
   const faqs = [
     {
-      q: 'Do I need experience for a private yoga class in Chiang Mai?',
+      q: 'Are these programs suitable for beginners?',
       aDisplay:
-        'Not at all! Each teacher offers classes at different levels, and they can adapt the session to your experience and goals. Whether you’re a beginner or an advanced practitioner, you’ll get guidance tailored to you.',
+        'Absolutely. We have programs specifically designed for foundations (Yoga Foundations Intensive), while our more technical programs like "The Art of Inversion" are tailored for those looking to progress. Your teacher adapts every session within the program to your specific level and pace.',
       aSchema:
-        'Not at all! Each teacher offers classes at different levels, and they can adapt the session to your experience and goals. Whether you’re a beginner or an advanced practitioner, you’ll get guidance tailored to you.',
+        'Absolutely. We have programs specifically designed for foundations, while technical programs are for progression. Teachers adapt every session to your specific level and pace.',
     },
     {
-      q: 'Where are the yoga classes held?',
+      q: 'Where do the program sessions take place?',
       aDisplay: (
         <>
-          All classes take place at our{' '}
-          <Link href="/location" className="text-blue-600 underline">
+          All sessions are held at our{' '}
+          <Link
+            href="/location"
+            className="text-emerald-600 underline font-medium"
+          >
             Old Town studio
           </Link>{' '}
-          in Chiang Mai. It’s centrally located for easy access, so you don’t
-          have to worry about finding a spot. The space is designed to create a
-          comfortable and focused environment for your practice.
+          in Chiang Mai. It’s a dedicated, quiet space designed for focused,
+          private practice, ensuring you get the most out of your structured
+          program.
         </>
       ),
       aSchema:
-        'All classes take place at our Old Town studio in Chiang Mai. It’s centrally located for easy access, so you don’t have to worry about finding a spot. The space is designed to create a comfortable and focused environment for your practice.',
+        'All sessions are held at our Old Town studio in Chiang Mai, a dedicated space for focused private practice.',
     },
     {
-      q: 'Are your yoga teachers certified?',
+      q: 'How are the teachers for these programs selected?',
       aDisplay:
-        'Yes! All teachers featured here are certified and bring years of experience. Each one has been carefully chosen for their quality of teaching and ability to create meaningful, personalized sessions. Additionally, teachers have different strengths and areas of expertise, so you can find one that best matches your practice goals.',
+        'Every teacher is handpicked based on their technical expertise and ability to teach structured curriculums. They are all certified professionals with deep experience in their specific niche, ensuring that your program is safe, progressive, and effective.',
       aSchema:
-        'Yes! All teachers featured here are certified and bring years of experience. Each one has been carefully chosen for their quality of teaching and ability to create meaningful, personalized sessions. Additionally, teachers have different strengths and areas of expertise, so you can find one that best matches your practice goals.',
+        'Teachers are handpicked based on technical expertise and ability to teach structured curriculums. All are certified professionals with deep experience.',
     },
-
     {
-      q: 'How far in advance do I need to book a private yoga class?',
+      q: 'Can I share a program with a friend?',
       aDisplay:
-        'Private yoga classes can be booked 7 to 30 days in advance. This allows both the teacher and the studio to be scheduled ahead, ensuring availability and a smooth experience.',
+        'Yes! You can book any program and bring a friend to join you. It’s a great way to stay motivated and share the cost. There is only a small additional fee per session for the extra person, which you can select during the booking process.',
       aSchema:
-        'Private yoga classes can be booked 7 to 30 days in advance to ensure teacher and studio availability.',
+        'Yes, you can share any program with a friend for a small additional fee per session, selectable during booking.',
+    },
+    {
+      q: 'How far in advance should I book my program?',
+      aDisplay:
+        'Programs can be booked 7 to 30 days in advance. Since these are multi-session paths, booking ahead ensures your preferred teacher and our studio space are available for your entire journey.',
+      aSchema:
+        'Programs can be booked 7 to 30 days in advance to ensure teacher and studio availability for the multi-session path.',
     },
   ];
 
@@ -58,25 +67,38 @@ export default function FAQSection() {
 
   return (
     <>
-      <div className="mt-12">
-        <h2 className="text-3xl font-bold mb-6 text-center">FAQ</h2>
-        <div className="space-y-6">
+      <div className="mt-12 max-w-3xl mx-auto">
+        <h2 className="text-3xl font-bold mb-10 text-center text-gray-900">
+          Common Questions
+        </h2>
+        <div className="space-y-8">
           {faqs.map((faq, idx) => (
-            <div key={idx} className="pb-4">
-              <h3 className="font-semibold text-lg">{faq.q}</h3>
-              <p className="text-gray-600 mt-2">- {faq.aDisplay}</p>
+            <div
+              key={idx}
+              className="group border-b border-gray-100 pb-6 last:border-0"
+            >
+              <h3 className="font-bold text-lg text-gray-900 flex items-start gap-3">
+                <span className="text-emerald-500 text-xl font-serif">Q.</span>
+                {faq.q}
+              </h3>
+              <div className="text-gray-600 mt-3 pl-8 leading-relaxed">
+                {faq.aDisplay}
+              </div>
             </div>
           ))}
         </div>
       </div>
-      <div className="mt-6 text-center">
+
+      <div className="mt-12 text-center">
         <p className="text-gray-400 text-sm">
-          <span className="block sm:inline">Have more questions?</span>{' '}
           <span className="block sm:inline">
-            Visit our{' '}
+            Still curious about our programs?
+          </span>{' '}
+          <span className="block sm:inline">
+            Join the conversation in our{' '}
             <Link
               href="/community?category=Q%26A"
-              className="text-blue-600 underline"
+              className="text-emerald-600 underline font-medium hover:text-emerald-700"
             >
               Community Q&A
             </Link>

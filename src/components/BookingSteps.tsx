@@ -3,25 +3,25 @@ import Script from 'next/script';
 export default function BookingSteps() {
   const steps = [
     {
-      title: '1. Pick Your Ideal Yoga Teacher',
-      desc: 'I’ve personally handpicked experienced yoga teachers in Chiang Mai who offer exceptional guidance and create meaningful experiences. Browse our curated list to find the teacher who resonates with you.',
+      title: 'Choose the Right Program',
+      desc: 'Browse our curated programs designed for specific goals—from mastering inversions to building a solid foundation. Pick the path that matches your current practice level and aspirations.',
     },
     {
-      title: '2. Schedule Your First Private Session',
-      desc: 'Booking is simple and flexible. Select a time that fits your schedule, and your session will take place at our studio—no extra fuss. You can also share the class with a friend for a more enjoyable experience and savings.',
+      title: 'Select Teacher & Schedule',
+      desc: 'Connect with the expert instructor leading your chosen program. Pick a date and time for your first 90-minute session. You can also add a friend to share the practice and the cost.',
     },
-
     {
-      title: '3. Experience Your 1-on-1 Yoga Class',
-      desc: 'Step into your private session and enjoy guidance tailored to your level, goals, and needs. Each teacher brings their expertise and passion, ensuring you feel supported, challenged, and inspired throughout your practice.',
+      title: 'Begin Your Guided Practice',
+      desc: 'Step into our studio for personalized, technical guidance tailored to your body. Each session in your program builds upon the last, ensuring meaningful progress and a safe, inspired practice.',
     },
   ];
+
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
-    name: 'How to Book a Private Yoga Class in Chiang Mai',
+    name: 'How to Book a Yoga Program in Chiang Mai',
     description:
-      'Follow these personalized steps to book a private yoga session with carefully selected, certified instructors in Chiang Mai.',
+      'Follow these steps to select a structured yoga program and book private sessions with expert instructors in Chiang Mai.',
     step: steps.map((step, index) => ({
       '@type': 'HowToStep',
       position: index + 1,
@@ -36,10 +36,15 @@ export default function BookingSteps() {
         {steps.map((step, idx) => (
           <div
             key={idx}
-            className="p-6 bg-white rounded-2xl shadow border border-gray-100 text-left"
+            className="p-8 bg-white rounded-3xl shadow-sm border border-gray-100 text-center hover:shadow-md transition-shadow"
           >
-            <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
-            <p className="text-gray-600">{step.desc}</p>
+            <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center font-bold mb-4">
+              {idx + 1}
+            </div>
+            <h3 className="text-xl font-bold mb-3 text-gray-900">
+              {step.title}
+            </h3>
+            <p className="text-gray-600 text-sm leading-relaxed">{step.desc}</p>
           </div>
         ))}
       </div>
