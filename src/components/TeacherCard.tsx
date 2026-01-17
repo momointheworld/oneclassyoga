@@ -36,10 +36,10 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleCheckAvailability = async () => {
+  const handleViewPrograms = async () => {
     setLoading(true);
-    router.push(`/teachers/${teacher.slug}#booking-calendar`);
-    // No need to manually reset loading - component will unmount
+    // Point to the #programs section instead of the calendar
+    router.push(`/teachers/${teacher.slug}?select=true#programs`);
   };
   return (
     <Card className="w-full max-w-sm rounded-3xl border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
@@ -112,7 +112,7 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
 
         <Button
           disabled={loading}
-          onClick={handleCheckAvailability}
+          onClick={handleViewPrograms}
           className="bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-emerald-700 transition flex items-center gap-2"
         >
           {loading ? (
@@ -121,7 +121,7 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
               Redirecting...
             </>
           ) : (
-            'Book This Teacher'
+            'Explore Programs'
           )}
         </Button>
       </CardFooter>

@@ -8,7 +8,7 @@ import parse from 'html-react-parser';
 import BookingCalendar from '@/components/BookingCalendar';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import YouTubeVideo from '@/components/YoutubeViedo';
 import { format } from 'date-fns-tz';
 import { createClient } from '@/utils/supabase/supabaseClient';
@@ -57,30 +57,36 @@ export default function TeacherProfileClient({
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
   const router = useRouter();
-  // const packages = getPackages(teacher.rates);
+  const searchParams = useSearchParams();
+  const shouldScroll = searchParams.get('select');
+  const preSelectedId = searchParams.get('program');
 
   useEffect(() => {
-    const hash = window.location.hash;
-    if (hash === '#booking-calendar' || hash === '#reviewCarousel') {
-      const timeout = setTimeout(() => {
-        const element = document.getElementById(hash.substring(1));
-        if (element) {
-          const yOffset = -80; // adjust for sticky header if any
-          const y =
-            element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-          window.scrollTo({ top: y, behavior: 'smooth' });
-
-          // Add highlight ring
-          element.classList.add('ring-2', 'ring-blue-500');
-          setTimeout(() => {
-            element.classList.remove('ring-2', 'ring-blue-500');
-          }, 2000);
-        }
-      }, 300); // wait for layout
-
-      return () => clearTimeout(timeout);
+    // Case A: Coming from the Programs Page with a specific ID
+    if (preSelectedId) {
+      const program = teacherPrograms.find((p) => p.id === preSelectedId);
+      if (program) {
+        onSelectProgram(
+          program.id,
+          program.bundleType as PackageType,
+          program.title
+        );
+        scrollToPrograms();
+      }
     }
-  }, []);
+    // Case B: Coming from TeacherCard just to "View Programs"
+    else if (shouldScroll) {
+      scrollToPrograms();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preSelectedId, shouldScroll]);
+
+  const scrollToPrograms = () => {
+    const el = document.getElementById('programs');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const formattedDate = selectedDate ? format(selectedDate, 'MMM d, yyyy') : '';
 
@@ -349,7 +355,7 @@ export default function TeacherProfileClient({
           )}
 
           {/* PROGRAMS RADIO SELECTION */}
-          <section className="space-y-6" id="booking-calendar">
+          <section className="space-y-6" id="programs">
             <div className="text-center mt-12 mb-8">
               <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
                 Select Your Program

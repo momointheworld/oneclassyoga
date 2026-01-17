@@ -48,12 +48,17 @@ const ProgramsPage = () => {
     );
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-16 bg-white">
-      <header className="mb-12 border-b border-gray-100 pb-8">
-        <h1 className="text-3xl font-light text-gray-900 tracking-tight">
-          Programs
+    <div className="max-w-3xl mx-auto py-16 bg-white">
+      <div className="mb-6 border-gray-100">
+        <h1 className="text-3xl font-bold text-gray-900 mb-3">
+          Focused Private Programs
         </h1>
-      </header>
+        <p className="text-gray-600 text-lg leading-relaxed">
+          I worked with these teachers to turn their best skills into simple
+          programs. Instead of just a random class, you get a clear path to
+          follow with personal help on every movement.
+        </p>
+      </div>
 
       <div className="divide-y divide-gray-100 border-t border-gray-100">
         {PROGRAMS.map((p) => {
@@ -75,7 +80,9 @@ const ProgramsPage = () => {
               instructor={instructorName}
               isOpen={openId === p.id}
               onToggle={() => setOpenId(openId === p.id ? null : p.id)}
-              onBook={() => router.push(`/teachers/${instructorSlug}`)}
+              onBook={() =>
+                router.push(`/teachers/${instructorSlug}?program=${p.id}`)
+              }
             />
           );
         })}

@@ -76,16 +76,19 @@ export default async function HomePage() {
         <section className="text-center mt-12 space-y-6">
           {/* Updated Headline focusing on Programs + Quality */}
           <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl max-w-4xl mx-auto">
-            Structured Yoga Programs in Chiang Mai — Led by Expert Teachers
+            Master Yoga Skills: <br />
+            Private Programs in Chiang Mai
           </h1>
 
           {/* Updated Body focusing on Levels and the "Practitioner's Choice" quality filter */}
-          <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Hi, I’m a longtime practitioner in Chiang Mai. I’ve hand-selected
-            the city’s most skilled instructors to build specialized programs
-            suitable for all levels. Whether you are a beginner or looking to
-            master inversions, our programs ensure technical quality and
-            meaningful progress.
+          <p className="text-gray-600 max-w-3xl mx-auto leading-relaxed text-lg">
+            I am a longtime practitioner in Chiang Mai and I’ve followed a lot
+            of teachers over the years, learning their skills in different
+            areas. I created this to help these teachers gain the exposure they
+            deserve by putting together private, one-on-one programs built
+            around their specific strengths. This allows students to progress
+            with much more focus than a group class, with every session tailored
+            to exactly what they need.
           </p>
 
           {/* <div className="flex justify-center">
@@ -107,11 +110,13 @@ export default async function HomePage() {
         {/* Programs Preview Section */}
         <section className="space-y-12">
           <div className="text-center space-y-4">
-            <h2 className="text-3xl font-semibold">Structured Yoga Programs</h2>
+            <h2 className="text-3xl font-semibold">
+              Get better at specific skills
+            </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Master specific skills through our curated programs. Each path is
-              designed to provide progressive learning with personalized
-              adjustments.
+              I worked with these teachers to turn their best skills into simple
+              programs. Instead of just a random class, you get a clear path to
+              follow with personal help on every movement.
             </p>
           </div>
 
