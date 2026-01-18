@@ -5,7 +5,7 @@ import { randomBytes } from 'crypto';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -22,11 +22,11 @@ export async function POST(req: Request) {
     event = stripe.webhooks.constructEvent(
       body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      process.env.STRIPE_WEBHOOK_SECRET!,
     );
   } catch (err) {
     console.error(
-      `Webhook Error: ${err instanceof Error ? err.message : 'Unknown error'}`
+      `Webhook Error: ${err instanceof Error ? err.message : 'Unknown error'}`,
     );
     return NextResponse.json({ error: 'Webhook error' }, { status: 400 });
   }
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     try {
       // Retrieve the customer details
       const customer = (await stripe.customers.retrieve(
-        session.customer as string
+        session.customer as string,
       )) as Stripe.Customer;
 
       const metadata = session.metadata || {};
@@ -46,6 +46,7 @@ export async function POST(req: Request) {
       const date = metadata.date || null;
       const time_slot = metadata.time_slot || null;
       const participants = metadata.participants || null;
+      const package_title = metadata.package_title || null;
       let bundleSize: number | null = null;
       if (metadata.booking_type?.startsWith('bundle')) {
         bundleSize = parseInt(metadata.booking_type.replace('bundle', ''), 10);
@@ -75,6 +76,7 @@ export async function POST(req: Request) {
       const { error: insertError } = await supabase.from('bookings').insert({
         session_id: session.id,
         booking_type,
+        package_title,
         teacher_slug,
         teacher_id: teacherId,
         customer_name: customer.name || '',
@@ -102,7 +104,7 @@ export async function POST(req: Request) {
       console.error('Error handling checkout.session.completed:', error);
       return NextResponse.json(
         { error: 'Webhook handler failed' },
-        { status: 500 }
+        { status: 500 },
       );
     }
   }

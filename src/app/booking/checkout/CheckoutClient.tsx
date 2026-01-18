@@ -11,6 +11,7 @@ export default function CheckoutPage() {
   const timeSlot = searchParams.get('timeSlot');
   const participants = searchParams.get('participants');
   const booking_type = searchParams.get('booking_type');
+  const package_title = searchParams.get('package_title');
   const date = searchParams.get('date');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -33,6 +34,7 @@ export default function CheckoutPage() {
             date,
             participants: parseInt(participants || '1', 10), // Default to 1 if not provided
             booking_type,
+            package_title,
           }),
         });
 
@@ -52,7 +54,7 @@ export default function CheckoutPage() {
     }
 
     createCheckout();
-  }, [teacherSlug, timeSlot, date, participants, booking_type]); // More specific dependencies
+  }, [teacherSlug, timeSlot, date, participants, booking_type, package_title]); // More specific dependencies
 
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-4">

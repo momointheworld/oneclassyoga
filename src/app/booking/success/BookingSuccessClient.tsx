@@ -13,6 +13,7 @@ export default function BookingSuccessClient() {
   const date = searchParams.get('date');
   const time = searchParams.get('timeSlot');
   const participants = searchParams.get('participants');
+  const packageTitle = searchParams.get('packageTitle');
   const isBundle = searchParams.get('bundle') === 'true';
 
   const [copied, setCopied] = useState(false);
@@ -121,14 +122,20 @@ export default function BookingSuccessClient() {
       {hasBookingDetails ? (
         <div className="bg-white shadow-md p-6 rounded-xl mb-8 text-left border border-gray-100">
           <h2 className="text-xl font-semibold mb-4 text-gray-800">
-            {isBundle ? 'Bundle Details' : 'Class Details'}
+            {isBundle ? 'Program Details' : 'Class Details'}
           </h2>
           <ul className="list-disc pl-5 space-y-2 text-gray-700">
+            {packageTitle && (
+              <li>
+                <span className="font-medium">Program:</span> {packageTitle}
+              </li>
+            )}
             {teacherName && (
               <li>
                 <span className="font-medium">Teacher:</span> {teacherName}
               </li>
             )}
+
             {date && (
               <li>
                 <span className="font-medium">
@@ -218,10 +225,10 @@ export default function BookingSuccessClient() {
 
       <div className="mt-8 text-center">
         <Link
-          href="/teachers"
+          href="/programs"
           className="text-blue-600 hover:text-blue-800 hover:underline"
         >
-          Check out more teachers
+          Check out other programs
         </Link>
       </div>
     </div>

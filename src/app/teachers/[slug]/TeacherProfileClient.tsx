@@ -44,7 +44,7 @@ export default function TeacherProfileClient({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [rate, setRate] = useState<number | null>(null);
   const [bookingTitle, setBookingTitle] = useState<string>(
-    'Choose Your Date & Time'
+    'Choose Your Date & Time',
   );
   const [showNote, setShowNote] = useState(false);
   const note = showNote
@@ -52,8 +52,9 @@ export default function TeacherProfileClient({
     : '';
   const [error, setError] = useState('');
   const [selectedPackage, setSelectedPackage] = useState<PackageType | null>(
-    null
+    null,
   );
+  const [packageTitle, setPackageTitle] = useState<string>('');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
   const router = useRouter();
@@ -69,7 +70,7 @@ export default function TeacherProfileClient({
         onSelectProgram(
           program.id,
           program.bundleType as PackageType,
-          program.title
+          program.title,
         );
         scrollToPrograms();
       }
@@ -148,6 +149,7 @@ export default function TeacherProfileClient({
       timeSlot: selectedTimeSlot,
       participants: participants.toString(),
       booking_type: selectedPackage,
+      package_title: bookingTitle,
     }).toString();
 
     router.push(`/booking/checkout?${query}`);
@@ -166,13 +168,13 @@ export default function TeacherProfileClient({
 
   // Filter the shared constant for this teacher
   const teacherPrograms = PROGRAMS.filter(
-    (p) => programTeachers[p.id] === teacher.slug
+    (p) => programTeachers[p.id] === teacher.slug,
   );
 
   const onSelectProgram = (
     progId: string,
     bundleType: PackageType,
-    title: string
+    title: string,
   ) => {
     setActiveProgramId(progId);
     handlePackageSelect(bundleType);
@@ -384,7 +386,7 @@ export default function TeacherProfileClient({
                         onSelectProgram(
                           'single',
                           'single',
-                          'Single Trial Session'
+                          'Single Trial Session',
                         )
                       }
                       className="w-5 h-5 accent-emerald-600"
@@ -431,7 +433,7 @@ export default function TeacherProfileClient({
                             onSelectProgram(
                               p.id,
                               p.bundleType as PackageType,
-                              p.title
+                              p.title,
                             )
                           }
                           className="w-5 h-5 accent-emerald-600"

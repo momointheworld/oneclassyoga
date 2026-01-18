@@ -6,7 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -15,13 +15,20 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { email, teacher_slug, date, time_slot, participants, booking_type } =
-    body;
+  const {
+    email,
+    teacher_slug,
+    date,
+    time_slot,
+    participants,
+    booking_type,
+    package_title,
+  } = body;
 
   if (!booking_type) {
     return NextResponse.json(
       { error: 'Missing required fields' },
-      { status: 400 }
+      { status: 400 },
     );
   }
   // Fetch teacher rates from your DB (Supabase example)
@@ -102,7 +109,7 @@ export async function POST(req: Request) {
     async function convertThbToHkd(amountInTHBCents: number) {
       try {
         const res = await fetch(
-          'https://api.exchangerate-api.com/v4/latest/THB'
+          'https://api.exchangerate-api.com/v4/latest/THB',
         );
         const data = await res.json();
         const rate = data?.rates?.HKD;
@@ -155,7 +162,7 @@ export async function POST(req: Request) {
     } else {
       return NextResponse.json(
         { error: 'Invalid booking_type' },
-        { status: 400 }
+        { status: 400 },
       );
     }
     // ✅ Metadata is now always stored, regardless of type
@@ -166,6 +173,7 @@ export async function POST(req: Request) {
       participants: participants?.toString() || '',
       booking_type,
       quantity: booking_type === 'single' ? 'dynamic' : '1',
+      package_title: package_title || '',
     };
 
     // Custom fields (visible in checkout page)
@@ -188,7 +196,7 @@ export async function POST(req: Request) {
       sessionOptions.success_url = `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&teacher=${teacher_slug}&date=${date}&timeSlot=${time_slot}&participants=${participants}`;
       sessionOptions.cancel_url = `${process.env.NEXT_PUBLIC_SITE_URL}/teachers/${teacher_slug}`;
     } else {
-      sessionOptions.success_url = `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&bundle=true&teacher=${teacher_slug}&date=${date}&timeSlot=${time_slot}&participants=${participants}`;
+      sessionOptions.success_url = `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&bundle=true&teacher=${teacher_slug}&date=${date}&timeSlot=${time_slot}&participants=${participants}&packageTitle=${encodeURIComponent(package_title)}`;
       sessionOptions.cancel_url = `${process.env.NEXT_PUBLIC_SITE_URL}/teachers/${teacher_slug}`;
     }
 
