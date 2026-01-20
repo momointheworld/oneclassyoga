@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     siteName: 'OneClass Yoga',
     images: [
       {
-        url: '/images/ogs/teachers-og.jpg',
+        url: '/images/ogs/teachers-og.jpeg',
         width: 1200,
         height: 630,
         alt: 'Private yoga classes in Chiang Mai with experienced teachers',
@@ -30,13 +30,13 @@ export const metadata: Metadata = {
     title: 'Chiang Mai Yoga Teachers | Private 1-on-1 Classes',
     description:
       'Discover top yoga teachers in Chiang Mai. Book private 1-on-1 classes tailored to your level and schedule, with the option to share the session with a friend.',
-    images: ['images/ogs/teachers-og.jpg'],
+    images: ['images/ogs/teachers-og.jpeg'],
   },
 };
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 
 type Teacher = {

@@ -61,7 +61,7 @@ export default function YouTubeVideo({
 
       try {
         const res = await fetch(
-          `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${youtubeId}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+          `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${youtubeId}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`,
         );
         const data = await res.json();
 
@@ -69,7 +69,7 @@ export default function YouTubeVideo({
           const snippet = data.items[0].snippet;
           const description = truncateBySentence(
             snippet.description || '',
-            maxDescriptionLength
+            maxDescriptionLength,
           );
 
           setVideoData({

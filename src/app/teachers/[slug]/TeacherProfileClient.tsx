@@ -54,7 +54,6 @@ export default function TeacherProfileClient({
   const [selectedPackage, setSelectedPackage] = useState<PackageType | null>(
     null,
   );
-  const [packageTitle, setPackageTitle] = useState<string>('');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
   const router = useRouter();

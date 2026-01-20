@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { PageContainer } from '@/components/PageContainer';
 import { createClient } from '@/utils/supabase/supabaseServer';
@@ -9,7 +8,7 @@ import { Metadata } from 'next';
 import YouTubeVideo from '@/components/YoutubeViedo';
 import ReviewCarousel from '@/components/ReviewCard';
 import { Badge } from '@/components/ui/badge';
-import { getPackages, PROGRAMS, programTeachers } from '@/lib/packages';
+import { PROGRAMS, programTeachers } from '@/lib/packages';
 
 export const metadata: Metadata = {
   title:
@@ -25,7 +24,7 @@ export const metadata: Metadata = {
     siteName: 'OneClass Yoga',
     images: [
       {
-        url: '/images/ogs/home-og.jpg',
+        url: '/images/ogs/home-og.jpeg',
         width: 1200,
         height: 630,
         alt: 'Handpicked private yoga classes in Chiang Mai – share a class with a friend for more fun and savings',
@@ -40,7 +39,7 @@ export const metadata: Metadata = {
       'Handpicked Private Yoga in Chiang Mai | Share a Class with a Friend for More Fun & Savings',
     description:
       'Book a private yoga class with handpicked teachers, or share it with a friend in Chiang Mai for a fun and cost-effective experience. Personalized sessions for all levels.',
-    images: ['/images/ogs/home-og.png'],
+    images: ['/images/ogs/home-og.jpeg'],
   },
 };
 
@@ -74,13 +73,12 @@ export default async function HomePage() {
       <div className="px-4 space-y-24">
         {/* Hero Section */}
         <section className="text-center mt-12 space-y-6">
-          {/* Updated Headline focusing on Programs + Quality */}
+          {/* Header Section */}
           <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl max-w-4xl mx-auto">
             Master Yoga Skills: <br />
             Private Programs in Chiang Mai
           </h1>
 
-          {/* Updated Body focusing on Levels and the "Practitioner's Choice" quality filter */}
           <p className="text-gray-600 max-w-3xl mx-auto leading-relaxed text-lg">
             I am a longtime practitioner in Chiang Mai and I’ve followed a lot
             of teachers over the years, learning their skills in different
@@ -91,14 +89,12 @@ export default async function HomePage() {
             to exactly what they need.
           </p>
 
-          {/* <div className="flex justify-center">
-            <div className="w-full max-w-3xl aspect-video rounded-3xl overflow-hidden shadow-2xl border border-gray-100">
-              <YouTubeVideo
-                youtubeId="hJgt8rKMRek?si=2IXosRgOQwFAenJJ"
-                bilibiliId="BV1opCvBiEfo"
-              />
+          {/* Simplified Video Container */}
+          <div className="flex justify-center px-4">
+            <div className="w-full max-w-3xl">
+              <YouTubeVideo youtubeId="hJgt8rKMRek" bilibiliId="BV1opCvBiEfo" />
             </div>
-          </div> */}
+          </div>
         </section>
 
         {/* How It Works */}
@@ -124,7 +120,7 @@ export default async function HomePage() {
             {PROGRAMS.slice(0, 3).map((program) => {
               const instructorSlug = programTeachers[program.id];
               const instructor = teachers?.find(
-                (t) => t.slug === instructorSlug
+                (t) => t.slug === instructorSlug,
               );
 
               return (

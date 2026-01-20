@@ -30,7 +30,7 @@ export async function generateMetadata({
     'Movement'
   ]?.join(', ')}. Offering private 1-on-1 classes.`;
 
-  const imageUrl = teacher.photo || '/images/ogs/teacher-og.jpg'; // fallback image
+  const imageUrl = teacher.photo || '/images/ogs/teacher-og.jpeg'; // fallback image
 
   return {
     title: `${teacher.name} | Experienced Private Yoga Teacher in Chiang Mai`,
@@ -73,7 +73,7 @@ export default async function TeacherProfilePage({
   const { data: teacher, error } = await (await supabase)
     .from('teachers')
     .select(
-      'id, name, slug, bio, isFeatured, photo, gallery, styles, strengths, rates, levels, videoUrl, weekly_schedule'
+      'id, name, slug, bio, isFeatured, photo, gallery, styles, strengths, rates, levels, videoUrl, weekly_schedule',
     )
     .eq('slug', slug)
     .eq('isActive', true)

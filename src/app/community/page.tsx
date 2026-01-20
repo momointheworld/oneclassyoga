@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     siteName: 'OneClass',
     images: [
       {
-        url: '/images/ogs/community-og.jpg',
+        url: '/images/ogs/community-og.jpeg',
         width: 1200,
         height: 630,
         alt: 'OneClass Community',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     title: 'OneClass Community',
     description:
       'Curated posts on Q&A, Experiences, Upcoming events, and Random topics — shared by OneClass.',
-    images: ['/images/ogs/community-og.jpg'],
+    images: ['/images/ogs/community-og.jpeg'],
     creator: '@oneromeo',
   },
   alternates: {
@@ -51,7 +51,7 @@ export default async function CommunityPage() {
   const { data: posts, error } = await (await supabase)
     .from('posts')
     .select(
-      'id, title, content, slug, user_name, user_id, created_at, category'
+      'id, title, content, slug, user_name, user_id, created_at, category',
     )
     .order('created_at', { ascending: false });
 
