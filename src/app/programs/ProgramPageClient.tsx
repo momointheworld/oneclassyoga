@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ProgramListRow } from '@/components/ProgramListRow';
 import { PROGRAMS, programTeachers } from '@/lib/packages';
 import { createClient } from '@/utils/supabase/supabaseClient';
+import { PageContainer } from '@/components/PageContainer';
 
 const supabase = createClient();
 
@@ -48,46 +49,48 @@ const ProgramsPageClient = () => {
     );
 
   return (
-    <div className="max-w-3xl mx-auto py-16 bg-white">
-      <div className="mb-6 border-gray-100">
-        <h1 className="text-3xl font-bold text-gray-900 mb-3">
-          Focused Private Programs
-        </h1>
-        <p className="text-gray-600 text-lg leading-relaxed">
-          I worked with these teachers to turn their best skills into simple
-          programs. Instead of just a random class, you get a clear path to
-          follow with personal help on every movement.
-        </p>
+    <PageContainer>
+      <div>
+        <div className="mb-6 border-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">
+            Focused Private Programs
+          </h1>
+          <p className="text-gray-600 text-lg leading-relaxed">
+            I worked with these teachers to turn their best skills into simple
+            programs. Instead of just a random class, you get a clear path to
+            follow with personal help on every movement.
+          </p>
+        </div>
+
+        <div className="divide-y divide-gray-100 border-t border-gray-100">
+          {PROGRAMS.map((p) => {
+            const instructorSlug = programTeachers[p.id];
+            const rates = teacherRates[instructorSlug];
+
+            // Determine if we need bundle3 or bundle6 price
+            const bundleKey = p.id.endsWith('-6') ? 'bundle6' : 'bundle3';
+            const price = rates ? rates[bundleKey] : '—';
+
+            const instructorName =
+              instructorSlug.charAt(0).toUpperCase() + instructorSlug.slice(1);
+
+            return (
+              <ProgramListRow
+                key={p.id}
+                program={p}
+                price={price}
+                instructor={instructorName}
+                isOpen={openId === p.id}
+                onToggle={() => setOpenId(openId === p.id ? null : p.id)}
+                onBook={() =>
+                  router.push(`/teachers/${instructorSlug}?program=${p.id}`)
+                }
+              />
+            );
+          })}
+        </div>
       </div>
-
-      <div className="divide-y divide-gray-100 border-t border-gray-100">
-        {PROGRAMS.map((p) => {
-          const instructorSlug = programTeachers[p.id];
-          const rates = teacherRates[instructorSlug];
-
-          // Determine if we need bundle3 or bundle6 price
-          const bundleKey = p.id.endsWith('-6') ? 'bundle6' : 'bundle3';
-          const price = rates ? rates[bundleKey] : '—';
-
-          const instructorName =
-            instructorSlug.charAt(0).toUpperCase() + instructorSlug.slice(1);
-
-          return (
-            <ProgramListRow
-              key={p.id}
-              program={p}
-              price={price}
-              instructor={instructorName}
-              isOpen={openId === p.id}
-              onToggle={() => setOpenId(openId === p.id ? null : p.id)}
-              onBook={() =>
-                router.push(`/teachers/${instructorSlug}?program=${p.id}`)
-              }
-            />
-          );
-        })}
-      </div>
-    </div>
+    </PageContainer>
   );
 };
 

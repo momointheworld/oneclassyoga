@@ -5,6 +5,7 @@ import '@/app/globals.css';
 import MainMenu from '@/components/MainMenu';
 import { Footer } from '@/components/Footer';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
+import CookieBanner from '@/components/CookieBanner';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -72,7 +73,10 @@ export default function RootLayout({
         <AnalyticsTracker /> {/* ✅ add here */}
         <div className="flex flex-col min-h-screen">
           <MainMenu />
-          <main className="flex-grow">{children}</main>
+          <main className="flex-grow">
+            {children}
+            <CookieBanner />
+          </main>
           <Footer />
         </div>
       </body>
