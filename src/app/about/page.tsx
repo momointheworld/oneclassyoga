@@ -83,8 +83,8 @@ export default function AboutPage() {
               <p className="text-gray-700 leading-relaxed">
                 What I noticed was that while Chiang Mai has amazing teachers,
                 it can be hard to find a clear path to get better at a specific
-                skill. I created this site to turn the "random group class"
-                experience into
+                skill. I created this site to turn the &quot;random group
+                class&quot; experience into
                 <span className="font-semibold text-emerald-700">
                   {' '}
                   focused, one-on-one programs

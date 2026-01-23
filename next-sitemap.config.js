@@ -3,12 +3,22 @@ module.exports = {
   siteUrl: 'https://www.oneclass.yoga',
   generateRobotsTxt: true,
   sitemapSize: 7000,
+  // This ensures your dynamic pages (like teacher profiles) are crawled
+  generateIndexSitemap: false, 
   exclude: [
-    '/dashboard',      // exact route
-    '/dashboard/*',    // all nested routes inside dashboard
+    '/dashboard',
+    '/dashboard/*',
     '/auth/*',
-  '/login',
-  '/api/*',
-    '/api/*',          
+    '/login',
+    '/api/*',
   ],
+  robotsTxtOptions: {
+    policies: [
+      {
+        userAgent: '*',
+        allow: '/',
+        disallow: ['/dashboard', '/auth', '/api'],
+      },
+    ],
+  },
 };
