@@ -4,15 +4,15 @@ export default function BookingSteps() {
   const steps = [
     {
       title: 'Pick your path',
-      desc: 'Browse the programs I’ve put together based on each teacher’s specific strengths. Whether it’s inversions or foundations, pick the one that matches what you want to learn.',
+      desc: 'Choose a program I’ve built around a teacher’s specific mastery. Whether it’s inversions or foundations, I’ve picked the path that matches your goal.',
     },
     {
-      title: 'Book your teacher',
-      desc: 'Each program is tied to its specialist teacher. Go straight to their calendar to book your first private session. You can also bring a friend to share the practice and the cost.',
+      title: 'Book your specialist',
+      desc: 'Go straight to my recommended teacher’s calendar to start. You can always bring a friend to share the practice (and the cost) with you.',
     },
     {
       title: 'Practice one-on-one',
-      desc: 'Meet for 90-minute sessions tailored entirely to your body. Because it is one-on-one, you actually learn the skill and progress instead of just following a random group flow.',
+      desc: 'We focus on 90-minute sessions tailored to your body. You’ll actually master the skill instead of just following a random group flow.',
     },
   ];
 
@@ -36,9 +36,9 @@ export default function BookingSteps() {
         {steps.map((step, idx) => (
           <div
             key={idx}
-            className="p-8 bg-white rounded-3xl shadow-sm border border-gray-100  flex flex-col items-center text-center hover:shadow-md transition-shadow"
+            className="p-8 bg-white rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow"
           >
-            <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-full flex items-center border justify-center font-bold mb-4">
+            <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-full flex items-center border border-emerald-100 justify-center font-bold mb-4">
               {idx + 1}
             </div>
             <h3 className="text-xl font-bold mb-3 text-gray-900 h-15">

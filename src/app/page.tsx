@@ -109,11 +109,6 @@ export default async function HomePage() {
             <h2 className="text-3xl font-semibold">
               Get better at specific skills
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              I worked with these teachers to turn their best skills into simple
-              programs. Instead of just a random class, you get a clear path to
-              follow with personal help on every movement.
-            </p>
           </div>
 
           <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto">
@@ -195,29 +190,25 @@ export default async function HomePage() {
         <section className="bg-gray-50 py-16 rounded-[2.5rem] px-6 md:px-12 space-y-12">
           <div className="space-y-4 text-center">
             <h2 className="text-3xl font-bold text-gray-900">
-              Why Choose Our Programs?
+              Built for Mastery
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              We bridge the gap between casual drop-in classes and professional,
-              result-oriented yoga practice.
-            </p>
           </div>
 
           <div className="grid gap-12 md:grid-cols-3 text-center">
             {[
               {
-                title: 'Curated Curriculums',
-                desc: 'Every program is designed based on years of practice to ensure you don’t just "do yoga," but actually progress in specific skills.',
-                icon: '📋',
+                title: 'Designed for Your Progress',
+                desc: "After 10 years in group classes, I realized following a flow isn't the same as improving. I built these programs to give you a structured path to actually master new skills.",
+                icon: '🎯',
               },
               {
-                title: 'Handpicked Excellence',
-                desc: 'I personally vet every teacher for their technical depth and ability to guide students safely through advanced movements.',
+                title: 'Teachers I Personally Trust',
+                desc: 'only list teachers I have practiced with myself. I’ve seen their technical depth and care for safety firsthand, so I only recommend those I trust with my own practice.',
                 icon: '💎',
               },
               {
-                title: 'Shared Growth',
-                desc: 'Our unique "Share with a Friend" model makes private, high-quality instruction more accessible and enjoyable for everyone.',
+                title: 'Grow Together, Save Together',
+                desc: "Private yoga is a big investment, so I created the 'Share with a Friend' model. It makes expert, 1-on-1 coaching more affordable and a lot more fun.",
                 icon: '🤝',
               },
             ].map((item, idx) => (
@@ -228,7 +219,7 @@ export default async function HomePage() {
                 <div className="text-5xl mb-2  transition-all duration-300 transform group-hover:scale-110">
                   {item.icon}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900">
+                <h3 className="text-xl font-bold text-gray-900 h-15">
                   {item.title}
                 </h3>
                 <p className="text-gray-600 text-sm leading-relaxed">
@@ -258,14 +249,14 @@ export default async function HomePage() {
         <section className="text-center space-y-6">
           <h2 className="text-3xl font-semibold">Have Questions?</h2>
           <p className="text-gray-600">
-            We&apos;re happy to help. Reach out anytime.
+            I&apos;m happy to help. Reach out anytime.
           </p>
           <Link href="/contact">
             <Button
               variant="outline"
               className="text-sm font-medium px-4 py-2 rounded-xl hover:bg-gray-200 transition"
             >
-              Contact Us
+              Contact me
             </Button>
           </Link>
         </section>

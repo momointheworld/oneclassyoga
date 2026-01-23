@@ -121,17 +121,17 @@ export function Footer() {
                 <span className="font-semibold text-gray-200 text-lg">
                   Explore
                 </span>
+                <Link href="/programs" className="hover:text-white transition">
+                  Programs
+                </Link>
                 <Link href="/teachers" className="hover:text-white transition">
                   Teachers
                 </Link>
-                <Link href="/pricing" className="hover:text-white transition">
-                  Pricing
+                <Link href="/about" className="hover:text-white transition">
+                  About
                 </Link>
                 <Link href="/location" className="hover:text-white transition">
                   Location
-                </Link>
-                <Link href="/about" className="hover:text-white transition">
-                  About
                 </Link>
               </div>
 
