@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // import Link from 'next/link';
 // import { Button } from '@/components/ui/button';
 // import { PageContainer } from '@/components/PageContainer';
@@ -321,6 +322,7 @@ export default async function HomePage({}: {
   params: Promise<{ locale: string }>;
 }) {
   const t = await getTranslations('Home');
+  const tPrograms = await getTranslations('Programs');
   const supabase = createClient();
 
   // Data fetching
@@ -364,7 +366,7 @@ export default async function HomePage({}: {
         {/* Programs Preview Section */}
         <section className="space-y-12">
           <div className="text-center space-y-4">
-            <h2 className="text-3xl font-semibold">{t('Programs.title')}</h2>
+            <h2 className="text-3xl font-semibold">{tPrograms('UI.title')}</h2>
           </div>
           <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto">
             {PROGRAMS.slice(0, 3).map((program) => {
@@ -373,6 +375,9 @@ export default async function HomePage({}: {
                 (t) => t.slug === instructorSlug,
               );
 
+              // Fetch the syllabus array using .raw from the Programs namespace
+              const syllabus = tPrograms.raw(`list.${program.id}.syllabus`);
+
               return (
                 <div
                   key={program.id}
@@ -380,21 +385,22 @@ export default async function HomePage({}: {
                 >
                   <div className="mb-6">
                     <Badge className="bg-emerald-50 text-emerald-700 border-none px-3 py-1 text-[10px] uppercase font-bold tracking-widest mb-4">
-                      {program.id.endsWith('-6')
-                        ? t('Programs.badge6')
-                        : t('Programs.badge3')}
+                      {program.bundleType === 'bundle6'
+                        ? tPrograms('UI.badge6')
+                        : tPrograms('UI.badge3')}
                     </Badge>
                     <h3 className="text-xl font-bold text-gray-900 leading-snug group-hover:text-emerald-600 transition-colors">
-                      {program.title}
+                      {tPrograms(`list.${program.id}.title`)}
                     </h3>
                   </div>
+
                   <div className="flex-grow space-y-6">
                     <div className="space-y-3">
                       <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">
-                        {t('Programs.syllabusLabel')}
+                        {tPrograms('UI.syllabusLabel')}
                       </p>
                       <ul className="space-y-2">
-                        {program.syllabus.slice(0, 3).map((step, i) => (
+                        {syllabus.slice(0, 3).map((item: any, i: number) => (
                           <li
                             key={i}
                             className="flex items-start gap-3 text-sm text-gray-600"
@@ -402,19 +408,20 @@ export default async function HomePage({}: {
                             <span className="text-emerald-500 font-bold">
                               {i + 1}.
                             </span>
-                            <span>
-                              {typeof step === 'string' ? step : step.title}
+                            <span className="line-clamp-2">
+                              {typeof item === 'string' ? item : item.title}
                             </span>
                           </li>
                         ))}
                       </ul>
                     </div>
                   </div>
+
                   <div className="mt-8 pt-6 border-t border-gray-50">
                     <div className="flex items-center justify-center">
                       <Link href={`/teachers/${instructorSlug}`}>
                         <span className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 transition-colors">
-                          {t('Programs.meetTeacher', {
+                          {tPrograms('UI.meetTeacher', {
                             name:
                               instructor?.name?.split(' ')[0] || 'the teacher',
                           })}{' '}
@@ -430,7 +437,7 @@ export default async function HomePage({}: {
           <div className="flex justify-center">
             <Link href="/programs">
               <Button className="bg-emerald-600 text-white px-8 py-6 rounded-2xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-50">
-                {t('Programs.exploreAll')}
+                {tPrograms('UI.exploreAll')}
               </Button>
             </Link>
           </div>
@@ -438,9 +445,6 @@ export default async function HomePage({}: {
 
         {/* Added FAQ Section */}
         <section className="space-y-10">
-          <h2 className="text-3xl font-semibold text-center">
-            {t('FAQ.title')}
-          </h2>
           <FAQSection />
         </section>
 

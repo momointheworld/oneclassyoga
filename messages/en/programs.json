@@ -1,0 +1,75 @@
+{
+  "Metadata": {
+    "title": "Yoga Programs in Chiang Mai | Master Specific Skills",
+    "description": "Choose from structured 3 and 6-session yoga programs. From foundations to advanced inversions, find the right specialist for your goals."
+  },
+  "UI": {
+    "title": "Get better at specific skills",
+    "badge3": "3 Sessions Intensive",
+    "badge6": "6 Sessions Series",
+    "syllabusLabel": "Program Syllabus",
+    "exploreAll": "Explore All Programs",
+    "meetTeacher": "Meet {name}",
+    "suitableLabel": "Suitable for:"
+  },
+  "packageTitles": {
+    "single": "Choose Your Date & Time",
+    "bundle3": "Choose Your First Class Date & Time",
+    "bundle6": "Choose Your First Class Date & Time"
+  },
+  "list": {
+    "foundations-3": {
+      "title": "Yoga Foundations Intensive",
+      "duration": "3 Sessions • 90 Min each",
+      "suitableFor": "Beginners • No experience required",
+      "description": "A comprehensive entry point into yoga. We focus on breath-to-movement connection and spinal safety to build a safe, lifelong foundation.",
+      "syllabus": [
+        "Session 1: Breath & Spine Mechanics",
+        "Session 2: Standing Poses & Warrior Alignment",
+        "Session 3: Introduction to Sun Salutations"
+      ]
+    },
+    "mobility-6": {
+      "title": "Core & Mobility Series",
+      "duration": "6 Sessions • 90 Min each",
+      "suitableFor": "Intermediate • Stable Downward Dog required",
+      "description": "Designed to unlock tight hips and shoulders while building deep abdominal stability and functional range of motion.",
+      "syllabus": [
+        "Sessions 1-2: Pelvic Floor & Hip Mobility",
+        "Sessions 3-4: Thoracic Opening & Posture",
+        "Sessions 5-6: Total Body Integration"
+      ]
+    },
+    "inversions-3": {
+      "title": "The Art of Inversion",
+      "duration": "3 Sessions • 90 Min each",
+      "suitableFor": "Intermediate • Stable Downward Dog required",
+      "description": "A technical workshop series designed to conquer the fear of going upside down. Focus on shoulder stability, wrist health, and core control.",
+      "syllabus": [
+        "Session 1: Foundation & Wall-Supported L-Stands",
+        "Session 2: Finding your Center (Headstand Mechanics)",
+        "Session 3: Kick-up Techniques & Forearm Stands"
+      ]
+    },
+    "arm-balance-3": {
+      "title": "Arm Balances & Twists",
+      "duration": "3 Sessions • 90 Min each",
+      "suitableFor": "All Levels • Some yoga experience recommended",
+      "description": "Explore the harmony of strength and flexibility. We combine deep spinal rotations with gentle introductions to balancing on the hands, finding lightness through technique.",
+      "syllabus": [
+        {
+          "title": "Session 1: Finding Balance & Stability",
+          "poses": "Crow Pose, Plank variations, Garland Pose"
+        },
+        {
+          "title": "Session 2: Mobility & Deep Rotations",
+          "poses": "Side Crow, Revolved Chair, Revolved Triangle"
+        },
+        {
+          "title": "Session 3: Integration & Lift",
+          "poses": "Flying Splits prep, Lizard Pose, Eight-Angle Pose"
+        }
+      ]
+    }
+  }
+}

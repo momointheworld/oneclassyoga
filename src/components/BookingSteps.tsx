@@ -1,27 +1,24 @@
+'use client';
+
 import Script from 'next/script';
+import { useTranslations } from 'next-intl';
 
 export default function BookingSteps() {
-  const steps = [
-    {
-      title: 'Pick your path',
-      desc: 'Choose a program I’ve built around a teacher’s specific mastery. Whether it’s inversions or foundations, I’ve picked the path that matches your goal.',
-    },
-    {
-      title: 'Book your specialist',
-      desc: 'Go straight to my recommended teacher’s calendar to start. You can always bring a friend to share the practice (and the cost) with you.',
-    },
-    {
-      title: 'Practice one-on-one',
-      desc: 'We focus on 90-minute sessions tailored to your body. You’ll actually master the skill instead of just following a random group flow.',
-    },
-  ];
+  const t = useTranslations('Home.Process');
+
+  // We define the keys to iterate through the translations
+  const stepKeys = ['step1', 'step2', 'step3'] as const;
+
+  const steps = stepKeys.map((key) => ({
+    title: t(`steps.${key}.title`),
+    desc: t(`steps.${key}.desc`),
+  }));
 
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
-    name: 'How to Book a Yoga Program in Chiang Mai',
-    description:
-      'Follow these steps to select a structured yoga program and book private sessions with expert instructors in Chiang Mai.',
+    name: t('schema.name'),
+    description: t('schema.description'),
     step: steps.map((step, index) => ({
       '@type': 'HowToStep',
       position: index + 1,
@@ -38,10 +35,10 @@ export default function BookingSteps() {
             key={idx}
             className="p-8 bg-white rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow"
           >
-            <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-full flex items-center border border-emerald-100 justify-center font-bold mb-4">
+            <div className="w-10 h-8 bg-emerald-50 text-emerald-600 rounded-full flex items-center border border-emerald-100 justify-center font-bold mb-4">
               {idx + 1}
             </div>
-            <h3 className="text-xl font-bold mb-3 text-gray-900 h-15">
+            <h3 className="text-xl font-bold mb-3 text-gray-900 min-h-[3.5rem] flex h-15">
               {step.title}
             </h3>
             <p className="text-gray-600 text-sm leading-relaxed">{step.desc}</p>

@@ -10,7 +10,7 @@ export default getRequestConfig(async ({ locale }) => {
     // We use a more explicit path for the bundler
     const [home, programs, teachers, contact, policies] = await Promise.all([
       import(`../../messages/${validLocale}/home.json`),
-      // import(`../../messages/${validLocale}/programs.json`),
+      import(`../../messages/${validLocale}/programs.json`),
       // import(`../../messages/${validLocale}/teachers.json`),
       // import(`../../messages/${validLocale}/contact.json`),
       // import(`../../messages/${validLocale}/policies.json`),
@@ -20,7 +20,7 @@ export default getRequestConfig(async ({ locale }) => {
       locale: validLocale,
       messages: {
         Home: home.default,
-        // Programs: programs.default,
+        Programs: programs.default,
         // Teachers: teachers.default,
         // Contact: contact.default,
         // Policies: policies.default,
