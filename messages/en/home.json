@@ -1,0 +1,53 @@
+{
+  "Metadata": {
+    "title": "Handpicked Private Yoga in Chiang Mai | Share a Class with a Friend",
+    "description": "Discover handpicked, experienced yoga teachers in Chiang Mai. Book a private class, or share it with a friend for a more fun and cost-effective experience.",
+    "ogTitle": "Handpicked Private Yoga in Chiang Mai | Share a Class with a Friend",
+    "ogDescription": "Discover handpicked, experienced yoga teachers in Chiang Mai. Book a private class, or share it with a friend for a more fun and cost-effective experience.",
+    "ogAlt": "OneClassYoga - Private Yoga Programs in Chiang Mai"
+  },
+  "Hero": {
+    "title": "Elevate Your Practice: Private Yoga in Chiang Mai",
+    "description": "I am a longtime practitioner in Chiang Mai and I’ve followed a lot of teachers over the years, learning their skills in different areas. I created this to help these teachers gain the exposure they deserve by putting together private, one-on-one programs built around their specific strengths. This allows students to progress with much more focus than a group class, with every session tailored to exactly what they need."
+  },
+  "Process": {
+    "title": "How It Works"
+  },
+  "Programs": {
+    "title": "Get better at specific skills",
+    "badge6": "6-Session Series",
+    "badge3": "3-Session Intensive",
+    "syllabusLabel": "Syllabus",
+    "meetTeacher": "Meet {name}",
+    "exploreAll": "Explore All Programs"
+  },
+  "Trust": {
+    "title": "Built for Mastery",
+    "items": {
+      "progress": {
+        "title": "Designed for Your Progress",
+        "desc": "After 10 years in group classes, I realized following a flow isn't the same as improving. I built these programs to give you a structured path to actually master new skills."
+      },
+      "trust": {
+        "title": "Teachers I Personally Trust",
+        "desc": "I only list teachers I have practiced with myself. I’ve seen their technical depth and care for safety firsthand, so I only recommend those I trust with my own practice."
+      },
+      "savings": {
+        "title": "Grow Together, Save Together",
+        "desc": "Private yoga is a big investment, so I created the 'Share with a Friend' model. It makes expert, 1-on-1 coaching more affordable and a lot more fun."
+      }
+    }
+  },
+  "Reviews": {
+    "title": "Student Reviews",
+    "subtitle": "Real experiences from those who’ve practiced with our teachers"
+  },
+  "FAQ": {
+    "title": "Frequently Asked Questions"
+  },
+  "Contact": {
+    "title": "Have Questions?",
+    "description": "I'm happy to help. Reach out anytime.",
+    "button": "Contact me"
+  }
+}

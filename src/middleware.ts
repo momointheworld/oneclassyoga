@@ -10,16 +10,19 @@ const intlMiddleware = createIntlMiddleware({
   defaultLocale: 'en',
   localePrefix: 'always', // Keeps the /en/ or /zh/ in the URL
 });
-
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
-  // --- PART A: AUTH PROTECTION ---
-  // Only run Supabase logic if we are trying to access a dashboard route
-  // We check for both /dashboard and /[locale]/dashboard
-  const isDashboard = pathname.includes('/dashboard');
+  console.log('--- Middleware Request:', pathname);
 
-  if (isDashboard) {
+  // 1. CHECK FOR NON-LOCALIZED ROUTES FIRST
+  const isProtected =
+    pathname.startsWith('/dashboard') || pathname.startsWith('/community');
+  const isAuthPage =
+    pathname.startsWith('/login') || pathname.startsWith('/auth');
+
+  if (isProtected || isAuthPage) {
+    console.log('-> Path is EXCLUDED from i18n'); // LOG 2
     const res = NextResponse.next();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,9 +31,9 @@ export async function middleware(req: NextRequest) {
         cookies: {
           getAll: () => req.cookies.getAll(),
           setAll: (cookies) => {
-            cookies.forEach(({ name, value, options }) => {
-              res.cookies.set(name, value, options);
-            });
+            cookies.forEach(({ name, value, options }) =>
+              res.cookies.set(name, value, options),
+            );
           },
         },
       },
@@ -39,34 +42,31 @@ export async function middleware(req: NextRequest) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    const githubIdentity = user?.identities?.find(
-      (id) => id.provider === 'github',
-    );
-    const githubUserId = githubIdentity?.id;
-    const allowedGithubId = process.env.GITHUB_ALLOWED_ID;
 
-    // Redirect if not logged in or not allowed
-    if (!user || githubUserId !== allowedGithubId) {
-      // Note: You might need to adjust the redirect URL to /[locale]/login
-      // if your login page is localized
-      return NextResponse.redirect(new URL('/login', req.url));
+    if (isProtected) {
+      const githubId = user?.identities?.find(
+        (id) => id.provider === 'github',
+      )?.id;
+      if (!user || githubId !== process.env.GITHUB_ALLOWED_ID) {
+        return NextResponse.redirect(new URL('/login', req.url));
+      }
     }
-  }
 
-  // --- PART B: INTERNATIONALIZATION ---
-  // This handles the language prefixes for all routes
+    // If it's a non-localized route, return 'res' directly and skip intlMiddleware
+    return res;
+  }
+  console.log('-> Path is LOCALIZED, calling intlMiddleware');
+
+  // 2. HANDLE LOCALIZED ROUTES (Home, Programs, etc.)
   return intlMiddleware(req);
 }
 
 export const config = {
-  // Combine both matchers:
-  // 1. The next-intl matcher for prefixes
-  // 2. Your existing dashboard matcher
   matcher: [
+    // Match all localized paths
     '/',
-    '/(zh|en)/:path*',
-    '/dashboard/:path*',
-    // Skip all internal paths (_next, api, static files, etc.)
-    '/((?!api|_next|_vercel|.*\\..*).*)',
+    '/(en|zh)/:path*',
+    // Match everything ELSE except internal Next.js folders and your excluded routes
+    '/((?!api|_next|_vercel|dashboard|auth|login|community|.*\\..*).*)',
   ],
 };
