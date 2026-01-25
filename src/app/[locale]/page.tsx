@@ -344,7 +344,7 @@ export default async function HomePage({}: {
       <div className="px-4 space-y-24">
         {/* Hero Section */}
         <section className="text-center mt-12 space-y-6">
-          <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl max-w-4xl mx-auto">
+          <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl max-w-4xl mx-auto whitespace-pre-line">
             {t('Hero.title')}
           </h1>
           <p className="text-gray-600 max-w-3xl mx-auto leading-relaxed text-lg">
@@ -366,7 +366,9 @@ export default async function HomePage({}: {
         {/* Programs Preview Section */}
         <section className="space-y-12">
           <div className="text-center space-y-4">
-            <h2 className="text-3xl font-semibold">{tPrograms('UI.title')}</h2>
+            <h2 className="text-3xl font-semibold">
+              {tPrograms('UI.home.title')}
+            </h2>
           </div>
           <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto">
             {PROGRAMS.slice(0, 3).map((program) => {
@@ -386,8 +388,8 @@ export default async function HomePage({}: {
                   <div className="mb-6">
                     <Badge className="bg-emerald-50 text-emerald-700 border-none px-3 py-1 text-[10px] uppercase font-bold tracking-widest mb-4">
                       {program.bundleType === 'bundle6'
-                        ? tPrograms('UI.badge6')
-                        : tPrograms('UI.badge3')}
+                        ? tPrograms('UI.home.badge6')
+                        : tPrograms('UI.home.badge3')}
                     </Badge>
                     <h3 className="text-xl font-bold text-gray-900 leading-snug group-hover:text-emerald-600 transition-colors">
                       {tPrograms(`list.${program.id}.title`)}
@@ -397,7 +399,7 @@ export default async function HomePage({}: {
                   <div className="flex-grow space-y-6">
                     <div className="space-y-3">
                       <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">
-                        {tPrograms('UI.syllabusLabel')}
+                        {tPrograms('UI.home.syllabusLabel')}
                       </p>
                       <ul className="space-y-2">
                         {syllabus.slice(0, 3).map((item: any, i: number) => (
@@ -421,7 +423,7 @@ export default async function HomePage({}: {
                     <div className="flex items-center justify-center">
                       <Link href={`/teachers/${instructorSlug}`}>
                         <span className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 transition-colors">
-                          {tPrograms('UI.meetTeacher', {
+                          {tPrograms('UI.home.meetTeacher', {
                             name:
                               instructor?.name?.split(' ')[0] || 'the teacher',
                           })}{' '}
@@ -437,7 +439,7 @@ export default async function HomePage({}: {
           <div className="flex justify-center">
             <Link href="/programs">
               <Button className="bg-emerald-600 text-white px-8 py-6 rounded-2xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-50">
-                {tPrograms('UI.exploreAll')}
+                {tPrograms('UI.home.exploreAll')}
               </Button>
             </Link>
           </div>

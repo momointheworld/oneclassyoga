@@ -1,4 +1,12 @@
 {
+  "Nav": {
+    "home": "Home",
+    "programs": "Programs",
+    "teachers": "Teachers",
+    "about": "About",
+    "contact": "Contact",
+    "community": "Community"
+  },
  "Metadata": {
     "title": "Master Yoga Skills: Private Programs in Chiang Mai | OneClass Yoga",
     "description": "Accelerate your progress with private, one-on-one yoga programs built around the specific strengths of Chiang Mai's best teachers.",
@@ -7,7 +15,7 @@
     "ogAlt": "OneClass Yoga - Private Yoga Programs in Chiang Mai"
   },
   "Hero": {
-    "title": "Master Yoga Skills: Private Programs in Chiang Mai",
+    "title": "Master Yoga Skills: \nPrivate Programs in Chiang Mai",
     "description": "I am a longtime practitioner in Chiang Mai and I’ve followed a lot of teachers over the years, learning their skills in different areas. I created this to help these teachers gain the exposure they deserve by putting together private, one-on-one programs built around their specific strengths. This allows students to progress with much more focus than a group class, with every session tailored to exactly what they need."
   },
   "Process": {
@@ -89,7 +97,7 @@
   },
   "Contact": {
     "title": "Have Questions?",
-    "description": "I'm happy to help. Reach out anytime.",
-    "button": "Contact me"
+    "description": "We're happy to help. Reach out anytime.",
+    "button": "Contact us"
   }
 }

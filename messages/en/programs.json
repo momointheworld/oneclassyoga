@@ -3,14 +3,38 @@
     "title": "Yoga Programs in Chiang Mai | Master Specific Skills",
     "description": "Choose from structured 3 and 6-session yoga programs. From foundations to advanced inversions, find the right specialist for your goals."
   },
-  "UI": {
-    "title": "Get better at specific skills",
-    "badge3": "3 Sessions Intensive",
-    "badge6": "6 Sessions Series",
+  "Page": {
+    "title": "Focused Private Programs",
+    "description": "I worked with these teachers to turn their best skills into simple programs. Instead of just a random class, you get a clear path to follow with personal help on every movement.",
+    "loading": "Loading programs..."
+  },
+ "UI": {
+  "home":{
+    "title": "Focused Private Programs",
+    "badge3": "bundle3",
+    "badge6": "bundle6",
+    "single": "Single Session",
+    "bundle3": "3 Session Intensive",
+    "bundle6": "6 Session Series",
     "syllabusLabel": "Program Syllabus",
     "exploreAll": "Explore All Programs",
     "meetTeacher": "Meet {name}",
-    "suitableLabel": "Suitable for:"
+    "suitableLabel": "Suitable for:",
+    "priceSuffix": "THB",
+    "notAvailable": "—",
+    "bookNow": "Book This Program"
+  },
+  "programsPage": {
+    "ledBy": "Led by",
+    "bookWith": "Book with {name}",
+    "curriculumOutline": "Curriculum Outline",
+    "programInvestment": "Program Investment",
+    "investment": "Program Investment",
+    "priceSuffix": "THB",
+    "notAvailable": "—",
+    "bundle3": "3 Sessions",
+    "bundle6": "6 Sessions"
+  }
   },
   "packageTitles": {
     "single": "Choose Your Date & Time",
