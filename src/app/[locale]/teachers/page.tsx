@@ -1,38 +1,44 @@
 import React from 'react';
 import TeacherCard from '@/components/TeacherCard';
 import { createClient } from '@supabase/supabase-js';
-import { Metadata } from 'next';
 import { TeacherRates } from '@/types/teacher';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-  title: 'Chiang Mai Yoga Teachers | Private 1-on-1 Classes',
-  description:
-    'Meet trusted yoga teachers in Chiang Mai. Offering private 1-on-1 yoga classes for travelers, expats, and locals—personalized yoga for all levels. Option to share a session with a friend.',
-  openGraph: {
-    title: 'Chiang Mai Yoga Teachers | Private 1-on-1 Classes',
-    description:
-      'Discover top yoga teachers in Chiang Mai. Book private 1-on-1 classes tailored to your level and schedule, with the option to share the session with a friend.',
-    url: 'https://oneclass.yoga',
-    siteName: 'OneClass Yoga',
-    images: [
-      {
-        url: '/images/ogs/teachers-og.jpeg',
-        width: 1200,
-        height: 630,
-        alt: 'Private yoga classes in Chiang Mai with experienced teachers',
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Chiang Mai Yoga Teachers | Private 1-on-1 Classes',
-    description:
-      'Discover top yoga teachers in Chiang Mai. Book private 1-on-1 classes tailored to your level and schedule, with the option to share the session with a friend.',
-    images: ['images/ogs/teachers-og.jpeg'],
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Teachers.Metadata' });
+
+  return {
+    title: t('title'),
+    description: t('description'),
+    openGraph: {
+      title: t('title'),
+      description: t('description'),
+      url: 'https://oneclass.yoga',
+      siteName: 'OneClass Yoga',
+      images: [
+        {
+          url: '/images/ogs/teachers-og.jpeg',
+          width: 1200,
+          height: 630,
+          alt: t('ogAlt'),
+        },
+      ],
+      locale: locale === 'zh' ? 'zh_CN' : 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: t('title'),
+      description: t('description'),
+      images: ['/images/ogs/teachers-og.jpeg'],
+    },
+  };
+}
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -47,18 +53,23 @@ type Teacher = {
   rates: TeacherRates;
   slug: string;
   bio: string | null;
+  bio_zh: string | null; // Added bio_zh
   isFeatured: boolean;
 };
 
-export const revalidate = 60; // cache for 60 seconds
+export const revalidate = 60;
 
-export default async function TeachersPage() {
+export default async function TeachersPage({}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const tUI = await getTranslations('Teachers.UI'); // Access UI labels like "Title"
+
   const { data: sortedTeachers, error } = await supabase
     .from('teachers')
-    .select('id, name, slug, photo, strengths, rates, bio, isFeatured')
+    .select('id, name, slug, photo, strengths, rates, bio, bio_zh, isFeatured') // Added bio_zh to select
     .eq('isActive', true)
     .order('isFeatured', { ascending: false })
-    .order('id', { ascending: false }); // fallback ordering
+    .order('id', { ascending: false });
 
   if (error) {
     throw new Error(error.message);
@@ -66,8 +77,9 @@ export default async function TeachersPage() {
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-16 flex-grow">
+      {/* Localized Title */}
       <h1 className="text-3xl font-bold mb-8 text-center">
-        Chiang Mai Yoga Teachers: Private Classes
+        {tUI('pageTitle')}
       </h1>
 
       <div
@@ -83,9 +95,11 @@ export default async function TeachersPage() {
             teacher={{
               id: teacher.id,
               name: teacher.name,
-              slug: teacher.name.toLowerCase().replace(/\s+/g, '-'),
+              // Use the slug from the DB instead of generating it on the fly
+              slug: teacher.slug,
               photo: teacher.photo || '/placeholder.png',
               bio: teacher.bio || '',
+              bio_zh: teacher.bio_zh || '', // Pass bio_zh to the card
               strengths: teacher.strengths,
               rates: teacher.rates,
               isFeatured: teacher.isFeatured,

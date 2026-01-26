@@ -7,22 +7,23 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import Image from 'next/image';
-import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import parse from 'html-react-parser';
 import { Button } from './ui/button';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Loader2Icon } from 'lucide-react';
-import { Star } from 'lucide-react';
+import { useRouter, useParams } from 'next/navigation'; // Added useParams
+import { useTranslations } from 'next-intl'; // Added useTranslations
+import { Loader2Icon, Star } from 'lucide-react';
 import ReviewStars from './ReviewStars';
 import { TeacherRates } from '@/types/teacher';
+import Link from 'next/link';
 
 interface TeacherCardProps {
   teacher: {
     id: string | number;
     name: string;
     bio?: string;
+    bio_zh?: string; // Added bio_zh
     slug?: string;
     photo?: string;
     rates: TeacherRates;
@@ -35,12 +36,20 @@ interface TeacherCardProps {
 export default function TeacherCard({ teacher }: TeacherCardProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { locale } = useParams(); // Get current locale
+  const t = useTranslations('Teachers');
+  const tMovement = useTranslations('Teachers.Strengths.Movement');
 
   const handleViewPrograms = async () => {
     setLoading(true);
-    // Point to the #programs section instead of the calendar
-    router.push(`/teachers/${teacher.slug}?select=true#programs`);
+    // Note: ensure your router is localized or uses the full path
+    router.push(`/${locale}/teachers/${teacher.slug}?select=true#programs`);
   };
+
+  // Localized Bio Fallback
+  const displayBio =
+    locale === 'zh' && teacher.bio_zh ? teacher.bio_zh : teacher.bio;
+
   return (
     <Card className="w-full max-w-sm rounded-3xl border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
       <CardHeader className="p-5 overflow-hidden rounded-t-3xl relative">
@@ -48,11 +57,11 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
           <span>{teacher.name}</span>
           {teacher.isFeatured && (
             <div
-              className="text-orange-500  px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1"
-              title="Featured Teacher"
+              className="text-orange-500 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1"
+              title={t('UI.featuredTitle')}
             >
-              <Star className="h-4 w-4 text-white-00" />
-              Most Popular
+              <Star className="h-4 w-4 fill-orange-500" />
+              {t('UI.mostPopular')}
             </div>
           )}
         </CardTitle>
@@ -71,33 +80,37 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
         {teacher.slug && <ReviewStars teacherSlug={teacher.slug} />}
 
         <div className="text-sm text-gray-600 mb-4 line-clamp-3">
-          {parse(teacher.bio || '')}
+          {parse(displayBio || '')}
         </div>
-        {/* make the strength the same height to align horizontally */}
+
+        {/* Localized Strengths */}
         <div className="text-gray-600 mb-4 h-[90px]">
-          <p className="font-semibold text-gray-600 mb-2">Strengths</p>
+          <p className="font-semibold text-gray-600 mb-2">
+            {t('UI.strengthLabel')}
+          </p>
           <div className="flex flex-wrap gap-2">
             {teacher.strengths?.Movement?.slice(0, 3).map((strength) => (
               <Badge
                 key={strength}
                 variant="secondary"
-                className="text-sm px-2 py-1 font-semibold border-emerald-500 text-emerald-600"
+                className="text-xs px-2 py-1 font-semibold border-emerald-500 text-emerald-600"
               >
-                {strength}
+                {tMovement.has(strength) ? tMovement(strength) : strength}
               </Badge>
             ))}
           </div>
         </div>
 
-        <div className="space-y-2 ">
-          <p className="mt-5 text-sm font-semibold text-gray-600 flex justify-end">
-            From{' '}
-            {teacher.rates.bundle6
-              ? `${Math.round(teacher.rates.bundle6 / 6)}฿`
-              : teacher.rates.single
-                ? `${teacher.rates.single}฿`
-                : 'N/A'}
-            {' / session'}
+        <div className="space-y-2">
+          <p className="mt-5 text-sm font-semibold text-gray-600 flex justify-end items-center gap-1">
+            {t('UI.from')}{' '}
+            <span className="text-lg text-gray-900">
+              {teacher.rates.bundle6
+                ? Math.round(teacher.rates.bundle6 / 6)
+                : teacher.rates.single || '—'}
+              {t('UI.priceSuffix')}
+            </span>
+            {t('UI.perSession')}
           </p>
         </div>
       </CardContent>
@@ -107,7 +120,7 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
           href={`/teachers/${teacher.slug}`}
           className="text-blue-600 text-sm font-medium hover:underline"
         >
-          View Profile
+          {t('UI.viewProfile')}
         </Link>
 
         <Button
@@ -117,11 +130,11 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
         >
           {loading ? (
             <>
-              <Loader2Icon className="animate-spin" />
-              Redirecting...
+              <Loader2Icon className="h-4 w-4 animate-spin" />
+              {t('UI.loading')}
             </>
           ) : (
-            'Explore Programs'
+            t('UI.explorePrograms')
           )}
         </Button>
       </CardFooter>

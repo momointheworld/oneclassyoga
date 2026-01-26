@@ -11,16 +11,16 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import YouTubeVideo from '@/components/YoutubeViedo';
 import { format } from 'date-fns-tz';
+import { useTranslations } from 'next-intl'; // Import hook
 import { createClient } from '@/utils/supabase/supabaseClient';
 import {
   BUNDLE3,
   BUNDLE6,
   PROGRAMS,
   PackageType,
-  packageTitles,
   programTeachers,
 } from '@/lib/packages';
-import { Teacher } from '@/types/teacher'; // adjust the path
+import { Teacher } from '@/types/teacher';
 import ReviewCarousel from '@/components/ReviewCard';
 
 type Review = {
@@ -38,18 +38,16 @@ export default function TeacherProfileClient({
 }: {
   teacher: Teacher;
 }) {
+  const t = useTranslations('Teachers'); // Use the translations hook
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
   const [participants, setParticipants] = useState<number>(1);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [rate, setRate] = useState<number | null>(null);
   const [bookingTitle, setBookingTitle] = useState<string>(
-    'Choose Your Date & Time',
+    t('calendar.defaultTitle'),
   );
   const [showNote, setShowNote] = useState(false);
-  const note = showNote
-    ? ' (Rest of sessions scheduled with your teacher.)'
-    : '';
+
   const [error, setError] = useState('');
   const [selectedPackage, setSelectedPackage] = useState<PackageType | null>(
     null,
@@ -62,30 +60,24 @@ export default function TeacherProfileClient({
   const preSelectedId = searchParams.get('program');
 
   useEffect(() => {
-    // Case A: Coming from the Programs Page with a specific ID
     if (preSelectedId) {
       const program = teacherPrograms.find((p) => p.id === preSelectedId);
       if (program) {
         onSelectProgram(
           program.id,
           program.bundleType as PackageType,
-          program.title,
+          t(`TeacherProfile.programData.${program.id}.title`),
         );
         scrollToPrograms();
       }
-    }
-    // Case B: Coming from TeacherCard just to "View Programs"
-    else if (shouldScroll) {
+    } else if (shouldScroll) {
       scrollToPrograms();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preSelectedId, shouldScroll]);
 
   const scrollToPrograms = () => {
     const el = document.getElementById('programs');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
   const formattedDate = selectedDate ? format(selectedDate, 'MMM d, yyyy') : '';
@@ -106,11 +98,11 @@ export default function TeacherProfileClient({
 
   const handleBooking = () => {
     if (!selectedPackage) {
-      setError('Please select a package.');
+      setError(t('errors.selectPackage'));
       return;
     }
     if (!selectedDate || !selectedTimeSlot) {
-      setError('Please select a date and time slot before booking.');
+      setError(t('errors.selectDateTime'));
       return;
     }
 
@@ -125,12 +117,8 @@ export default function TeacherProfileClient({
       case BUNDLE6:
         basePrice = teacher.rates.bundle6 ?? 0;
         break;
-      default:
-        setError('Invalid package selected.');
-        return;
     }
 
-    // Add participant extra fee
     if (participants === 2 && teacher.rates?.extra) {
       basePrice +=
         selectedPackage === 'single'
@@ -154,18 +142,18 @@ export default function TeacherProfileClient({
     router.push(`/booking/checkout?${query}`);
   };
 
-  // console.log(selectedDate, selectedDate && ToBangkokDateOnly(selectedDate));
-
   const handlePackageSelect = (packageType: PackageType) => {
     setSelectedPackage(packageType);
-    setBookingTitle(packageTitles[packageType]);
+    // Use the packageTitles map but ensure fallback for single
+    setBookingTitle(
+      packageType === 'single'
+        ? t('programs.singleTitle')
+        : packageTitles[packageType],
+    );
     setShowNote(packageType !== 'single');
   };
 
-  // Inside TeacherProfileClient
   const [activeProgramId, setActiveProgramId] = useState<string | null>(null);
-
-  // Filter the shared constant for this teacher
   const teacherPrograms = PROGRAMS.filter(
     (p) => programTeachers[p.id] === teacher.slug,
   );
@@ -177,16 +165,13 @@ export default function TeacherProfileClient({
   ) => {
     setActiveProgramId(progId);
     handlePackageSelect(bundleType);
-    setBookingTitle(title); // Updates the title above the calendar
+    setBookingTitle(title);
   };
 
   const handleRateChange = (newRate: number) => {
     setRate(newRate);
-
     if (!selectedPackage) return;
-
     let calculatedRate = 0;
-
     if (teacher.rates) {
       switch (selectedPackage) {
         case 'single':
@@ -200,8 +185,6 @@ export default function TeacherProfileClient({
           break;
       }
     }
-
-    // Add extra participant fee
     if (participants === 2) {
       calculatedRate +=
         selectedPackage === 'single'
@@ -210,7 +193,6 @@ export default function TeacherProfileClient({
             ? 2400
             : 4800;
     }
-
     setRate(calculatedRate);
   };
 
@@ -218,27 +200,19 @@ export default function TeacherProfileClient({
 
   function parseVideoIds(input: string) {
     if (!input) return { youtubeId: '', bilibiliId: '' };
-
     const [youtubeRaw, bilibiliRaw] = input.split('|').map((str) => str.trim());
-    const youtubeId = youtubeRaw.split('?')[0]; // remove ?si=... if present
+    const youtubeId = youtubeRaw.split('?')[0];
     const bilibiliId = bilibiliRaw || '';
-
     return { youtubeId, bilibiliId };
   }
   const { youtubeId, bilibiliId } = parseVideoIds(teacher.videoUrl || '');
-
   const galleryImages = teacher.gallery || [];
-  // Get days that have at least one time slot
   const weeklySchedule = teacher.weekly_schedule || {};
   const availableDays = Object.entries(weeklySchedule)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .filter(([day, slots]) => slots.length > 0)
-    .map(([day]) => day); // ["Monday", "Tuesday", "Thursday", "Friday"]
+    .filter(([_, slots]) => slots.length > 0)
+    .map(([day]) => day);
 
-  const selectedDay = selectedDate
-    ? format(selectedDate, 'EEEE') // no time zone conversion
-    : null;
-
+  const selectedDay = selectedDate ? format(selectedDate, 'EEEE') : null;
   const timeSlots = selectedDay ? weeklySchedule[selectedDay] || [] : [];
 
   return (
@@ -255,13 +229,13 @@ export default function TeacherProfileClient({
           <h1 className="text-3xl font-bold text-gray-900 mb-3">
             {teacher.name}
           </h1>
-
           <div className="tiptap prose max-w-none">{parse(teacher.bio)}</div>
 
           <div className="grid grid-cols-2 gap-4 text-gray-800 mt-6">
-            {/* Styles */}
             <div>
-              <p className="font-semibold text-gray-700 mb-2">Styles</p>
+              <p className="font-semibold text-gray-700 mb-2">
+                {t('labels.styles')}
+              </p>
               <div className="flex flex-wrap gap-2">
                 {teacher.styles.map((style) => (
                   <Badge
@@ -274,10 +248,10 @@ export default function TeacherProfileClient({
                 ))}
               </div>
             </div>
-
-            {/* Levels */}
             <div>
-              <p className="font-semibold text-gray-700 mb-2">Levels</p>
+              <p className="font-semibold text-gray-700 mb-2">
+                {t('labels.levels')}
+              </p>
               <div className="flex flex-wrap gap-2">
                 {teacher.levels.map((level) => (
                   <Badge
@@ -292,9 +266,10 @@ export default function TeacherProfileClient({
             </div>
           </div>
 
-          {/* Strengths */}
           <div className="my-8">
-            <p className="font-semibold text-gray-700 mb-2">Strengths</p>
+            <p className="font-semibold text-gray-700 mb-2">
+              {t('labels.strengths')}
+            </p>
             <div className="flex flex-col gap-3">
               {teacher.strengths &&
                 Object.entries(teacher.strengths).map(([category, items]) => (
@@ -307,13 +282,7 @@ export default function TeacherProfileClient({
                         <Badge
                           key={`${category}-${strength}`}
                           variant="secondary"
-                          className={`text-xs px-2 py-1 font-semibold ${
-                            category === 'Movement'
-                              ? 'border-orange-600 dark:bg-orange-700 text-orange-600'
-                              : category === 'Mind & Body'
-                                ? 'border-blue-600 dark:bg-blue-700 text-blue-600'
-                                : 'border-emerald-600 dark:bg-green-700 text-emerald-600'
-                          }`}
+                          className={`text-xs px-2 py-1 font-semibold ${category === 'Movement' ? 'border-orange-600 text-orange-600' : category === 'Mind & Body' ? 'border-blue-600 text-blue-600' : 'border-emerald-600 text-emerald-600'}`}
                         >
                           {strength}
                         </Badge>
@@ -328,52 +297,42 @@ export default function TeacherProfileClient({
             <TeacherGallery galleryImages={galleryImages} />
           )}
 
-          {/* VIDEO PREVIEW */}
           {teacher.videoUrl && (
             <section className="mt-6">
               <h2 className="font-semibold my-5 text-xl text-center">
-                {teacher.name} on Yoga, Teaching, and Practice
+                {t('video.title', { name: teacher.name })}
               </h2>
               <YouTubeVideo youtubeId={youtubeId} bilibiliId={bilibiliId} />
             </section>
           )}
 
-          {/* REVIEWS SECTION */}
           {reviews.length > 0 && (
             <section className="mt-15 mb-5" id="reviewCarousel">
               <div className="mt-5 font-semibold">
                 <h1 className="text-xl font-bold text-center mb-2 text-gray-800">
-                  Student Reviews
+                  {t('reviews.title')}
                 </h1>
                 <p className="text-center text-gray-600 mb-8">
-                  Real experiences from those who’ve practiced with{' '}
-                  {teacher.name}
+                  {t('reviews.subtitle', { name: teacher.name })}
                 </p>
                 <ReviewCarousel reviews={reviews} />
               </div>
-              {/* <ResponsiveCarouselDemo /> */}
             </section>
           )}
 
-          {/* PROGRAMS RADIO SELECTION */}
           <section className="space-y-6" id="programs">
             <div className="text-center mt-12 mb-8">
               <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
-                Select Your Program
+                {t('programs.sectionTitle')}
               </h2>
               <p className="text-emerald-600 font-semibold mt-1 text-sm uppercase tracking-wider">
-                Add a Friend for {extraRate}฿ more only!
+                {t('programs.extraParticipantNote', { rate: extraRate })}
               </p>
             </div>
 
             <div className="space-y-3">
-              {/* SINGLE SESSION RADIO */}
               <label
-                className={`relative flex flex-col p-5 rounded-3xl border cursor-pointer transition-all duration-200 ${
-                  selectedPackage === 'single'
-                    ? 'border-emerald-500 bg-emerald-50/30 ring-1 ring-emerald-500'
-                    : 'border-gray-100 hover:border-gray-200'
-                }`}
+                className={`relative flex flex-col p-5 rounded-3xl border cursor-pointer transition-all duration-200 ${selectedPackage === 'single' ? 'border-emerald-500 bg-emerald-50/30 ring-1 ring-emerald-500' : 'border-gray-100 hover:border-gray-200'}`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -385,17 +344,17 @@ export default function TeacherProfileClient({
                         onSelectProgram(
                           'single',
                           'single',
-                          'Single Trial Session',
+                          t('programs.singleTitle'),
                         )
                       }
                       className="w-5 h-5 accent-emerald-600"
                     />
                     <div>
                       <span className="block font-bold text-gray-900">
-                        Single Trial Session
+                        {t('programs.singleTitle')}
                       </span>
                       <span className="block text-xs text-gray-500">
-                        90 Min • Personal Consultation
+                        {t('programs.singleSubtitle')}
                       </span>
                     </div>
                   </div>
@@ -412,6 +371,10 @@ export default function TeacherProfileClient({
                   p.bundleType === 'bundle6'
                     ? teacher.rates.bundle6
                     : teacher.rates.bundle3;
+
+                // Look up translated values using the program ID
+                const translatedTitle = t(`programData.${p.id}.title`);
+                const translatedDuration = t(`programData.${p.id}.duration`);
 
                 return (
                   <label
@@ -432,17 +395,17 @@ export default function TeacherProfileClient({
                             onSelectProgram(
                               p.id,
                               p.bundleType as PackageType,
-                              p.title,
+                              translatedTitle, // Pass the translated title to the state
                             )
                           }
                           className="w-5 h-5 accent-emerald-600"
                         />
                         <div>
                           <span className="block font-bold text-gray-900">
-                            {p.title}
+                            {translatedTitle}
                           </span>
                           <span className="block text-xs font-bold text-emerald-600 uppercase mt-0.5">
-                            {p.duration}
+                            {translatedDuration}
                           </span>
                         </div>
                       </div>
@@ -456,13 +419,14 @@ export default function TeacherProfileClient({
             </div>
           </section>
 
-          {/* ALWAYS SHOW CALENDAR ONCE PACKAGE SELECTED */}
           {selectedPackage && (
             <div className="mt-8 p-6 rounded-3xl">
               <h2 className="text-xl font-semibold mb-4 text-center">
                 {bookingTitle}
                 <br />
-                <span className="text-sm">{note}</span>
+                <span className="text-sm">
+                  {showNote ? t('calendar.bundleNote') : ''}
+                </span>
               </h2>
               <BookingCalendar
                 onSelect={(date, timeSlot) => {
@@ -481,7 +445,6 @@ export default function TeacherProfileClient({
             </div>
           )}
 
-          {/* FOOTER ACTIONS */}
           <div className="mt-6 flex flex-row justify-end items-center flex-wrap gap-4">
             <div className="flex items-end flex-col gap-2 flex-wrap">
               <div className="flex flex-row items-center gap-2">
@@ -493,22 +456,21 @@ export default function TeacherProfileClient({
                   className="w-4 h-4 accent-orange-600"
                 />
                 <label htmlFor="tos" className="text-gray-700 text-sm">
-                  I agree to the{' '}
+                  {t('footer.tosAgreement')}{' '}
                   <Link href="/tos" className="text-blue-600 underline">
-                    Terms of Service
+                    {t('footer.tosLink')}
                   </Link>
                 </label>
               </div>
               <Button
                 onClick={handleBooking}
                 disabled={!selectedPackage || !agreedToTerms}
-                className="bg-orange-600 text-white text-lg font-medium px-4 py-2 rounded-xl hover:bg-orange-700 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                className="bg-orange-600 text-white text-lg font-medium px-4 py-2 rounded-xl hover:bg-orange-700 transition disabled:opacity-30"
               >
-                Book Now
+                {t('footer.bookButton')}
               </Button>
-
               {error && (
-                <p className="text-red-600 text-sm mt-2 sm:mt-0 text-center sm:text-right w-full sm:w-auto">
+                <p className="text-red-600 text-sm mt-2 text-right w-full">
                   {error}
                 </p>
               )}

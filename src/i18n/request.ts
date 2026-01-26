@@ -11,7 +11,7 @@ export default getRequestConfig(async ({ locale }) => {
     const [home, programs, teachers, contact, policies] = await Promise.all([
       import(`../../messages/${validLocale}/home.json`),
       import(`../../messages/${validLocale}/programs.json`),
-      // import(`../../messages/${validLocale}/teachers.json`),
+      import(`../../messages/${validLocale}/teachers.json`),
       // import(`../../messages/${validLocale}/contact.json`),
       // import(`../../messages/${validLocale}/policies.json`),
     ]);
@@ -21,7 +21,7 @@ export default getRequestConfig(async ({ locale }) => {
       messages: {
         Home: home.default,
         Programs: programs.default,
-        // Teachers: teachers.default,
+        Teachers: teachers.default,
         // Contact: contact.default,
         // Policies: policies.default,
       },

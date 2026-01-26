@@ -1,0 +1,146 @@
+{
+    
+  "Metadata": {
+    "title": "Chiang Mai Yoga Teachers | Private 1-on-1 Classes",
+    "description": "Meet trusted yoga teachers in Chiang Mai. Offering private 1-on-1 yoga classes for travelers, expats, and locals—personalized yoga for all levels. Option to share a session with a friend.",
+    "ogAlt": "Private yoga classes in Chiang Mai with experienced teachers"
+  },
+ 
+    "UI": {
+    "pageTitle":"Chiang Mai Yoga Teachers: Private Classes",
+    "mostPopular": "Most Popular",
+    "featuredTitle": "Featured Teacher",
+    "from": "From",
+    "priceSuffix": "฿",
+    "perSession": " / session",
+    "strengthLabel": "Strengths:",
+    "viewProfile": "View Profile",
+    "explorePrograms": "Explore Programs",
+    "loading": "Redirecting..."
+  },
+    "levels": { 
+    "Beginner": "Beginner",
+    "Intermediate": "Intermediate",
+    "Advanced": "Advanced"
+  },
+  "Styles": {
+    "Aerial": "Aerial",
+    "Anusara": "Anusara",
+    "Anusaranga": "Anusaranga",
+    "Ashtanga": "Ashtanga",
+    "Bikram": "Bikram",
+    "Chair": "Chair",
+    "Hatha": "Hatha",
+    "Iyengar": "Iyengar",
+    "Karma": "Karma",
+    "Kundalini": "Kundalini",
+    "Power": "Power",
+    "Restorative": "Restorative",
+    "Sivananda": "Sivananda",
+    "Vinyasa": "Vinyasa",
+    "Yin": "Yin"
+  },
+    "strengthCategories": {
+    "Movement": "Movement",
+    "Mind & Body": "Mind & Body",
+    "Connection": "Connection"
+  },
+  "Strengths": {
+    "Movement": {
+      "Backbends": "Backbends",
+      "Arm Balances": "Arm Balances",
+      "Inversions": "Inversions",
+      "Twists": "Twists",
+      "Stretching & Mobility": "Stretching & Mobility",
+      "Strength Building": "Strength Building",
+      "Flexibility": "Flexibility",
+      "Core Stability": "Core Stability",
+      "Alignment": "Alignment",
+      "Balance": "Balance",
+      "Endurance": "Endurance",
+      "Flow Sequencing": "Flow Sequencing",
+      "Breathwork": "Breathwork",
+      "Therapy": "Therapy",
+      "Restorative Yoga": "Restorative Yoga",
+      "Physical Conditioning": "Physical Conditioning",
+      "Functional Movement": "Functional Movement",
+      "Posture Correction": "Posture Correction",
+      "Proprioception": "Proprioception",
+      "Dynamic Flow": "Dynamic Flow"
+    },
+    "Mind & Body": {
+      "Mindfulness": "Mindfulness",
+      "Meditation": "Meditation",
+      "Relaxation": "Relaxation",
+      "Focus": "Focus",
+      "Healing": "Healing",
+      "Visualization": "Visualization",
+      "Stress Relief": "Stress Relief",
+      "Energy Work": "Energy Work",
+      "Emotional Awareness": "Emotional Awareness",
+      "Self-Reflection": "Self-Reflection",
+      "Pranayama": "Pranayama",
+      "Breath Awareness": "Breath Awareness",
+      "Body Scan": "Body Scan",
+      "Chakra Work": "Chakra Work",
+      "Inner Strength": "Inner Strength"
+    },
+    "Connection": {
+      "Patience": "Patience",
+      "Motivation": "Motivation",
+      "Compassion": "Compassion",
+      "Adaptability": "Adaptability",
+      "Clear Communication": "Clear Communication",
+      "Confidence Building": "Confidence Building",
+      "Encouragement": "Encouragement",
+      "Dynamic": "Dynamic",
+      "Empathy": "Empathy",
+      "Active Listening": "Active Listening",
+      "Supportive Guidance": "Supportive Guidance",
+      "Positive Reinforcement": "Positive Reinforcement",
+      "Personalized Instruction": "Personalized Instruction",
+      "Mentorship": "Mentorship",
+      "Inspiring Presence": "Inspiring Presence"
+    }
+  },
+  "TeacherProfile": {
+    "programData": {
+      "foundations-3": {
+        "title": "Yoga Foundations",
+        "duration": "3 Sessions • 60 Min"
+      },
+      "mobility-6": {
+        "title": "Mobility Masterclass",
+        "duration": "6 Sessions • 75 Min"
+      },
+      "inversions-3": {
+        "title": "Inversion Basics",
+        "duration": "3 Sessions • 90 Min"
+      },
+      "arm-balance-3": {
+        "title": "Arm Balance Intensive",
+        "duration": "3 Sessions • 90 Min"
+      }
+    },
+    "programs": {
+      "sectionTitle": "Select Your Program",
+      "extraParticipantNote": "Add a Friend for {rate}฿ more only!",
+      "singleTitle": "Single Trial Session",
+      "singleSubtitle": "90 Min • Personal Consultation"
+    },
+    "calendar": {
+      "defaultTitle": "Choose Your Date & Time",
+      "bundleNote": "(Rest of sessions scheduled with your teacher.)"
+    },
+    "footer": {
+      "tosAgreement": "I agree to the",
+      "tosLink": "Terms of Service",
+      "bookButton": "Book Now"
+    },
+    "errors": {
+      "selectPackage": "Please select a package.",
+      "selectDateTime": "Please select a date and time slot before booking."
+    }
+  }
+ 
+}
