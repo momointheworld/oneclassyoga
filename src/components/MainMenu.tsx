@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { useRouter, usePathname, useParams } from 'next/navigation'; // Standard Next.js hooks
 import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
@@ -21,7 +21,9 @@ export default function MainMenu() {
   const locale = params.locale as string; // 'en' or 'zh'
 
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isPending, startTransition] = useTransition();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [progress, setProgress] = useState(0);
 
   // 1. Helper to get the path without the locale prefix
