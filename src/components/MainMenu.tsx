@@ -94,7 +94,7 @@ export default function MainMenu() {
                 'text-md font-medium transition-all duration-200 relative py-2 px-1',
                 isActiveLink(href)
                   ? 'text-emerald-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-emerald-600'
-                  : 'text-gray-500 hover:text-emerald-500',
+                  : 'text-gray-800 hover:text-emerald-500',
               )}
             >
               {label}

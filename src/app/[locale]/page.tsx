@@ -387,9 +387,9 @@ export default async function HomePage({}: {
                 >
                   <div className="mb-6">
                     <Badge className="bg-emerald-50 text-emerald-700 border-none px-3 py-1 text-[10px] uppercase font-bold tracking-widest mb-4">
-                      {program.bundleType === 'bundle6'
-                        ? tPrograms('UI.home.badge6')
-                        : tPrograms('UI.home.badge3')}
+                      {program.id.endsWith('-6')
+                        ? tPrograms('UI.home.bundle6')
+                        : tPrograms('UI.home.bundle3')}
                     </Badge>
                     <h3 className="text-xl font-bold text-gray-900 leading-snug group-hover:text-emerald-600 transition-colors">
                       {tPrograms(`list.${program.id}.title`)}

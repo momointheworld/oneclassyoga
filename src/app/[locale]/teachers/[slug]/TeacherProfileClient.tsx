@@ -12,6 +12,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import YouTubeVideo from '@/components/YoutubeViedo';
 import { format } from 'date-fns-tz';
 import { useTranslations } from 'next-intl'; // Import hook
+import { useParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/supabaseClient';
 import {
   BUNDLE3,
@@ -38,7 +39,9 @@ export default function TeacherProfileClient({
 }: {
   teacher: Teacher;
 }) {
-  const t = useTranslations('Teachers'); // Use the translations hook
+  const t = useTranslations('Teachers.TeacherProfile'); // Use the translations hook
+  const params = useParams();
+  const locale = params.locale as string;
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
   const [participants, setParticipants] = useState<number>(1);
@@ -66,7 +69,7 @@ export default function TeacherProfileClient({
         onSelectProgram(
           program.id,
           program.bundleType as PackageType,
-          t(`TeacherProfile.programData.${program.id}.title`),
+          t(`programData.${program.id}.title`),
         );
         scrollToPrograms();
       }
@@ -146,9 +149,7 @@ export default function TeacherProfileClient({
     setSelectedPackage(packageType);
     // Use the packageTitles map but ensure fallback for single
     setBookingTitle(
-      packageType === 'single'
-        ? t('programs.singleTitle')
-        : packageTitles[packageType],
+      packageType === 'single' ? t('programs.singleTitle') : bookingTitle,
     );
     setShowNote(packageType !== 'single');
   };
@@ -196,7 +197,7 @@ export default function TeacherProfileClient({
     setRate(calculatedRate);
   };
 
-  const extraRate = teacher.rates.extra.single;
+  const extraRate = teacher.rates.extra.single ?? 0;
 
   function parseVideoIds(input: string) {
     if (!input) return { youtubeId: '', bilibiliId: '' };
@@ -313,7 +314,7 @@ export default function TeacherProfileClient({
                   {t('reviews.title')}
                 </h1>
                 <p className="text-center text-gray-600 mb-8">
-                  {t('reviews.subtitle', { name: teacher.name })}
+                  {t('reviews.subtitle', { teacherName: teacher.name })}
                 </p>
                 <ReviewCarousel reviews={reviews} />
               </div>
@@ -368,7 +369,7 @@ export default function TeacherProfileClient({
               {teacherPrograms.map((p) => {
                 const isSelected = activeProgramId === p.id;
                 const price =
-                  p.bundleType === 'bundle6'
+                  (p.bundleType as PackageType) === BUNDLE6
                     ? teacher.rates.bundle6
                     : teacher.rates.bundle3;
 
@@ -457,7 +458,10 @@ export default function TeacherProfileClient({
                 />
                 <label htmlFor="tos" className="text-gray-700 text-sm">
                   {t('footer.tosAgreement')}{' '}
-                  <Link href="/tos" className="text-blue-600 underline">
+                  <Link
+                    href={`/${locale}/tos`}
+                    className="text-blue-600 underline"
+                  >
                     {t('footer.tosLink')}
                   </Link>
                 </label>

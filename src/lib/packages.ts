@@ -35,7 +35,7 @@ export const packageTitleKeys: Record<PackageType, string> = {
 // ✅ Instructor Mapping (Logic remains here)
 export const programTeachers: Record<string, string> = {
   'foundations-3': 'toon',
-  'mobility-6': 'toon',
+  'mobility-3': 'toon',
   'inversions-3': 'patrick',
   'arm-balance-3': 'patrick',
 };
@@ -47,8 +47,8 @@ export const PROGRAMS = [
     bundleType: BUNDLE3,
   },
   {
-    id: 'mobility-6',
-    bundleType: BUNDLE6,
+    id: 'mobility-3',
+    bundleType: BUNDLE3,
   },
   {
     id: 'inversions-3',

@@ -104,22 +104,27 @@
     }
   },
   "TeacherProfile": {
+    "labels": {
+    "strengths": "Strengths:",
+    "levels": "Levels:",
+    "styles": "Styles:"
+    },
     "programData": {
       "foundations-3": {
-        "title": "Yoga Foundations",
-        "duration": "3 Sessions • 60 Min"
+        "title": "Yoga Foundations Intensive",
+        "duration": "3 Sessions • 90 Min Each"
       },
-      "mobility-6": {
-        "title": "Mobility Masterclass",
-        "duration": "6 Sessions • 75 Min"
+      "mobility-3": {
+        "title": "Core & Mobility Series",
+        "duration": "3 Sessions • 90 Min Each"
       },
       "inversions-3": {
-        "title": "Inversion Basics",
-        "duration": "3 Sessions • 90 Min"
+        "title": "The Art of Inversion",
+        "duration": "3 Sessions • 90 Min Each"
       },
       "arm-balance-3": {
-        "title": "Arm Balance Intensive",
-        "duration": "3 Sessions • 90 Min"
+        "title": "Arm Balances & Twists",
+        "duration": "3 Sessions • 90 Min Each"
       }
     },
     "programs": {
@@ -131,6 +136,10 @@
     "calendar": {
       "defaultTitle": "Choose Your Date & Time",
       "bundleNote": "(Rest of sessions scheduled with your teacher.)"
+    },
+    "reviews": {
+      "title": "Student Reviews",
+      "subtitle": "Real experiences from those who’ve practiced with {teacherName}."
     },
     "footer": {
       "tosAgreement": "I agree to the",
