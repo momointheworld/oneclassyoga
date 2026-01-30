@@ -13,17 +13,17 @@ const intlMiddleware = createIntlMiddleware({
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
-  console.log('--- Middleware Request:', pathname);
+  // 1. Define segments that need Auth
+  const needsAuth =
+    pathname.includes('/dashboard') || pathname.includes('/community');
+  const isAuthPage = pathname.includes('/login') || pathname.includes('/auth');
 
-  // 1. CHECK FOR NON-LOCALIZED ROUTES FIRST
-  const isProtected =
-    pathname.startsWith('/dashboard') || pathname.startsWith('/community');
-  const isAuthPage =
-    pathname.startsWith('/login') || pathname.startsWith('/auth');
+  // 2. Run the intlMiddleware first for everything except actual auth/api internals
+  // This ensures /en/community stays /en/community
+  const response = intlMiddleware(req);
 
-  if (isProtected || isAuthPage) {
-    console.log('-> Path is EXCLUDED from i18n'); // LOG 2
-    const res = NextResponse.next();
+  // 3. Handle Supabase Auth (Protection Logic)
+  if (needsAuth || isAuthPage) {
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -31,8 +31,9 @@ export async function middleware(req: NextRequest) {
         cookies: {
           getAll: () => req.cookies.getAll(),
           setAll: (cookies) => {
-            cookies.forEach(({ name, value, options }) =>
-              res.cookies.set(name, value, options),
+            cookies.forEach(
+              ({ name, value, options }) =>
+                response.cookies.set(name, value, options), // Use the 'response' from intlMiddleware!
             );
           },
         },
@@ -43,30 +44,29 @@ export async function middleware(req: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (isProtected) {
+    if (needsAuth) {
       const githubId = user?.identities?.find(
         (id) => id.provider === 'github',
       )?.id;
+      // If no user, or wrong user, redirect to login
       if (!user || githubId !== process.env.GITHUB_ALLOWED_ID) {
+        // Important: Redirect to the localized login if possible
         return NextResponse.redirect(new URL('/login', req.url));
       }
     }
-
-    // If it's a non-localized route, return 'res' directly and skip intlMiddleware
-    return res;
   }
-  console.log('-> Path is LOCALIZED, calling intlMiddleware');
 
-  // 2. HANDLE LOCALIZED ROUTES (Home, Programs, etc.)
-  return intlMiddleware(req);
+  return response;
 }
 
 export const config = {
   matcher: [
-    // Match all localized paths
+    // 1. Match the root
     '/',
+    // 2. Match paths starting with your locales
     '/(en|zh)/:path*',
-    // Match everything ELSE except internal Next.js folders and your excluded routes
-    '/((?!api|_next|_vercel|dashboard|auth|login|community|.*\\..*).*)',
+    // 3. Match everything ELSE, but REMOVE community from the exclusion list
+    // Only keep internal things like api, _next, and static files (.*\\..*)
+    '/((?!api|_next|_vercel|dashboard|auth|login|.*\\..*).*)',
   ],
 };

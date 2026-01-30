@@ -7,6 +7,7 @@ import MainMenu from '@/components/MainMenu';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getLocale } from 'next-intl/server';
 import { Metadata } from 'next';
+import { Footer } from 'react-day-picker';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
 const geistMono = Geist_Mono({
@@ -66,6 +67,7 @@ export default async function RootLayout({
           <div className="flex flex-col min-h-screen">
             <MainMenu />
             <main className="flex-grow">{children}</main>
+            <Footer />
           </div>
         </NextIntlClientProvider>
       </body>
