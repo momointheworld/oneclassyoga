@@ -3,6 +3,7 @@ import TeacherProfileClient from './TeacherProfileClient';
 import type { Metadata } from 'next';
 import { createClient } from '@/utils/supabase/supabaseServer';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 
 export async function generateMetadata({
   params,
@@ -12,6 +13,9 @@ export async function generateMetadata({
   const supabase = createClient();
   const { slug } = await params;
 
+  // Initialize translations
+  const t = await getTranslations('Teachers.TeacherProfile.metadata');
+
   const { data: teacher } = await (await supabase)
     .from('teachers')
     .select('name, photo, strengths')
@@ -20,42 +24,35 @@ export async function generateMetadata({
 
   if (!teacher) {
     return {
-      title: 'Yoga Teacher Not Found | OneClass Yoga',
-      description:
-        'This yoga teacher profile could not be found in Chiang Mai.',
+      title: t('notFoundTitle'),
+      description: t('notFoundDescription'),
     };
   }
 
-  const description = `Learn yoga in Chiang Mai with ${teacher.name}, specializing in ${teacher.strengths[
-    'Movement'
-  ]?.join(', ')}. Offering private 1-on-1 classes.`;
-
-  const imageUrl = teacher.photo || '/images/ogs/teacher-og.jpeg'; // fallback image
+  // Extract strengths for movement, or default to empty array
+  const movementStrengths = teacher.strengths?.['Movement']?.join(', ') || '';
 
   return {
-    title: `${teacher.name} | Experienced Private Yoga Teacher in Chiang Mai`,
-    description,
+    // Inject dynamic data into the translation template
+    title: t('title', { name: teacher.name }),
+    description: t('description', {
+      name: teacher.name,
+      strengths: movementStrengths,
+    }),
     openGraph: {
-      title: `${teacher.name} | Experienced Private Yoga Teacher in Chiang Mai`,
-      description,
-      url: `https://oneclass.yoga/teachers/${slug}`,
-      siteName: 'OneClass Yoga',
+      title: t('title', { name: teacher.name }),
+      description: t('description', {
+        name: teacher.name,
+        strengths: movementStrengths,
+      }),
       images: [
         {
-          url: imageUrl,
+          url: teacher.photo || '/images/default-teacher.jpg',
           width: 1200,
           height: 630,
-          alt: `${teacher.name} - Yoga Teacher in Chiang Mai`,
+          alt: t('ogAlt', { name: teacher.name }),
         },
       ],
-      locale: 'en_US',
-      type: 'profile',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${teacher.name} | Private Yoga Teacher in Chiang Mai`,
-      description,
-      images: [imageUrl],
     },
   };
 }

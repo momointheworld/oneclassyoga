@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { useRouter, usePathname, useParams } from 'next/navigation'; // Standard Next.js hooks
-import { useTranslations } from 'next-intl';
+import { useRouter, usePathname } from 'next/navigation'; // Standard Next.js hooks
+import { useTranslations, useLocale } from 'next-intl';
 import clsx from 'clsx';
 import Link from 'next/link';
 import {
@@ -17,8 +17,7 @@ import Image from 'next/image';
 export default function MainMenu() {
   const t = useTranslations('Home.Nav');
   const pathname = usePathname();
-  const params = useParams();
-  const locale = params.locale as string; // 'en' or 'zh'
+  const locale = useLocale();
 
   const router = useRouter();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -49,19 +48,59 @@ export default function MainMenu() {
     { label: t('community'), href: '/community' },
   ];
 
-  // 2. Updated isActiveLink logic using the stripped path
   const isActiveLink = (href: string) => {
+    // If we are on a non-localized page, compare the raw pathname
+    if (NON_LOCALIZED_PATHS.includes(href)) {
+      return pathname === href;
+    }
+
+    // Existing logic for localized pages
     if (href === '/') return relativePathname === '/';
     return relativePathname === href || relativePathname.startsWith(href);
   };
 
+  // Add a list of paths that live outside the [locale] folder
+  const NON_LOCALIZED_PATHS = ['/community'];
+
   const handleNavigate = (href: string) => {
-    // Ensure we keep the locale prefix when navigating manually
-    const localizedHref = `/${locale}${href === '/' ? '' : href}`;
+    // If it's community, don't add the locale prefix
+    const localizedHref =
+      href === '/community' ? href : `/${locale}${href === '/' ? '' : href}`;
+
     startTransition(() => {
       router.push(localizedHref);
     });
   };
+
+  // ... inside the return statement for Desktop Links ...
+  {
+    links.map(({ label, href }) => {
+      const isNonLocalized = NON_LOCALIZED_PATHS.includes(href);
+      const finalHref = isNonLocalized
+        ? href
+        : `/${locale}${href === '/' ? '' : href}`;
+
+      return (
+        <Link
+          key={href}
+          href={finalHref}
+          onClick={(e) => {
+            if (isActiveLink(href)) return;
+            e.preventDefault();
+            handleNavigate(href);
+          }}
+          className={clsx(
+            'text-md font-medium transition-all duration-200 relative py-2 px-1',
+            isActiveLink(href)
+              ? 'text-emerald-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-emerald-600'
+              : 'text-gray-800 hover:text-emerald-500',
+          )}
+        >
+          {label}
+        </Link>
+      );
+    });
+  }
 
   return (
     <div className="w-full shadow-sm bg-white z-50 relative">

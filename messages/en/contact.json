@@ -1,0 +1,36 @@
+{
+    "metadata": {
+      "title": "Contact Us | OneClass Yoga Chiang Mai",
+      "description": "Have questions about private yoga sessions, sharing classes with a friend, or bundle pricing in Chiang Mai? Reach out to OneClass Yoga through our contact form and we’ll respond quickly.",
+      "ogAlt": "Contact OneClass Yoga for private sessions in Chiang Mai"
+    },
+    "header": {
+      "title": "Contact Us",
+      "subtitle": "Have a question or need help? Fill out the form below and we'll get back to you as soon as we can."
+    },
+    "form": {
+      "labels": {
+        "name": "Name",
+        "email": "Email",
+        "message": "Message"
+      },
+      "placeholders": {
+        "name": "Your name",
+        "email": "you@example.com",
+        "message": "What would you like to ask or say?"
+      },
+      "buttons": {
+        "send": "Send Message",
+        "sending": "Sending...",
+        "verifying": "Verifying..."
+      },
+      "success": {
+        "title": "Thank you!",
+        "message": "Your message has been sent. We'll get back to you soon."
+      },
+      "errors": {
+        "verify": "Please complete the human verification.",
+        "general": "Something went wrong. Please try again later."
+      }
+    } 
+}

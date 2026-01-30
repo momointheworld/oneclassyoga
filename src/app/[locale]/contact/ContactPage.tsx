@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { PageContainer } from '@/components/PageContainer';
 import { Loader2Icon } from 'lucide-react';
 import Turnstile from 'react-turnstile';
+import { useTranslations } from 'next-intl';
 
 type FormData = {
   name: string;
@@ -16,6 +17,7 @@ type FormData = {
 };
 
 function ContactForm() {
+  const t = useTranslations('Contact.form');
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -28,7 +30,7 @@ function ContactForm() {
   const [showTurnstile, setShowTurnstile] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -56,13 +58,11 @@ function ContactForm() {
       } else if (res.status === 400 && data.errors) {
         setFieldErrors(data.errors);
       } else {
-        setGeneralError(
-          data.message || 'Something went wrong. Please try again later.'
-        );
+        setGeneralError(data.message || t('errors.general'));
       }
     } catch (err) {
       console.error(err);
-      setGeneralError('Something went wrong.');
+      setGeneralError(t('errors.general'));
     } finally {
       setLoading(false);
     }
@@ -73,36 +73,28 @@ function ContactForm() {
     setFieldErrors({});
     setGeneralError('');
 
-    // If Turnstile hasn't been shown yet, show it and stop submission
     if (!formData.turnstileToken) {
       setShowTurnstile(true);
-      setGeneralError('Please complete the human verification.');
+      setGeneralError(t('errors.verify'));
       return;
     }
 
-    // If we have the token, submit immediately
     await submitForm(formData);
   };
 
   const handleTurnstileVerify = async (token: string) => {
     const updatedFormData = { ...formData, turnstileToken: token };
     setFormData(updatedFormData);
-
-    // Clear any existing errors
     setFieldErrors({});
     setGeneralError('');
-
-    // Auto-submit the form immediately after verification
     await submitForm(updatedFormData);
   };
 
   if (submitted) {
     return (
       <div className="bg-green-50 border border-green-200 text-green-800 p-6 rounded-xl">
-        <p className="text-lg font-semibold">Thank you!</p>
-        <p className="text-sm mt-1">
-          Your message has been sent. We&apos;ll get back to you soon.
-        </p>
+        <p className="text-lg font-semibold">{t('success.title')}</p>
+        <p className="text-sm mt-1">{t('success.message')}</p>
       </div>
     );
   }
@@ -111,7 +103,7 @@ function ContactForm() {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
         <label htmlFor="name" className="block text-sm font-medium mb-1">
-          Name
+          {t('labels.name')}
         </label>
         <Input
           id="name"
@@ -120,7 +112,7 @@ function ContactForm() {
           required
           value={formData.name}
           onChange={handleChange}
-          placeholder="Your name"
+          placeholder={t('placeholders.name')}
         />
         {fieldErrors.name && (
           <p className="text-red-500 text-sm mt-1">{fieldErrors.name}</p>
@@ -129,7 +121,7 @@ function ContactForm() {
 
       <div>
         <label htmlFor="email" className="block text-sm font-medium mb-1">
-          Email
+          {t('labels.email')}
         </label>
         <Input
           id="email"
@@ -138,7 +130,7 @@ function ContactForm() {
           required
           value={formData.email}
           onChange={handleChange}
-          placeholder="you@example.com"
+          placeholder={t('placeholders.email')}
         />
         {fieldErrors.email && (
           <p className="text-red-500 text-sm mt-1">{fieldErrors.email}</p>
@@ -147,7 +139,7 @@ function ContactForm() {
 
       <div>
         <label htmlFor="message" className="block text-sm font-medium mb-1">
-          Message
+          {t('labels.message')}
         </label>
         <Textarea
           id="message"
@@ -156,7 +148,7 @@ function ContactForm() {
           value={formData.message}
           onChange={handleChange}
           rows={6}
-          placeholder="What would you like to ask or say?"
+          placeholder={t('placeholders.message')}
         />
         {fieldErrors.message && (
           <p className="text-red-500 text-sm mt-1">{fieldErrors.message}</p>
@@ -182,10 +174,10 @@ function ContactForm() {
       >
         {loading && <Loader2Icon className="animate-spin h-4 w-4 mr-2" />}
         {loading
-          ? 'Sending...'
+          ? t('buttons.sending')
           : showTurnstile
-            ? 'Verifying...'
-            : 'Send Message'}
+            ? t('buttons.verifying')
+            : t('buttons.send')}
       </Button>
       {generalError && <p className="text-orange-500 mt-2">{generalError}</p>}
     </form>
@@ -193,14 +185,13 @@ function ContactForm() {
 }
 
 export default function ContactPage() {
+  const t = useTranslations('Contact');
+
   return (
     <PageContainer>
       <div className="max-w-2xl mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-4">Contact Us</h1>
-        <p className="text-gray-600 mb-10">
-          Have a question or need help? Fill out the form below and we&apos;ll
-          get back to you as soon as we can.
-        </p>
+        <h1 className="text-3xl font-bold mb-4">{t('header.title')}</h1>
+        <p className="text-gray-600 mb-10">{t('header.subtitle')}</p>
 
         <ContactForm />
       </div>

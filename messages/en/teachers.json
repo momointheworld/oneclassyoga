@@ -104,6 +104,13 @@
     }
   },
   "TeacherProfile": {
+    "metadata": {
+      "title": "{name} | Private Yoga Teacher in Chiang Mai",
+      "description": "Learn yoga in Chiang Mai with {name}, specializing in {strengths}. Offering private 1-on-1 classes and structured programs.",
+      "ogAlt": "Yoga session with {name} in Chiang Mai",
+      "notFoundTitle": "Yoga Teacher Not Found | OneClass Yoga",
+      "notFoundDescription": "This yoga teacher profile could not be found in Chiang Mai."
+    },
     "labels": {
     "strengths": "Strengths:",
     "levels": "Levels:",
