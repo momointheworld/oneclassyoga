@@ -1,100 +1,121 @@
 import { PageContainer } from '@/components/PageContainer';
 import { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
 
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'Privacy Policy | OneClass',
-  description:
-    'Read the Privacy Policy for OneClass — learn how we collect, use, and protect your personal information when booking classes or using our services.',
-  alternates: {
-    canonical: 'https://oneromeo.com/privacy',
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({
+    locale,
+    namespace: 'Policies.PrivacyPage.metadata',
+  });
 
-export default function PrivacyPage() {
+  return {
+    title: t('title'),
+    description: t('description'),
+    alternates: {
+      canonical: `https://oneclass.yoga/${locale}/privacy`,
+    },
+  };
+}
+
+export default async function PrivacyPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations('Policies.PrivacyPage');
+
   return (
     <PageContainer>
-      <h1 className="text-4xl font-bold mb-8">Privacy Policy</h1>
+      <h1 className="text-4xl font-bold mb-8">{t('title')}</h1>
+      <p className="mb-4">{t('intro')}</p>
 
-      <p className="mb-4">
-        Your privacy is important to us. This Privacy Policy explains how we
-        collect, use, and protect your personal information when you use our
-        website and services.
-      </p>
-
+      {/* Information We Collect */}
       <h2 className="text-2xl font-semibold mt-8 mb-4">
-        Information We Collect
+        {t('sections.collect.title')}
       </h2>
-      <p className="mb-4">
-        When you book a session or make a purchase, we collect the following
-        information:
-      </p>
+      <p className="mb-4">{t('sections.collect.content')}</p>
       <ul className="list-disc list-inside mb-4">
-        <li>Email address</li>
-        <li>Full name</li>
-        <li>Billing address</li>
+        {(t.raw('sections.collect.items') as string[]).map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
       </ul>
 
+      {/* Usage */}
       <h2 className="text-2xl font-semibold mt-8 mb-4">
-        How We Use Your Information
+        {t('sections.usage.title')}
       </h2>
-      <p className="mb-4">We use your information to:</p>
+      <p className="mb-4">{t('sections.usage.content')}</p>
       <ul className="list-disc list-inside mb-4">
-        <li>Process your payment securely via Stripe</li>
-        <li>Schedule and manage your booked sessions</li>
-        <li>Send you booking confirmations and related communications</li>
-        <li>Provide customer support</li>
+        {(t.raw('sections.usage.items') as string[]).map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
       </ul>
 
+      {/* Protection */}
       <h2 className="text-2xl font-semibold mt-8 mb-4">
-        How We Protect Your Information
+        {t('sections.protection.title')}
       </h2>
-      <p className="mb-4">
-        We take your privacy seriously and use industry-standard security
-        measures to protect your data. All payment processing is handled
-        securely by Stripe, a trusted payment processor.
-      </p>
+      <p className="mb-4">{t('sections.protection.content')}</p>
 
+      {/* Sharing */}
       <h2 className="text-2xl font-semibold mt-8 mb-4">
-        Sharing Your Information
+        {t('sections.sharing.title')}
       </h2>
-      <p className="mb-4">
-        We do not sell, trade, or rent your personal information to others. Your
-        data is only shared with trusted third parties necessary to provide our
-        services (such as Stripe).
-      </p>
+      <p className="mb-4">{t('sections.sharing.content')}</p>
 
-      <h2 className="text-2xl font-semibold mt-8 mb-4">Your Rights</h2>
-      <p className="mb-4">You have the right to:</p>
+      {/* Rights */}
+      <h2 className="text-2xl font-semibold mt-8 mb-4">
+        {t('sections.rights.title')}
+      </h2>
+      <p className="mb-4">{t('sections.rights.content')}</p>
       <ul className="list-disc list-inside mb-4">
-        <li>Access your personal information</li>
-        <li>Request correction or deletion of your data</li>
-        <li>Opt out of marketing communications</li>
+        {(t.raw('sections.rights.items') as string[]).map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
       </ul>
       <p className="mb-4">
-        To exercise these rights, please{' '}
-        <a href="/contact" className="text-emerald-600 underline">
-          contact us
-        </a>
-        .
+        {t.rich('sections.rights.footer', {
+          link: (chunks) => (
+            <Link
+              href={`/${locale}/contact`}
+              className="text-emerald-600 underline"
+            >
+              {chunks}
+            </Link>
+          ),
+        })}
       </p>
 
+      {/* Changes */}
       <h2 className="text-2xl font-semibold mt-8 mb-4">
-        Changes to This Policy
+        {t('sections.changes.title')}
       </h2>
-      <p className="mb-4">
-        We may update this Privacy Policy from time to time. We encourage you to
-        review it periodically.
-      </p>
+      <p className="mb-4">{t('sections.changes.content')}</p>
 
-      <h2 className="text-2xl font-semibold mt-8 mb-4">Contact Us</h2>
+      {/* Contact */}
+      <h2 className="text-2xl font-semibold mt-8 mb-4">
+        {t('sections.contact.title')}
+      </h2>
       <p>
-        If you have questions or concerns about your privacy, please{' '}
-        <a href="/contact" className="text-emerald-600 underline">
-          contact us
-        </a>
-        .
+        {t.rich('sections.contact.content', {
+          link: (chunks) => (
+            <Link
+              href={`/${locale}/contact`}
+              className="text-emerald-600 underline"
+            >
+              {chunks}
+            </Link>
+          ),
+        })}
       </p>
     </PageContainer>
   );

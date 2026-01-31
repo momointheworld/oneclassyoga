@@ -1,100 +1,111 @@
+// src/app/[locale]/tos/page.tsx
 import { PageContainer } from '@/components/PageContainer';
 import { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
 
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'Terms of Service | OneClass',
-  description:
-    'Read the Terms of Service for OneClass — including booking, payments, cancellations, rescheduling, class locations, and equipment policies.',
-  alternates: {
-    canonical: 'https://oneromeo.com/tos',
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({
+    locale,
+    namespace: 'Policies.TermsPage.metadata',
+  });
 
-export default function TermsPage() {
+  return {
+    title: t('title'),
+    description: t('description'),
+    alternates: {
+      canonical: `https://oneclass.yoga/${locale}/tos`,
+    },
+  };
+}
+
+export default async function TermsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations('Policies.TermsPage');
+
   return (
     <PageContainer>
-      <h1 className="text-4xl font-bold mb-8">Terms of Service</h1>
+      <h1 className="text-4xl font-bold mb-8">{t('title')}</h1>
 
-      <p className="mb-4">
-        Please read these Terms of Service (&quot;Terms&quot;) carefully before
-        using our website and services.
-      </p>
+      <p className="mb-4">{t('intro')}</p>
 
-      <h2 className="text-2xl font-semibold mt-8 mb-4">Acceptance of Terms</h2>
-      <p className="mb-4">
-        By accessing or using our services, you agree to be bound by these
-        Terms. If you do not agree, please do not use our site.
-      </p>
+      <h2 className="text-2xl font-semibold mt-8 mb-4">
+        {t('sections.acceptance.title')}
+      </h2>
+      <p className="mb-4">{t('sections.acceptance.content')}</p>
 
-      <h2 className="text-2xl font-semibold mt-8 mb-4">Booking and Payments</h2>
+      <h2 className="text-2xl font-semibold mt-8 mb-4">
+        {t('sections.payments.title')}
+      </h2>
+      <p className="mb-4">{t('sections.payments.content1')}</p>
+      <p className="mb-4">{t('sections.payments.content2')}</p>
       <p className="mb-4">
-        All bookings and payments are processed securely through Stripe. You
-        agree to provide accurate information during checkout.
-      </p>
-      <p className="mb-4">
-        Payment confirmation is required to secure your booking slot. We are not
-        responsible for missed sessions due to payment issues.
-      </p>
-      <p className="mb-4">
-        <strong>Studio, yoga mat, and props</strong> are included in your
-        payment.
+        <strong>{t('sections.payments.includedBold')}</strong>{' '}
+        {t('sections.payments.includedText')}
       </p>
 
       <h2 className="text-2xl font-semibold mt-8 mb-4">
-        Cancellation and Rescheduling Policy
+        {t('sections.policy.title')}
       </h2>
-
       <p className="mb-4">
-        All bookings are <strong>non-refundable</strong>. However, you may
-        reschedule or transfer your class to another person under the conditions
-        below.
+        {t.rich('sections.policy.intro', {
+          bold: (chunks) => <strong>{chunks}</strong>,
+        })}
       </p>
 
       <ul className="list-disc ml-6 mb-4">
         <li>
-          Rescheduling is allowed up to <strong>24 hours before</strong> the
-          class.
+          {t.rich('sections.policy.bullet1', {
+            bold: (chunks) => <strong>{chunks}</strong>,
+          })}
         </li>
+        <li>{t('sections.policy.bullet2')}</li>
         <li>
-          You may transfer your booking to another person with prior notice.
-        </li>
-        <li>
-          <strong>No rescheduling or transfers</strong> are allowed for late
-          cancellations, no-shows, or arrivals more than 30 minutes late.
+          <strong>{t('sections.policy.bullet3Bold')}</strong>{' '}
+          {t('sections.policy.bullet3Text')}
         </li>
       </ul>
 
-      <h2 className="text-2xl font-semibold mt-8 mb-4">User Conduct</h2>
-      <p className="mb-4">
-        You agree to use the services responsibly and respectfully. Any abusive,
-        harmful, or illegal behavior may result in termination of service
-        without refund.
-      </p>
+      <h2 className="text-2xl font-semibold mt-8 mb-4">
+        {t('sections.conduct.title')}
+      </h2>
+      <p className="mb-4">{t('sections.conduct.content')}</p>
 
       <h2 className="text-2xl font-semibold mt-8 mb-4">
-        Limitation of Liability
+        {t('sections.liability.title')}
       </h2>
-      <p className="mb-4">
-        We provide services &quot;as is&quot; and are not liable for any
-        indirect, incidental, or consequential damages arising from your use of
-        the site.
-      </p>
+      <p className="mb-4">{t('sections.liability.content')}</p>
 
-      <h2 className="text-2xl font-semibold mt-8 mb-4">Changes to Terms</h2>
-      <p className="mb-4">
-        We may update these Terms periodically. Continued use of the site after
-        changes means you accept the updated Terms.
-      </p>
+      <h2 className="text-2xl font-semibold mt-8 mb-4">
+        {t('sections.changes.title')}
+      </h2>
+      <p className="mb-4">{t('sections.changes.content')}</p>
 
-      <h2 className="text-2xl font-semibold mt-8 mb-4">Contact Us</h2>
+      <h2 className="text-2xl font-semibold mt-8 mb-4">
+        {t('sections.contact.title')}
+      </h2>
       <p>
-        If you have questions about these Terms, please{' '}
-        <a href="/contact" className="text-emerald-600 underline">
-          contact us
-        </a>
-        .
+        {t.rich('sections.contact.content', {
+          link: (chunks) => (
+            <Link
+              href={`/${locale}/contact`}
+              className="text-emerald-600 underline"
+            >
+              {chunks}
+            </Link>
+          ),
+        })}
       </p>
     </PageContainer>
   );
