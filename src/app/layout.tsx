@@ -7,7 +7,7 @@ import MainMenu from '@/components/MainMenu';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getLocale } from 'next-intl/server';
 import { Metadata } from 'next';
-import { Footer } from 'react-day-picker';
+import { Footer } from '@/components/Footer';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
 const geistMono = Geist_Mono({
@@ -16,7 +16,6 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  // Replace with your actual production URL
   metadataBase: new URL(
     process.env.NODE_ENV === 'production'
       ? 'https://oneclass.yoga'
@@ -69,6 +68,7 @@ export default async function RootLayout({
             <main className="flex-grow">{children}</main>
           </div>
         </NextIntlClientProvider>
+        <Footer />
       </body>
     </html>
   );

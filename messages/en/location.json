@@ -1,0 +1,25 @@
+{
+    "metadata": {
+      "title": "Yoga Studio Location in Chiang Mai",
+      "description": "Find the OneClass Yoga studio in Chiang Mai Old Town. Private yoga classes in a quiet, airy venue with mats and props provided."
+    },
+    "title": "Location",
+    "description": "Private classes take place in a semi-open venue in the heart of Chiang Mai's Old Town, offering a quiet and airy environment, perfect for focused yoga sessions.",
+    "features": {
+      "title": "Private Class Features",
+      "items": [
+        "Venue rental included (normally 500 THB per 1.5-hour session)",
+        "Mats and props provided",
+        "Quiet surroundings in the center of Old Town"
+      ]
+    },
+    "address": {
+      "title": "Address",
+      "text": "Rachadamnoen Rd Soi 5, Tambon Si Phum, Mueang Chiang Mai District, Chiang Mai 50200"
+    },
+    "images": {
+      "venueAlt": "Yoga Venue",
+      "mapAlt": "Yoga Studio Map Location"
+    }
+  }
+ 

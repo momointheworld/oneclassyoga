@@ -8,7 +8,7 @@ export default getRequestConfig(async ({ locale }) => {
 
   try {
     // We use a more explicit path for the bundler
-    const [home, programs, teachers, about, contact, policies] =
+    const [home, programs, teachers, about, contact, policies, location] =
       await Promise.all([
         import(`../../messages/${validLocale}/home.json`),
         import(`../../messages/${validLocale}/programs.json`),
@@ -16,6 +16,7 @@ export default getRequestConfig(async ({ locale }) => {
         import(`../../messages/${validLocale}/about.json`),
         import(`../../messages/${validLocale}/contact.json`),
         import(`../../messages/${validLocale}/policies.json`),
+        import(`../../messages/${validLocale}/location.json`),
       ]);
 
     return {
@@ -27,6 +28,7 @@ export default getRequestConfig(async ({ locale }) => {
         About: about.default,
         Contact: contact.default,
         Policies: policies.default,
+        Location: location.default,
       },
     };
   } catch (error) {

@@ -23,7 +23,6 @@ export default async function LocaleLayout({
     <>
       {children}
       <CookieBanner />
-      <Footer />
     </>
   );
 }
