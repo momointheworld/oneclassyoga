@@ -34,6 +34,7 @@ type Booking = {
   review_submitted: boolean;
   review_approved: boolean;
   review_token: string;
+  package_title: string;
 };
 
 type Teacher = {
@@ -83,13 +84,13 @@ export default function BookingDashboard() {
   // Filter bookings based on search
   const filteredBookings = searchEmail.trim()
     ? allBookings.filter((b) =>
-        b.customer_email.toLowerCase().includes(searchEmail.toLowerCase())
+        b.customer_email.toLowerCase().includes(searchEmail.toLowerCase()),
       )
     : allBookings;
 
   // Sort all bookings by date descending
   const sortedBookings = filteredBookings.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   );
 
   // Get bundle bookings
@@ -97,7 +98,7 @@ export default function BookingDashboard() {
     .filter((b) => b.booking_type?.startsWith('bundle'))
     .sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
 
   // Pagination
@@ -136,7 +137,7 @@ export default function BookingDashboard() {
               ? countsMap[booking.bundle_id] || 0
               : 0,
           };
-        }
+        },
       );
 
       setAllBookings(bookingsWithCounts);
@@ -191,7 +192,7 @@ export default function BookingDashboard() {
       acc[review.teacher_slug].push(review);
       return acc;
     },
-    {} as Record<string, Review[]>
+    {} as Record<string, Review[]>,
   );
 
   useEffect(() => {
@@ -206,7 +207,7 @@ export default function BookingDashboard() {
   // Optimized function to update timeslots immediately
   const updateTimeSlotsForDate = (
     date: Date | null,
-    schedule: Record<string, string[]>
+    schedule: Record<string, string[]>,
   ) => {
     if (!date) {
       setTimeSlots([]);
@@ -276,7 +277,7 @@ export default function BookingDashboard() {
   const fetchBookedSlots = async (teacherSlug: string, date: string) => {
     try {
       const res = await fetch(
-        `/api/search-booking?teacherSlug=${teacherSlug}&date=${date}`
+        `/api/search-booking?teacherSlug=${teacherSlug}&date=${date}`,
       );
       const data = await res.json();
       setBookedSlots(data?.bookedTimeSlots || []);
@@ -295,7 +296,7 @@ export default function BookingDashboard() {
       if (editingBooking?.teacher_slug) {
         fetchBookedSlots(
           editingBooking.teacher_slug,
-          ToBangkokDateOnly(selectedDate)
+          ToBangkokDateOnly(selectedDate),
         );
       }
     }
@@ -614,11 +615,12 @@ export default function BookingDashboard() {
             <th className="px-3 py-2 border">Name</th>
             <th className="px-3 py-2 border">Email</th>
             <th className="px-3 py-2 border">Teacher</th>
-            <th className="px-3 py-2 border">Participants</th>
+            <th className="px-3 py-2 border">Persons</th>
             <th className="px-3 py-2 border">Date</th>
             <th className="px-3 py-2 border">Time Slot</th>
             <th className="px-3 py-2 border">Amount</th>
             <th className="px-3 py-2 border">Booking Type</th>
+            <th className="px-3 py-2 border">Package</th>
             <th className="px-3 py-2 border">Bundle Linked</th>
             <th className="px-3 py-2 border">Actions</th>
           </tr>
@@ -647,6 +649,7 @@ export default function BookingDashboard() {
                 {b.amount_total?.toLocaleString()}
               </td>
               <td className="px-3 py-2 border">{b.booking_type}</td>
+              <td className="px-3 py-2 border">{b.package_title}</td>
               <td className="px-3 py-2 border">
                 {b.bundle_size
                   ? `${b.customer_name} | ${b.customer_email}`
@@ -739,6 +742,7 @@ export default function BookingDashboard() {
             <th className="px-3 py-2 border">Name</th>
             <th className="px-3 py-2 border">Email</th>
             <th className="px-3 py-2 border">Teacher</th>
+            <th className="px-3 py-2 border">Package</th>
             <th className="px-3 py-2 border">Bundle Size</th>
             <th className="px-3 py-2 border">Bundle count</th>
             <th className="px-3 py-2 border">Amount</th>
@@ -753,7 +757,7 @@ export default function BookingDashboard() {
               <td className="px-3 py-2 border">
                 <Link
                   href={`/dashboard/bookings/new?email=${encodeURIComponent(
-                    b.customer_email
+                    b.customer_email,
                   )}`}
                 >
                   <span className="text-blue-600 hover:underline cursor-pointer">
@@ -762,6 +766,7 @@ export default function BookingDashboard() {
                 </Link>
               </td>
               <td className="px-3 py-2 border">{b.teacher_slug}</td>
+              <td className="px-3 py-2 border">{b.package_title}</td>
               <td className="px-3 py-2 border">{b.bundle_size}</td>
               <td className="px-3 py-2 border">{b.bundle_count}</td>
               <td className="px-3 py-2 border">
