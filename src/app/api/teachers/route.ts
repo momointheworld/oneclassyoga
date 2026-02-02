@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
-function slugify(name: string) {
+function slugify(name: string, p0: { lower: boolean; strict: boolean }) {
   return name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
@@ -24,7 +25,7 @@ export async function GET() {
       console.error('Supabase fetch error:', error);
       return NextResponse.json(
         { error: 'Failed to fetch teachers' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -33,7 +34,7 @@ export async function GET() {
     console.error('Unexpected error:', error);
     return NextResponse.json(
       { error: 'Unexpected server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -43,25 +44,14 @@ export async function POST(req: NextRequest) {
     const data = await req.json();
 
     // Create slug from name
-    const slug = slugify(data.name);
-
-    const weekly_schedule = data.weekly_schedule || {};
+    const slug = slugify(data.name, { lower: true, strict: true });
 
     // Insert into supabase table
     const { data: created, error } = await supabase
       .from('teachers')
       .insert({
-        name: data.name,
-        slug,
-        bio: data.bio,
-        gallery: data.gallery || [],
-        videoUrl: data.videoUrl || '',
-        styles: data.styles,
-        levels: data.levels,
-        isActive: data.isActive ?? true,
-        isFeatured: data.isFeatured ?? false,
-        photo: data.photo,
-        weekly_schedule,
+        ...data, // Spread the incoming data
+        slug, // Override with the server-generated slug
       })
       .select()
       .single();
@@ -70,7 +60,7 @@ export async function POST(req: NextRequest) {
       console.error('Supabase insert error:', error);
       return NextResponse.json(
         { error: 'Failed to create teacher' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -79,7 +69,7 @@ export async function POST(req: NextRequest) {
     console.error('Unexpected error:', error);
     return NextResponse.json(
       { error: 'Failed to create teacher' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

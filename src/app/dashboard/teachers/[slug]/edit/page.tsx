@@ -27,6 +27,7 @@ export default function EditTeacherProfilePage() {
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
+  const [zhBio, setZhBio] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [levels, setLevels] = useState<string[]>([]);
   const [styles, setStyles] = useState<string[]>([]);
@@ -77,6 +78,7 @@ export default function EditTeacherProfilePage() {
         setTeacherId(data.id);
         setName(data.name || '');
         setBio(data.bio || '');
+        setZhBio(data.bio_zh || '');
         setVideoUrl(data.videoUrl || '');
         setLevels(data.levels || []);
         setStyles(data.styles || []);
@@ -111,38 +113,64 @@ export default function EditTeacherProfilePage() {
       minute: '2-digit',
     });
   }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!teacherId) return;
     setButtonLoading(true);
 
-    const { error } = await supabase
-      .from('teachers')
-      .update({
-        name,
-        bio,
-        slug: params.slug,
-        videoUrl,
-        levels,
-        isActive,
-        isFeatured,
-        styles,
-        strengths,
-        photo: profilePhoto,
-        gallery: galleryUrls,
-        updatedAt: new Date().toISOString(),
-        weekly_schedule: weeklySchedule,
-        stripe_product_id: stripeProductId,
-        rates: rates,
-      })
-      .eq('id', teacherId);
+    // 1. Prepare payload (matching your DB column names)
+    const payload = {
+      name,
+      bio,
+      bio_zh: zhBio,
+      videoUrl,
+      levels,
+      isActive,
+      isFeatured,
+      styles,
+      strengths,
+      photo: profilePhoto,
+      gallery: galleryUrls,
+      weekly_schedule: weeklySchedule,
+      stripe_product_id: stripeProductId,
+      rates: rates,
+    };
 
-    if (error) {
-      console.error('Update failed:', error.message);
-      setButtonLoading(false);
-    } else {
+    try {
+      // 2. Call the PATCH API
+      const response = await fetch(`/api/teachers/${teacherId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      // 1. Check if the response actually has content
+      const contentType = response.headers.get('content-type');
+
+      if (!response.ok) {
+        // If it's JSON, parse the error; otherwise, use text
+        const errorMsg = contentType?.includes('application/json')
+          ? (await response.json()).error
+          : await response.text();
+
+        throw new Error(errorMsg || 'Server error');
+      }
+
+      // 2. Safely parse the success data
+      const result = contentType?.includes('application/json')
+        ? await response.json()
+        : {};
+
+      console.log('Update success:', result);
+
       router.push(`/dashboard/teachers/`);
+      router.refresh(); // Forces Next.js to clear cache and show fresh data
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      console.error('Update failed:', err.message);
+      alert(`Error: ${err.message}`);
+    } finally {
+      setButtonLoading(false);
     }
   };
 
@@ -168,11 +196,20 @@ export default function EditTeacherProfilePage() {
           required
           disabled
         />
-
-        <TipTapEditor
-          initialContent={bio}
-          onChange={(html: SetStateAction<string>) => setBio(html)}
-        />
+        <Label className="block mb-2">
+          Bio (English)
+          <TipTapEditor
+            initialContent={bio}
+            onChange={(html: SetStateAction<string>) => setBio(html)}
+          />
+        </Label>
+        <Label className="block mb-2">
+          Bio (Chinese)
+          <TipTapEditor
+            initialContent={zhBio}
+            onChange={(html: SetStateAction<string>) => setZhBio(html)}
+          />
+        </Label>
 
         <Label className="block mb-2">
           Video URL
@@ -253,7 +290,7 @@ export default function EditTeacherProfilePage() {
                             ...strengths,
                             [category]:
                               strengths[category]?.filter(
-                                (s) => s !== strength
+                                (s) => s !== strength,
                               ) ?? [],
                           });
                         }
@@ -284,7 +321,7 @@ export default function EditTeacherProfilePage() {
                         const newSlots = e.target.checked
                           ? [...(weeklySchedule[day] || []), timeSlot]
                           : (weeklySchedule[day] || []).filter(
-                              (s) => s !== timeSlot
+                              (s) => s !== timeSlot,
                             );
 
                         setWeeklySchedule({
