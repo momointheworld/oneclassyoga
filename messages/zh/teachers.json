@@ -1,0 +1,180 @@
+{
+  "Metadata": {
+    "title": "清迈瑜伽老师与私教课程｜告别普通团课，开启精准蜕变之旅✨",
+    "description": "在清迈跟随宝藏老师，体验身心合一的精准私教瑜伽课程🧘‍♂️。从理疗修复到高阶练习，1对1私教量身定制，还可与好友共享蜕变时刻！",
+    "ogAlt": "清迈专业瑜伽老师带领精准私教课程，开启你的身心蜕变之旅🌿"
+  },
+  "UI": {
+    "pageTitle": "清迈瑜伽老师：私教课程精选",
+    "mostPopular": "🔥 人气推荐",
+    "featuredTitle": "🌟 宝藏老师推荐",
+    "from": "起",
+    "priceSuffix": "฿",
+    "perSession": " / 课时",
+    "strengthLabel": "专长领域：",
+    "viewProfile": "查看老师详情",
+    "explorePrograms": "探索课程方案",
+    "loading": "正在跳转..."
+  },
+  "levels": {
+    "Beginner": "初学者",
+    "Intermediate": "中级",
+    "Advanced": "高级"
+  },
+  "Styles": {
+    "Aerial": "空中瑜伽",
+    "Anusara": "阿奴萨拉瑜伽",
+    "Anusaranga": "阿奴萨兰加瑜伽",
+    "Ashtanga": "阿斯汤加瑜伽",
+    "Bikram": "高温瑜伽",
+    "Chair": "椅子瑜伽",
+    "Hatha": "哈他瑜伽",
+    "Iyengar": "艾扬格瑜伽",
+    "Karma": "业瑜伽",
+    "Kundalini": "昆达里尼瑜伽",
+    "Power": "力量瑜伽",
+    "Restorative": "修复瑜伽",
+    "Sivananda": "希瓦南达瑜伽",
+    "Vinyasa": "流瑜伽",
+    "Yin": "阴瑜伽"
+  },
+  "strengthCategories": {
+    "Movement": "体式精进",
+    "Mind & Body": "身心疗愈",
+    "Connection": "心灵连接"
+  },
+  "Strengths": {
+    "Movement": {
+      "Backbends": "后弯体式",
+      "Arm Balances": "手臂平衡",
+      "Inversions": "倒立体式",
+      "Twists": "扭转体式",
+      "Stretching & Mobility": "拉伸与灵活度",
+      "Strength Building": "力量建立",
+      "Flexibility": "柔韧性",
+      "Core Stability": "核心稳定",
+      "Alignment": "正位调整",
+      "Balance": "平衡训练",
+      "Endurance": "耐力提升",
+      "Flow Sequencing": "流序列编排",
+      "Breathwork": "呼吸控制",
+      "Therapy": "理疗修复",
+      "Restorative Yoga": "修复瑜伽",
+      "Physical Conditioning": "身体调理",
+      "Functional Movement": "功能性训练",
+      "Posture Correction": "体态矫正",
+      "Proprioception": "本体感觉",
+      "Dynamic Flow": "动态流"
+    },
+    "Mind & Body": {
+      "Mindfulness": "正念冥想",
+      "Meditation": "冥想引导",
+      "Relaxation": "深度放松",
+      "Focus": "专注力训练",
+      "Healing": "身心疗愈",
+      "Visualization": "视觉化练习",
+      "Stress Relief": "压力释放",
+      "Energy Work": "能量工作",
+      "Emotional Awareness": "情绪觉察",
+      "Self-Reflection": "自我反思",
+      "Pranayama": "调息法",
+      "Breath Awareness": "呼吸觉察",
+      "Body Scan": "身体扫描",
+      "Chakra Work": "脉轮平衡",
+      "Inner Strength": "内在力量"
+    },
+    "Connection": {
+      "Patience": "耐心引导",
+      "Motivation": "动力激发",
+      "Compassion": "慈悲陪伴",
+      "Adaptability": "灵活适应",
+      "Clear Communication": "清晰沟通",
+      "Confidence Building": "信心建立",
+      "Encouragement": "鼓励支持",
+      "Dynamic": "活力互动",
+      "Empathy": "共情理解",
+      "Active Listening": "积极倾听",
+      "Supportive Guidance": "支持性指导",
+      "Positive Reinforcement": "正向强化",
+      "Personalized Instruction": "个性化教学",
+      "Mentorship": "导师陪伴",
+      "Inspiring Presence": "启发式引导"
+    }
+  },
+  "TeacherProfile": {
+    "metadata": {
+      "title": "{name}｜清迈私教瑜伽老师",
+      "description": "在清迈跟随{name}老师学习瑜伽，专长{strengths}。提供1对1私教课程和结构化方案，开启你的蜕变之旅🧘‍♂️。",
+      "ogAlt": "与{name}老师在清迈的瑜伽私教课程",
+      "notFoundTitle": "未找到瑜伽老师｜OneClass Yoga",
+      "notFoundDescription": "在清迈未找到该瑜伽老师信息。"
+    },
+    "labels": {
+      "strengths": "专长领域：",
+      "levels": "适合级别：",
+      "styles": "瑜伽风格："
+    },
+    "programData": {
+      "single": {
+          "title": "单次深度体验课",
+          "duration": "90分钟 • 1对1专业私教评估 ✨"
+        },
+      "foundations-3": {
+        "title": "瑜伽基础强化工作坊",
+        "duration": "3课时 • 每节90分钟"
+      },
+      "mobility-3": {
+        "title": "核心与灵活度系列",
+        "duration": "3课时 • 每节90分钟"
+      },
+      "inversions-3": {
+        "title": "倒立艺术精修",
+        "duration": "3课时 • 每节90分钟"
+      },
+      "arm-balance-3": {
+        "title": "手臂平衡与扭转进阶",
+        "duration": "3课时 • 每节90分钟"
+      }
+    },
+    "programs": {
+      "sectionTitle": "选择你的蜕变方案✨",
+      "extraParticipantNote": "仅加{rate}฿即可与好友共享！",
+      "singleTitle": "单次体验课",
+      "singleSubtitle": "90分钟 • 个性化评估"
+    },
+    "calendar": {
+      "datePicker" :{
+      "defaultTitle": "预约你的专属蜕变时刻",
+      "bundleNote": "（剩余课时将在课后与老师协商安排）",
+      "label": "选择日期",
+      "placeholder": "点击挑选练习日期",
+      "format": "PPP",
+      "summary": {
+        "selectedDate": "已选日期：",
+        "selectedTime": "预约时段：",
+        "rate": "课程费用：",
+        "notSelected": "尚未选择"
+      }
+      },
+      "timeSlot": {
+        "label": "选择时间段",
+        "noSlots": "该日期暂无可用时段",
+        "placeholder": "点击挑选练习时段",
+        "notAvailable": "该时段不可用，请选择其他时间。"
+      }
+    },
+    "reviews": {
+      "title": "学员真实评价",
+      "subtitle": "跟随{teacherName}老师练习的蜕变体验分享🌿"
+    },
+    "footer": {
+      "tosAgreement": "我已阅读并同意",
+      "tosLink": "服务条款",
+      "bookButton": "立即预约"
+    },
+    "errors": {
+      "selectPackage": "请选择课程方案。",
+      "selectDateTime": "预约前请选择日期和时间段。"
+    }
+  }
+}

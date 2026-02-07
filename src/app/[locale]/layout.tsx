@@ -1,11 +1,9 @@
-// src/app/[locale]/layout.tsx
-import { Footer } from '@/components/Footer';
-import CookieBanner from '@/components/CookieBanner';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-
-export function generateStaticParams() {
-  return [{ locale: 'en' }, { locale: 'zh' }];
-}
+import MainMenu from '@/components/MainMenu';
+import { Footer } from '@/components/Footer';
+import AnalyticsTracker from '@/components/AnalyticsTracker';
 
 export default async function LocaleLayout({
   children,
@@ -15,14 +13,19 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-
-  // Validate locale
   if (!['en', 'zh'].includes(locale)) notFound();
 
+  // Client provider: Pass locale explicitly
+  const messages = await getMessages({ locale });
+
   return (
-    <>
-      {children}
-      <CookieBanner />
-    </>
+    <NextIntlClientProvider messages={messages} locale={locale}>
+      <AnalyticsTracker />
+      <div className="flex flex-col min-h-screen">
+        <MainMenu />
+        <main className="flex-grow">{children}</main>
+        <Footer />
+      </div>
+    </NextIntlClientProvider>
   );
 }

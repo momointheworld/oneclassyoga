@@ -39,7 +39,11 @@ export default function TeacherProfileClient({
 }: {
   teacher: Teacher;
 }) {
-  const t = useTranslations('Teachers.TeacherProfile'); // Use the translations hook
+  const t = useTranslations('Teachers'); // Access translations for this page
+  const tProfile = useTranslations('Teachers.TeacherProfile');
+  const tStrengths = useTranslations('Teachers.Strengths');
+  const tStyles = useTranslations('Teachers.Styles');
+  const tLevels = useTranslations('Teachers.levels');
   const params = useParams();
   const locale = params.locale as string;
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -47,7 +51,7 @@ export default function TeacherProfileClient({
   const [participants, setParticipants] = useState<number>(1);
   const [rate, setRate] = useState<number | null>(null);
   const [bookingTitle, setBookingTitle] = useState<string>(
-    t('calendar.defaultTitle'),
+    tProfile('calendar.defaultTitle'),
   );
   const [showNote, setShowNote] = useState(false);
 
@@ -76,6 +80,7 @@ export default function TeacherProfileClient({
     } else if (shouldScroll) {
       scrollToPrograms();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preSelectedId, shouldScroll]);
 
   const scrollToPrograms = () => {
@@ -149,7 +154,9 @@ export default function TeacherProfileClient({
     setSelectedPackage(packageType);
     // Use the packageTitles map but ensure fallback for single
     setBookingTitle(
-      packageType === 'single' ? t('programs.singleTitle') : bookingTitle,
+      packageType === 'single'
+        ? tProfile('programs.singleTitle')
+        : bookingTitle,
     );
     setShowNote(packageType !== 'single');
   };
@@ -233,9 +240,10 @@ export default function TeacherProfileClient({
           <div className="tiptap prose max-w-none">{parse(teacher.bio)}</div>
 
           <div className="grid grid-cols-2 gap-4 text-gray-800 mt-6">
+            {/* STYLES SECTION */}
             <div>
               <p className="font-semibold text-gray-700 mb-2">
-                {t('labels.styles')}
+                {tProfile('labels.styles')}
               </p>
               <div className="flex flex-wrap gap-2">
                 {teacher.styles.map((style) => (
@@ -244,14 +252,16 @@ export default function TeacherProfileClient({
                     variant="secondary"
                     className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-xs px-2 py-1"
                   >
-                    {style}
+                    {/* FIX: Use tStyles to get the Chinese name */}
+                    {tStyles(style)}
                   </Badge>
                 ))}
               </div>
             </div>
+            {/* LEVELS SECTION */}
             <div>
               <p className="font-semibold text-gray-700 mb-2">
-                {t('labels.levels')}
+                {tProfile('labels.levels')}
               </p>
               <div className="flex flex-wrap gap-2">
                 {teacher.levels.map((level) => (
@@ -260,32 +270,42 @@ export default function TeacherProfileClient({
                     variant="secondary"
                     className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-xs px-2 py-1"
                   >
-                    {level}
+                    {/* FIX: Use tLevels to get the Chinese name */}
+                    {tLevels(level)}
                   </Badge>
                 ))}
               </div>
             </div>
           </div>
 
+          {/* STRENGTHS SECTION */}
           <div className="my-8">
             <p className="font-semibold text-gray-700 mb-2">
-              {t('labels.strengths')}
+              {tProfile('labels.strengths')}
             </p>
             <div className="flex flex-col gap-3">
               {teacher.strengths &&
                 Object.entries(teacher.strengths).map(([category, items]) => (
                   <div key={category} className="px-3">
                     <p className="font-medium text-gray-500 text-sm mb-1">
-                      {category}
+                      {/* FIX: Use the specific category mapping */}
+                      {t(`strengthCategories.${category}`)}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {items.map((strength) => (
+                      {items.map((strengthKey) => (
                         <Badge
-                          key={`${category}-${strength}`}
+                          key={`${category}-${strengthKey}`}
                           variant="secondary"
-                          className={`text-xs px-2 py-1 font-semibold ${category === 'Movement' ? 'border-orange-600 text-orange-600' : category === 'Mind & Body' ? 'border-blue-600 text-blue-600' : 'border-emerald-600 text-emerald-600'}`}
+                          className={`text-xs px-2 py-1 font-semibold ${
+                            category === 'Movement'
+                              ? 'border-orange-600 text-orange-600'
+                              : category === 'Mind & Body'
+                                ? 'border-blue-600 text-blue-600'
+                                : 'border-emerald-600 text-emerald-600'
+                          }`}
                         >
-                          {strength}
+                          {/* FIX: Access the nested path Strengths.Category.Key */}
+                          {tStrengths(`${category}.${strengthKey}`)}
                         </Badge>
                       ))}
                     </div>
@@ -324,10 +344,10 @@ export default function TeacherProfileClient({
           <section className="space-y-6" id="programs">
             <div className="text-center mt-12 mb-8">
               <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
-                {t('programs.sectionTitle')}
+                {tProfile('programs.sectionTitle')}
               </h2>
               <p className="text-emerald-600 font-semibold mt-1 text-sm uppercase tracking-wider">
-                {t('programs.extraParticipantNote', { rate: extraRate })}
+                {tProfile('programs.extraParticipantNote', { rate: extraRate })}
               </p>
             </div>
 
@@ -345,17 +365,17 @@ export default function TeacherProfileClient({
                         onSelectProgram(
                           'single',
                           'single',
-                          t('programs.singleTitle'),
+                          tProfile('programData.single.title'),
                         )
                       }
                       className="w-5 h-5 accent-emerald-600"
                     />
                     <div>
                       <span className="block font-bold text-gray-900">
-                        {t('programs.singleTitle')}
+                        {tProfile('programData.single.title')}
                       </span>
                       <span className="block text-xs text-gray-500">
-                        {t('programs.singleSubtitle')}
+                        {tProfile('programData.single.duration')}
                       </span>
                     </div>
                   </div>
@@ -374,8 +394,10 @@ export default function TeacherProfileClient({
                     : teacher.rates.bundle3;
 
                 // Look up translated values using the program ID
-                const translatedTitle = t(`programData.${p.id}.title`);
-                const translatedDuration = t(`programData.${p.id}.duration`);
+                const translatedTitle = tProfile(`programData.${p.id}.title`);
+                const translatedDuration = tProfile(
+                  `programData.${p.id}.duration`,
+                );
 
                 return (
                   <label
@@ -426,7 +448,7 @@ export default function TeacherProfileClient({
                 {bookingTitle}
                 <br />
                 <span className="text-sm">
-                  {showNote ? t('calendar.bundleNote') : ''}
+                  {showNote ? tProfile('calendar.bundleNote') : ''}
                 </span>
               </h2>
               <BookingCalendar
@@ -457,12 +479,12 @@ export default function TeacherProfileClient({
                   className="w-4 h-4 accent-orange-600"
                 />
                 <label htmlFor="tos" className="text-gray-700 text-sm">
-                  {t('footer.tosAgreement')}{' '}
+                  {tProfile('footer.tosAgreement')}{' '}
                   <Link
                     href={`/${locale}/tos`}
                     className="text-blue-600 underline"
                   >
-                    {t('footer.tosLink')}
+                    {tProfile('footer.tosLink')}
                   </Link>
                 </label>
               </div>
@@ -471,7 +493,7 @@ export default function TeacherProfileClient({
                 disabled={!selectedPackage || !agreedToTerms}
                 className="bg-orange-600 text-white text-lg font-medium px-4 py-2 rounded-xl hover:bg-orange-700 transition disabled:opacity-30"
               >
-                {t('footer.bookButton')}
+                {tProfile('footer.bookButton')}
               </Button>
               {error && (
                 <p className="text-red-600 text-sm mt-2 text-right w-full">

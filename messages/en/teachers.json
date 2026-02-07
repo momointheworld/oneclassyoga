@@ -118,6 +118,10 @@
     "styles": "Styles:"
     },
     "programData": {
+      "single": {
+        "title": "Single Trial Session",
+        "duration": "90 Min • Personal Consultation"
+      },
       "foundations-3": {
         "title": "Yoga Foundations Intensive",
         "duration": "3 Sessions • 90 Min Each"
@@ -142,8 +146,24 @@
       "singleSubtitle": "90 Min • Personal Consultation"
     },
     "calendar": {
+      "datePicker" :{
       "defaultTitle": "Choose Your Date & Time",
-      "bundleNote": "(Rest of sessions scheduled with your teacher.)"
+      "bundleNote": "(Rest of sessions scheduled with your teacher.)",
+      "label": "Choose a date",
+      "placeholder": "Pick a date",
+      "format": "PPP",
+      "summary": {
+        "selectedDate": "Selected Date:",
+        "selectedTime": "Selected Time:",
+        "rate": "Rate:",
+        "notSelected": "Not selected"
+      }},
+      "timeSlot": {
+      "label": "Select a time",
+      "noSlots": "No slots available for this date",
+      "booked": "Booked",
+      "notAvailable": "Not available"
+    }
     },
     "reviews": {
       "title": "Student Reviews",

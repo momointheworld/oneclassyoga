@@ -1,0 +1,99 @@
+{
+  "Metadata": {
+    "title": "清迈瑜伽私教｜精准蜕变计划✨",
+    "description": "告别盲目跟练！3节/6节系统化私教课程，从基础到高阶倒立，宝藏老师带你实现身心合一蜕变🧘‍♂️"
+  },
+  "Page": {
+    "title": "精准私教计划",
+    "description": "我与这些宝藏老师合作，将他们的核心教学精华转化为清晰路径。告别随机课程，获得每一步都有私人指导的蜕变之旅🌿",
+    "loading": "正在加载课程..."
+  },
+  "UI": {
+    "home": {
+      "title": "精准私教计划",
+      "badge3": "3节套餐",
+      "badge6": "6节套餐",
+      "single": "单节体验",
+      "bundle3": "3节强化系列",
+      "bundle6": "6节蜕变系列",
+      "syllabusLabel": "课程大纲",
+      "exploreAll": "探索所有课程",
+      "meetTeacher": "认识{name}老师",
+      "suitableLabel": "适合人群：",
+      "priceSuffix": "泰铢",
+      "notAvailable": "—",
+      "bookNow": "立即预订"
+    },
+    "programsPage": {
+      "ledBy": "授课老师",
+      "bookWith": "预约{name}老师",
+      "curriculumOutline": "课程大纲",
+      "programInvestment": "课程投资",
+      "investment": "课程投资",
+      "priceSuffix": "泰铢",
+      "notAvailable": "—",
+      "bundle3": "3节课",
+      "bundle6": "6节课"
+    }
+  },
+  "packageTitles": {
+    "single": "选择日期与时间",
+    "bundle3": "选择首节课日期与时间",
+    "bundle6": "选择首节课日期与时间"
+  },
+  "list": {
+    "foundations-3": {
+      "title": "瑜伽基础强化工作坊",
+      "duration": "3节课 • 每节90分钟",
+      "suitableFor": "零基础 • 无需经验",
+      "description": "瑜伽入门全面指南！专注呼吸与动作的连接，建立脊柱安全保护机制，打造终身受益的稳固基础✨",
+      "syllabus": [
+        "第1节：呼吸与脊柱力学",
+        "第2节：站立体式与战士式正位",
+        "第3节：拜日式入门"
+      ]
+    },
+    "mobility-3": {
+      "title": "核心与流动性系列",
+      "duration": "3节课 • 每节90分钟",
+      "suitableFor": "中级 • 需稳定下犬式",
+      "description": "解锁紧绷的髋部与肩部，同时建立深层腹部稳定性与功能性活动范围，告别身体僵硬🧘‍♂️",
+      "syllabus": [
+        "第1节：盆底肌与髋部流动性",
+        "第2节：胸腔打开与体态调整",
+        "第3节：全身整合练习"
+      ]
+    },
+    "inversions-3": {
+      "title": "倒立艺术工作坊",
+      "duration": "3节课 • 每节90分钟",
+      "suitableFor": "中级 • 需稳定下犬式",
+      "description": "专业倒立系列工作坊，征服倒立恐惧！专注肩部稳定、手腕健康与核心控制，安全解锁倒立🌿",
+      "syllabus": [
+        "第1节：基础与墙辅助L型倒立",
+        "第2节：寻找平衡中心（头倒立力学）",
+        "第3节：踢腿技巧与前臂倒立"
+      ]
+    },
+    "arm-balance-3": {
+      "title": "手臂平衡与扭转理疗修复",
+      "duration": "3节课 • 每节90分钟",
+      "suitableFor": "全级别 • 建议有瑜伽经验",
+      "description": "探索力量与柔韧的和谐！结合深度脊柱扭转与温和手平衡入门，通过技巧找到身体的轻盈感✨",
+      "syllabus": [
+        {
+          "title": "第1节：寻找平衡与稳定",
+          "poses": "乌鸦式、平板变体、花环式"
+        },
+        {
+          "title": "第2节：流动性深度扭转",
+          "poses": "侧乌鸦式、扭转幻椅式、扭转三角式"
+        },
+        {
+          "title": "第3节：整合与提升",
+          "poses": "飞鸽式准备、蜥蜴式、八角式"
+        }
+      ]
+    }
+  }
+}

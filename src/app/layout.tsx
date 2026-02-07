@@ -1,13 +1,7 @@
-// src/app/layout.tsx
 import { Geist, Geist_Mono } from 'next/font/google';
 import Script from 'next/script';
 import '@/app/globals.css';
-import AnalyticsTracker from '@/components/AnalyticsTracker';
-import MainMenu from '@/components/MainMenu';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getLocale } from 'next-intl/server';
 import { Metadata } from 'next';
-import { Footer } from '@/components/Footer';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
 const geistMono = Geist_Mono({
@@ -33,14 +27,13 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
   const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-
-  // Get current locale and messages for the Global Nav
-  const locale = await getLocale();
-  const messages = await getMessages();
+  const { locale } = await params;
 
   return (
     <html lang={locale}>
@@ -60,15 +53,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* Providing messages here allows MainMenu to work on non-locale pages */}
-        <NextIntlClientProvider messages={messages} locale={locale}>
-          <AnalyticsTracker />
-          <div className="flex flex-col min-h-screen">
-            <MainMenu />
-            <main className="flex-grow">{children}</main>
-          </div>
-        </NextIntlClientProvider>
-        <Footer />
+        {children}
       </body>
     </html>
   );

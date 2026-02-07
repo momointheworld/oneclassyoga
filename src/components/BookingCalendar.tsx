@@ -20,7 +20,7 @@ interface BookingCalendarProps {
     date: Date | undefined,
     timeSlot: string | null,
     participants: number,
-    packageType: string | null
+    packageType: string | null,
   ) => void;
   onRateChange?: (rate: number) => void;
   rates: TeacherRates;
@@ -86,8 +86,6 @@ export default function BookingCalendar({
     selectedPackage,
   ]);
 
-  console.log(participants);
-
   // fetch booked slots
   useEffect(() => {
     if (!selectedDate || !teacherSlug) {
@@ -100,7 +98,7 @@ export default function BookingCalendar({
     const fetchBookedSlots = async () => {
       try {
         const res = await fetch(
-          `/api/search-booking?date=${bkkDate}&teacherSlug=${teacherSlug}`
+          `/api/search-booking?date=${bkkDate}&teacherSlug=${teacherSlug}`,
         );
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();

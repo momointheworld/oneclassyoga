@@ -8,13 +8,16 @@ import { getTranslations } from 'next-intl/server';
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }): Promise<Metadata> {
   const supabase = createClient();
-  const { slug } = await params;
+  const { slug, locale } = await params;
 
   // Initialize translations
-  const t = await getTranslations('Teachers.TeacherProfile.metadata');
+  const t = await getTranslations({
+    locale,
+    namespace: 'Teachers.TeacherProfile.metadata',
+  });
 
   const { data: teacher } = await (await supabase)
     .from('teachers')
@@ -62,7 +65,7 @@ export const revalidate = 60; // cache for 60 seconds
 export default async function TeacherProfilePage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }) {
   const { slug } = await params;
   const supabase = createClient();

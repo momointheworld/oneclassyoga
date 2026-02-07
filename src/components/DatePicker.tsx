@@ -15,26 +15,32 @@ import { cn } from '@/lib/utils';
 import { addDays, startOfDay } from 'date-fns';
 import { availableDaysOptions } from '@/lib/constants';
 
+// --- IMPORT LOCALE DATA ---
+import { useLocale, useTranslations } from 'next-intl';
+import { zhCN, enUS } from 'date-fns/locale';
+
 interface DatePickerProps {
   selected?: Date;
   onSelect?: (date: Date | undefined) => void;
-  label?: string;
   className?: string;
-  fromDate?: Date;
-  toDate?: Date;
   availableDays?: string[];
 }
 
 export function DatePicker({
   selected,
   onSelect,
-  label = 'Choose a date',
   className = '',
   availableDays,
 }: DatePickerProps) {
+  const t = useTranslations('Teachers.TeacherProfile.calendar.datePicker');
+  const locale = useLocale();
+
+  // Map next-intl locale string to date-fns locale object
+  const dateLocale = locale === 'zh' ? zhCN : enUS;
+
   const [open, setOpen] = React.useState(false);
   const [internalDate, setInternalDate] = React.useState<Date | undefined>(
-    selected
+    selected,
   );
 
   const today = startOfDay(new Date());
@@ -44,7 +50,7 @@ export function DatePicker({
   return (
     <div className={cn('flex flex-col gap-2 w-full max-w-sm', className)}>
       <Label htmlFor="date-picker" className="text-sm text-gray-500">
-        {label}
+        {t('label')}
       </Label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
@@ -53,10 +59,13 @@ export function DatePicker({
             id="date-picker"
             className={cn(
               'w-full justify-between text-left font-normal border border-gray-300 rounded-xl px-4 py-2 shadow-sm transition-all',
-              !internalDate && 'text-muted-foreground'
+              !internalDate && 'text-muted-foreground',
             )}
           >
-            {internalDate ? format(internalDate, 'PPP') : 'Pick a date'}
+            {/* Localized Date String */}
+            {internalDate
+              ? format(internalDate, 'PPP', { locale: dateLocale })
+              : t('placeholder')}
             <ChevronDownIcon className="h-4 w-4 opacity-60" />
           </Button>
         </PopoverTrigger>
@@ -66,6 +75,8 @@ export function DatePicker({
         >
           <Calendar
             mode="single"
+            // --- PASS LOCALE TO CALENDAR ---
+            locale={dateLocale}
             selected={internalDate}
             onSelect={(date) => {
               setInternalDate(date);
@@ -79,8 +90,6 @@ export function DatePicker({
               return isOutsideRange || isUnavailable;
             }}
             weekStartsOn={0}
-            // startMonth={from}
-            // endMonth={to}
             defaultMonth={from}
             captionLayout="dropdown"
             numberOfMonths={1}

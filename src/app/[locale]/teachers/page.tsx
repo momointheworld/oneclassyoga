@@ -59,10 +59,13 @@ type Teacher = {
 
 export const revalidate = 60;
 
-export default async function TeachersPage({}: {
+export default async function TeachersPage({
+  params,
+}: {
   params: Promise<{ locale: string }>;
 }) {
-  const tUI = await getTranslations('Teachers.UI'); // Access UI labels like "Title"
+  const { locale } = await params;
+  const tUI = await getTranslations({ locale, namespace: 'Teachers.UI' }); // Access UI labels like "Title"
 
   const { data: sortedTeachers, error } = await supabase
     .from('teachers')
