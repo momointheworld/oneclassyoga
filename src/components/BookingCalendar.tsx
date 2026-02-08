@@ -8,6 +8,10 @@ import { ToBangkokDateOnly } from './BkkTimeConverter';
 import { BUNDLE3, BUNDLE6, PackageType } from '@/lib/packages';
 import { TeacherRates } from '@/types/teacher';
 
+// --- LOCALIZATION IMPORTS ---
+import { useTranslations, useLocale } from 'next-intl';
+import { zhCN, enUS } from 'date-fns/locale';
+
 interface BookingCalendarProps {
   onSelect: (date: Date | null, timeSlot: string | null) => void;
   timeSlots: string[];
@@ -38,6 +42,11 @@ export default function BookingCalendar({
   onRateChange,
   rates,
 }: BookingCalendarProps) {
+  // --- HOOKS ---
+  const t = useTranslations('Teachers.TeacherProfile.calendar'); // Access the namespace
+  const locale = useLocale();
+  const dateLocale = locale === 'zh' ? zhCN : enUS;
+
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [timeSlot, setTimeSlot] = useState<string | null>(null);
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
@@ -45,12 +54,10 @@ export default function BookingCalendar({
 
   const calculateRate = useCallback(() => {
     let total = 0;
-    // Base rate based on selected package
     if (selectedPackage === 'single') total = rates.single ?? 0;
     else if (selectedPackage === BUNDLE3) total = rates.bundle3 ?? 0;
     else if (selectedPackage === BUNDLE6) total = rates.bundle6 ?? 0;
 
-    // Extra for second participant
     if (participants === 2) {
       if (selectedPackage === 'single') total += rates.extra.single ?? 0;
       else if (selectedPackage === BUNDLE3) total += rates.extra.bundle3 ?? 0;
@@ -63,13 +70,9 @@ export default function BookingCalendar({
   useEffect(() => {
     calculateRate();
   }, [participants, selectedPackage, calculateRate]);
-
-  // Reset selected time when date changes
   useEffect(() => {
     setTimeSlot(null);
   }, [selectedDate]);
-
-  // call parent callbacks
   useEffect(() => {
     onSelect(selectedDate || null, timeSlot);
   }, [selectedDate, timeSlot, onSelect]);
@@ -86,15 +89,12 @@ export default function BookingCalendar({
     selectedPackage,
   ]);
 
-  // fetch booked slots
   useEffect(() => {
     if (!selectedDate || !teacherSlug) {
       setBookedSlots([]);
       return;
     }
-
     const bkkDate = ToBangkokDateOnly(selectedDate);
-
     const fetchBookedSlots = async () => {
       try {
         const res = await fetch(
@@ -108,7 +108,6 @@ export default function BookingCalendar({
         setBookedSlots([]);
       }
     };
-
     fetchBookedSlots();
   }, [selectedDate, teacherSlug]);
 
@@ -130,32 +129,41 @@ export default function BookingCalendar({
         participants={participants}
       />
 
-      {/* Summary */}
+      {/* Summary Section - Fully Localized */}
       <div className="mt-8 flex flex-col space-y-4">
+        {/* Date Summary */}
         <div className="flex flex-col sm:flex-row sm:justify-between w-full">
-          <span className="text-sm text-gray-500">Selected Date:</span>
+          <span className="text-sm text-gray-500">
+            {t('summary.selectedDate')}
+          </span>
           <p
             className={`text-sm mt-1 sm:mt-0 ${selectedDate ? 'font-semibold text-blue-600' : 'text-gray-600'}`}
           >
-            {selectedDate ? format(selectedDate, 'PPP') : 'Not selected'}
+            {selectedDate
+              ? format(selectedDate, 'PPP', { locale: dateLocale })
+              : t('summary.notSelected')}
           </p>
         </div>
 
+        {/* Time Summary */}
         <div className="flex flex-col sm:flex-row sm:justify-between w-full">
-          <span className="text-sm text-gray-500">Selected Time:</span>
+          <span className="text-sm text-gray-500">
+            {t('summary.selectedTime')}
+          </span>
           <p
             className={`text-sm mt-1 sm:mt-0 ${timeSlot ? 'font-semibold text-blue-600' : 'text-gray-600'}`}
           >
-            {timeSlot || 'Not selected'}
+            {timeSlot || t('summary.notSelected')}
           </p>
         </div>
 
+        {/* Rate Summary */}
         <div className="flex flex-col sm:flex-row sm:justify-between w-full">
-          <span className="text-sm text-gray-500">Rate:</span>
+          <span className="text-sm text-gray-500">{t('summary.rate')}</span>
           <p
             className={`text-sm mt-1 sm:mt-0 ${rate !== null ? 'font-semibold text-blue-600' : 'text-gray-600'}`}
           >
-            {rate !== null ? `${rate} THB` : 'Not selected'}
+            {rate !== null ? `${rate} THB` : t('summary.notSelected')}
           </p>
         </div>
       </div>

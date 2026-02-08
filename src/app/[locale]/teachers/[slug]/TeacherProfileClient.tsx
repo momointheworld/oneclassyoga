@@ -39,7 +39,7 @@ export default function TeacherProfileClient({
 }: {
   teacher: Teacher;
 }) {
-  const t = useTranslations('Teachers'); // Access translations for this page
+  const t = useTranslations('Teachers');
   const tProfile = useTranslations('Teachers.TeacherProfile');
   const tStrengths = useTranslations('Teachers.Strengths');
   const tStyles = useTranslations('Teachers.Styles');
@@ -106,11 +106,11 @@ export default function TeacherProfileClient({
 
   const handleBooking = () => {
     if (!selectedPackage) {
-      setError(t('errors.selectPackage'));
+      setError(tProfile('errors.selectPackage'));
       return;
     }
     if (!selectedDate || !selectedTimeSlot) {
-      setError(t('errors.selectDateTime'));
+      setError(tProfile('errors.selectDateTime'));
       return;
     }
 
@@ -321,7 +321,7 @@ export default function TeacherProfileClient({
           {teacher.videoUrl && (
             <section className="mt-6">
               <h2 className="font-semibold my-5 text-xl text-center">
-                {t('video.title', { name: teacher.name })}
+                {tProfile('video.title', { name: teacher.name })}
               </h2>
               <YouTubeVideo youtubeId={youtubeId} bilibiliId={bilibiliId} />
             </section>
@@ -331,10 +331,10 @@ export default function TeacherProfileClient({
             <section className="mt-15 mb-5" id="reviewCarousel">
               <div className="mt-5 font-semibold">
                 <h1 className="text-xl font-bold text-center mb-2 text-gray-800">
-                  {t('reviews.title')}
+                  {tProfile('reviews.title')}
                 </h1>
                 <p className="text-center text-gray-600 mb-8">
-                  {t('reviews.subtitle', { teacherName: teacher.name })}
+                  {tProfile('reviews.subtitle', { teacherName: teacher.name })}
                 </p>
                 <ReviewCarousel reviews={reviews} />
               </div>

@@ -4,10 +4,16 @@ import { Target, UserCheck, Layout } from 'lucide-react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server'; // Import for Server Components
+import { getTranslations } from 'next-intl/server';
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('About.metadata');
+// 1. Update generateMetadata to await params
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params; // Await the promise
+  const t = await getTranslations({ locale, namespace: 'About.metadata' });
 
   return {
     title: t('title'),
@@ -25,25 +31,25 @@ export async function generateMetadata(): Promise<Metadata> {
           alt: t('ogAlt'),
         },
       ],
-      locale: 'en_US',
+      locale: locale === 'zh' ? 'zh_CN' : 'en_US',
       type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: t('title'),
-      description: t('description'),
-      images: ['/images/ogs/about-og.jpeg'],
     },
   };
 }
 
-export default async function AboutPage() {
-  const t = await getTranslations('About');
+// 2. Update Page component to await params
+export default async function AboutPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params; // Await the promise
+  const t = await getTranslations({ locale, namespace: 'About' });
 
   return (
     <PageContainer>
       <div className="max-w-6xl mx-auto py-12 px-6 space-y-20">
-        {/* Hero Section with Video */}
+        {/* Hero Section */}
         <section className="space-y-6 text-center">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 tracking-tight">
             {t('hero.title')}
@@ -60,13 +66,13 @@ export default async function AboutPage() {
           </div>
         </section>
 
-        {/* Personal Profile Section */}
+        {/* Profile Section */}
         <section className="max-w-3xl mx-auto text-center space-y-6">
           <div className="flex flex-col items-center space-y-4">
             <div className="relative w-32 h-32 rounded-full overflow-hidden shadow-md ring-4 ring-emerald-50">
               <Image
                 src="/images/about.jpeg"
-                alt="Lifen Li"
+                alt="Founder"
                 fill
                 className="object-cover"
               />
@@ -75,36 +81,35 @@ export default async function AboutPage() {
               <h3 className="text-xl font-bold text-gray-900">
                 {t('profile.name')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
-                {/* next-intl handles rich text/bolding via the <b> tag in the JSON */}
-                {t.rich('profile.bio1', {
-                  b: (chunks) => (
-                    <span className="font-semibold">{chunks}</span>
-                  ),
-                })}
-              </p>
-              <p className="text-gray-700 leading-relaxed">
-                {t.rich('profile.bio2', {
-                  b: (chunks) => (
-                    <span className="font-semibold text-emerald-700">
-                      {chunks}
-                    </span>
-                  ),
-                })}
-              </p>
+              <div className="text-gray-700 leading-relaxed space-y-4">
+                <p>
+                  {t.rich('profile.bio1', {
+                    b: (chunks) => (
+                      <span className="font-semibold">{chunks}</span>
+                    ),
+                  })}
+                </p>
+                <p>
+                  {t.rich('profile.bio2', {
+                    b: (chunks) => (
+                      <span className="font-semibold text-emerald-700 underline decoration-emerald-200 decoration-4 underline-offset-2">
+                        {chunks}
+                      </span>
+                    ),
+                  })}
+                </p>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Mission Section */}
         <section className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <div className="space-y-4">
+            <h2 className="text-3xl font-bold text-gray-900">
               {t('mission.title')}
             </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              {t('mission.p1')}
-            </p>
+            <p className="text-gray-700 leading-relaxed">{t('mission.p1')}</p>
             <p className="text-gray-700 leading-relaxed">{t('mission.p2')}</p>
           </div>
           <div className="bg-white border border-gray-100 rounded-3xl p-8 shadow-xl shadow-gray-200/50">
@@ -134,7 +139,7 @@ export default async function AboutPage() {
           </div>
         </section>
 
-        {/* Closing Invite */}
+        {/* Invite/CTA Section */}
         <section className="text-center space-y-6 pb-12">
           <h2 className="text-3xl font-bold text-gray-900">
             {t('invite.title')}
@@ -143,8 +148,9 @@ export default async function AboutPage() {
             {t('invite.subtitle')}
           </p>
           <div className="pt-4">
+            {/* Using locale to ensure correct routing */}
             <Link
-              href="/programs"
+              href={`/${locale}/programs`}
               className="inline-block bg-emerald-600 text-white px-8 py-4 rounded-2xl font-bold shadow-lg hover:bg-emerald-700 transition-all hover:scale-105"
             >
               {t('invite.button')}

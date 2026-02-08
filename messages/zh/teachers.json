@@ -116,9 +116,9 @@
     },
     "programData": {
       "single": {
-          "title": "单次深度体验课",
-          "duration": "90分钟 • 1对1专业私教评估 ✨"
-        },
+        "title": "单次深度体验课",
+        "duration": "90分钟 • 1对1专业私教评估 ✨"
+      },
       "foundations-3": {
         "title": "瑜伽基础强化工作坊",
         "duration": "3课时 • 每节90分钟"
@@ -142,25 +142,31 @@
       "singleTitle": "单次体验课",
       "singleSubtitle": "90分钟 • 个性化评估"
     },
+    "video": {
+      "title": "{name}老师的瑜伽哲学与蜕变分享🧘‍♂️"
+    },
     "calendar": {
-      "datePicker" :{
       "defaultTitle": "预约你的专属蜕变时刻",
       "bundleNote": "（剩余课时将在课后与老师协商安排）",
       "label": "选择日期",
       "placeholder": "点击挑选练习日期",
       "format": "PPP",
+      "timeSlot": {
+        "label": "选择时间段",
+        "noSlots": "该日期暂无可用时段",
+        "booked": "已约满",
+        "notAvailable": "该时段不可用，请选择其他时间。"
+      },
+      "participants": {
+        "label": "邀请好友同行",
+        "alone": "独自练习",
+        "friend": "与好友共享"
+      },
       "summary": {
         "selectedDate": "已选日期：",
         "selectedTime": "预约时段：",
         "rate": "课程费用：",
         "notSelected": "尚未选择"
-      }
-      },
-      "timeSlot": {
-        "label": "选择时间段",
-        "noSlots": "该日期暂无可用时段",
-        "placeholder": "点击挑选练习时段",
-        "notAvailable": "该时段不可用，请选择其他时间。"
       }
     },
     "reviews": {

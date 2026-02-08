@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useTransition } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import clsx from 'clsx';
@@ -21,7 +21,6 @@ export default function MainMenu() {
   const locale = useLocale();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [progress, setProgress] = useState(0);
 
   // Helper to get the path without the locale prefix
   const getRelativePath = (path: string) => {

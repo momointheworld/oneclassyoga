@@ -2,8 +2,13 @@ import type { Metadata } from 'next';
 import ContactPage from './ContactPage';
 import { getTranslations } from 'next-intl/server';
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('Contact.metadata');
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params; // Await the promise
+  const t = await getTranslations({ locale, namespace: 'Contact.metadata' });
 
   return {
     title: t('title'),

@@ -1,13 +1,7 @@
-// app/teachers/loading.tsx
-
-export default function TeachersLoading() {
+export default async function TeachersLoading() {
   // Simple grid of skeleton cards matching your layout
   return (
     <main className="max-w-6xl mx-auto px-4 py-16">
-      <h1 className="text-4xl font-bold mb-8 text-center">
-        Loading teachers...
-      </h1>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {[...Array(6)].map((_, i) => (
           <div key={i} className="animate-pulse rounded-lg p-4 bg-white shadow">

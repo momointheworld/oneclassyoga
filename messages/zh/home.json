@@ -3,7 +3,7 @@
     "home": "首页",
     "programs": "课程",
     "teachers": "宝藏老师",
-    "about": "关于我们",
+    "about": "关于",
     "contact": "联系",
     "community": "社群"
   },
@@ -103,7 +103,7 @@
       "title": "探索",
       "programs": "课程",
       "teachers": "宝藏老师",
-      "about": "关于我们",
+      "about": "关于",
       "location": "地点"
     },
     "legal": {

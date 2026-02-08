@@ -1,6 +1,4 @@
 {
-    
- 
   "Metadata": {
     "title": "Yoga Teachers & Private Programs in Chiang Mai",
     "description": "Learn from expert teachers through focused private yoga programs in Chiang Mai. Specialized 1-on-1 training for all levels, from therapeutic recovery to advanced practice. Share a session with a friend.",
@@ -145,25 +143,32 @@
       "singleTitle": "Single Trial Session",
       "singleSubtitle": "90 Min • Personal Consultation"
     },
+    "video": {
+      "title": "{name} on Yoga, Teaching, and Practice"
+    },
     "calendar": {
-      "datePicker" :{
       "defaultTitle": "Choose Your Date & Time",
       "bundleNote": "(Rest of sessions scheduled with your teacher.)",
       "label": "Choose a date",
       "placeholder": "Pick a date",
       "format": "PPP",
+        "timeSlot": {
+          "label": "Select a time",
+          "noSlots": "No slots available for this date",
+          "booked": "Booked",
+          "notAvailable": "Not available"
+        },
+    "participants": {
+          "label": "Invite a Friend",
+          "alone":"Just Me",
+          "friend":"With a friend"
+        },
       "summary": {
         "selectedDate": "Selected Date:",
         "selectedTime": "Selected Time:",
         "rate": "Rate:",
         "notSelected": "Not selected"
-      }},
-      "timeSlot": {
-      "label": "Select a time",
-      "noSlots": "No slots available for this date",
-      "booked": "Booked",
-      "notAvailable": "Not available"
-    }
+      }
     },
     "reviews": {
       "title": "Student Reviews",

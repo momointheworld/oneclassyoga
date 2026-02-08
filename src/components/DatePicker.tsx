@@ -32,7 +32,7 @@ export function DatePicker({
   className = '',
   availableDays,
 }: DatePickerProps) {
-  const t = useTranslations('Teachers.TeacherProfile.calendar.datePicker');
+  const t = useTranslations('Teachers.TeacherProfile.calendar');
   const locale = useLocale();
 
   // Map next-intl locale string to date-fns locale object
