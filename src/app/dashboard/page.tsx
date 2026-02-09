@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/supabaseServer';
 import { LogOut } from 'lucide-react'; // example icon for logout
+import MainMenu from '@/components/MainMenu';
+import Link from 'next/link';
 
 // A simple logout function as server action (optional)
 async function logout() {
@@ -19,7 +21,7 @@ export default async function DashboardPage() {
 
   // Redirect if no user or unauthorized GitHub user
   const githubIdentity = user?.identities?.find(
-    (id) => id.provider === 'github'
+    (id) => id.provider === 'github',
   );
   const githubUserId = githubIdentity?.id;
   const allowedGithubId = process.env.NEXT_PUBLIC_GITHUB_ALLOWED_ID;
@@ -47,14 +49,14 @@ export default async function DashboardPage() {
 
       <ul className="mt-6 space-y-2 list-disc list-inside text-blue-600">
         <li>
-          <a href="/dashboard/teachers" className="hover:underline">
+          <Link href="/dashboard/teachers" className="hover:underline">
             Manage Teachers
-          </a>
+          </Link>
         </li>
         <li>
-          <a href="/dashboard/bookings" className="hover:underline">
+          <Link href="/dashboard/bookings" className="hover:underline">
             View Bookings
-          </a>
+          </Link>
         </li>
       </ul>
     </main>

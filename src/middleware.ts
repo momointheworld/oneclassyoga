@@ -8,25 +8,35 @@ const intlMiddleware = createIntlMiddleware({
   defaultLocale: 'en',
   localePrefix: 'always',
 });
-
 export async function middleware(req: NextRequest) {
-  // 2. ✅ Run intlMiddleware FIRST and get the response
-  const response = intlMiddleware(req);
-
   const pathname = req.nextUrl.pathname;
 
-  // 3. Extract locale from pathname AFTER intl processing
-  const pathnameLocale = pathname.split('/')[1];
-  const currentLocale = ['en', 'zh'].includes(pathnameLocale)
-    ? pathnameLocale
-    : 'en';
+  // 1. ✅ EXEMPT both /login and /dashboard from localization
+  // This ensures they stay at the root /path
+  if (
+    pathname === '/login' ||
+    pathname.startsWith('/auth') ||
+    pathname.startsWith('/dashboard')
+  ) {
+    // We don't return NextResponse.next() yet because /dashboard NEEDS Auth.
+    // We just skip the intlMiddleware part.
+  }
+
+  // 2. Initialize response
+  // Only run intl if it's NOT a bypassed route
+  const response =
+    pathname === '/login' ||
+    pathname.startsWith('/auth') ||
+    pathname.startsWith('/dashboard')
+      ? NextResponse.next()
+      : intlMiddleware(req);
 
   // 4. Define segments that need Auth
   const needsAuth =
-    pathname.includes('/dashboard') || pathname.includes('/community');
-  const isAuthPage = pathname.includes('/login') || pathname.includes('/auth');
+    pathname.startsWith('/dashboard') || pathname.includes('/community/new');
+  const isAuthPage = pathname === '/login' || pathname.startsWith('/auth');
 
-  // 5. Create Supabase client with the response from intlMiddleware
+  // 5. Create Supabase client
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -53,13 +63,12 @@ export async function middleware(req: NextRequest) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-
     const githubId = user?.identities?.find(
       (id) => id.provider === 'github',
     )?.id;
 
-    if (!user || githubId !== process.env.GITHUB_ALLOWED_ID) {
-      return NextResponse.redirect(new URL(`/${currentLocale}/login`, req.url));
+    if (!user || githubId !== process.env.NEXT_PUBLIC_GITHUB_ALLOWED_ID) {
+      return NextResponse.redirect(new URL(`/login`, req.url));
     }
   }
 
@@ -67,5 +76,6 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
+  // 7. Update matcher to exclude dashboard from the general "catch-all"
+  matcher: ['/((?!api|_next|_vercel|login|auth|dashboard|.*\\..*).*)'],
 };

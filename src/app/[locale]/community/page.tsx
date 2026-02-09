@@ -1,54 +1,49 @@
-// app/community/page.tsx
 import { Metadata } from 'next';
 import CommunityPageClient from './CommunityPageClient';
 import { createClient } from '@/utils/supabase/supabaseServer';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-  title: 'Community | OneClass',
-  description:
-    'Explore curated posts on Q&A, Experiences, Upcoming events, and Random thoughts — shared by OneClass.',
-  openGraph: {
-    title: 'OneClass Community',
-    description:
-      'Discover curated posts in Q&A, Experiences, Upcoming events, and Random categories — shared by OneClass.',
-    url: 'https://oneromeo.com/community',
-    siteName: 'OneClass',
-    images: [
-      {
-        url: '/images/ogs/community-og.jpeg',
-        width: 1200,
-        height: 630,
-        alt: 'OneClass Community',
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'OneClass Community',
-    description:
-      'Curated posts on Q&A, Experiences, Upcoming events, and Random topics — shared by OneClass.',
-    images: ['/images/ogs/community-og.jpeg'],
-    creator: '@oneromeo',
-  },
-  alternates: {
-    canonical: 'https://oneromeo.com/community',
-  },
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
-export const revalidate = 30; // cache for 30 seconds
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Community.metadata' });
 
-export default async function CommunityPage() {
-  const supabase = createClient();
+  return {
+    title: t('title'),
+    description: t('description'),
+    openGraph: {
+      title: t('title'),
+      description: t('description'),
+      url: 'https://oneclass.yoga/community',
+      siteName: 'OneClass',
+      images: [
+        {
+          url: '/images/ogs/community-og.jpeg',
+          width: 1200,
+          height: 630,
+          alt: t('title'),
+        },
+      ],
+      locale: locale === 'zh' ? 'zh_CN' : 'en_US',
+      type: 'website',
+    },
+  };
+}
 
-  // Get logged-in user (server side)
+export const revalidate = 30;
+
+export default async function CommunityPage({ params }: Props) {
+  const { locale } = await params;
+  const supabase = await createClient(); // Await supabase client
+
   const {
     data: { user },
-  } = await (await supabase).auth.getUser();
+  } = await supabase.auth.getUser();
 
-  // Get posts (server side)
-  const { data: posts, error } = await (await supabase)
+  const { data: posts, error } = await supabase
     .from('posts')
     .select(
       'id, title, content, slug, user_name, user_id, created_at, category',
@@ -57,5 +52,7 @@ export default async function CommunityPage() {
 
   if (error) throw new Error(error.message);
 
-  return <CommunityPageClient user={user} posts={posts || []} />;
+  return (
+    <CommunityPageClient user={user} posts={posts || []} locale={locale} />
+  );
 }

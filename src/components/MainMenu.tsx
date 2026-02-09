@@ -3,6 +3,7 @@
 import { useTransition } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
+import { LayoutDashboard } from 'lucide-react';
 import clsx from 'clsx';
 import Link from 'next/link';
 import {
@@ -25,6 +26,8 @@ export default function MainMenu() {
   // Helper to get the path without the locale prefix
   const getRelativePath = (path: string) => {
     if (!path) return '';
+    // Handle the dashboard specifically since it has no locale prefix
+    if (path.startsWith('/dashboard')) return path;
     const segments = path.split('/');
     // If the first segment is the current locale, remove it
     if (segments[1] === locale) {
@@ -51,7 +54,10 @@ export default function MainMenu() {
   };
 
   const handleNavigate = (href: string) => {
-    const localizedHref = `/${locale}${href === '/' ? '' : href}`;
+    // Check if the link is the dashboard (root-level) or a localized link
+    const localizedHref = href.startsWith('/dashboard')
+      ? href
+      : `/${locale}${href === '/' ? '' : href}`;
     startTransition(() => {
       router.push(localizedHref);
     });
@@ -66,7 +72,7 @@ export default function MainMenu() {
         <div className="text-lg font-semibold">
           <Link href={`/${locale}`} className="flex items-center gap-2">
             <Image
-              src="/images/oneclass-logo.svg"
+              src="../../images/oneclass-logo.svg"
               alt="Logo"
               width={50}
               height={50}
@@ -101,6 +107,17 @@ export default function MainMenu() {
               </Link>
             );
           })}
+
+          {/* HIDDEN DASHBOARD LINK: Only visible when active or via manual check */}
+          {relativePathname.startsWith('/dashboard') && (
+            <Link
+              href="/dashboard"
+              className="ml-4 flex items-center gap-1 text-sm font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100"
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              Admin
+            </Link>
+          )}
         </div>
 
         {/* Mobile menu */}
