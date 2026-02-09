@@ -17,9 +17,14 @@ export async function generateMetadata({
   };
 }
 
-export default async function LocationPage() {
+export default async function LocationPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
   // Use 'Home.LocationPage' if you nested it inside Home in your request config
-  const t = await getTranslations('Location');
+  const t = await getTranslations({ locale, namespace: 'Location' });
 
   return (
     <PageContainer>

@@ -31,7 +31,10 @@ export default async function PrivacyPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations('Policies.PrivacyPage');
+  const t = await getTranslations({
+    locale,
+    namespace: 'Policies.PrivacyPage',
+  });
 
   return (
     <PageContainer>

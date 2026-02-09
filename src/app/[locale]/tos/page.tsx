@@ -32,7 +32,10 @@ export default async function TermsPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations('Policies.TermsPage');
+  const t = await getTranslations({
+    locale,
+    namespace: 'Policies.TermsPage',
+  });
 
   return (
     <PageContainer>

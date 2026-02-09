@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/supabaseServer';
 import { LogOut } from 'lucide-react'; // example icon for logout
-import MainMenu from '@/components/MainMenu';
 import Link from 'next/link';
 
 // A simple logout function as server action (optional)

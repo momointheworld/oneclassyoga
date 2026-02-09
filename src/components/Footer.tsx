@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getTranslations, getLocale } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 
 const paymentMethods = [
   { src: '/payments/mastercard.svg', alt: 'Master Card' },
@@ -38,10 +38,9 @@ export function PaymentIcons() {
   );
 }
 
-export async function Footer() {
+export async function Footer({ locale }: { locale: string }) {
   // Use getLocale() and getTranslations() for Server Components
-  const locale = await getLocale();
-  const t = await getTranslations('Home.Footer');
+  const t = await getTranslations({ locale, namespace: 'Home.Footer' });
 
   return (
     <footer className="bg-gray-900 py-10 text-gray-300 text-sm px-2 sm:px-8 lg:px-10">

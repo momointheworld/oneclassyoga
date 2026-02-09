@@ -222,6 +222,8 @@ export default function TeacherProfileClient({
 
   const selectedDay = selectedDate ? format(selectedDate, 'EEEE') : null;
   const timeSlots = selectedDay ? weeklySchedule[selectedDay] || [] : [];
+  const displayBio =
+    locale === 'zh' ? teacher.bio_zh || teacher.bio : teacher.bio;
 
   return (
     <main className="max-w-3xl mx-auto p-6 space-y-8">
@@ -237,7 +239,9 @@ export default function TeacherProfileClient({
           <h1 className="text-3xl font-bold text-gray-900 mb-3">
             {teacher.name}
           </h1>
-          <div className="tiptap prose max-w-none">{parse(teacher.bio)}</div>
+          <div className="tiptap prose max-w-none">
+            {parse(displayBio || '')}
+          </div>
 
           <div className="grid grid-cols-2 gap-4 text-gray-800 mt-6">
             {/* STYLES SECTION */}
