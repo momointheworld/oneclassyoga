@@ -24,7 +24,7 @@ export const strengthsOptions = {
     'Arm Balances',
     'Inversions',
     'Twists',
-    'Stretching & Mobility',
+    'Stretching and Mobility',
     'Strength Building',
     'Flexibility',
     'Core Stability',

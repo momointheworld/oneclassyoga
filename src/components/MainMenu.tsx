@@ -23,6 +23,25 @@ export default function MainMenu() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
+  const languages = [
+    { code: 'en', label: 'EN', flag: '🇺🇸' },
+    { code: 'zh', label: '中文', flag: '🇨🇳' },
+  ];
+
+  const toggleLanguage = (newLocale: string) => {
+    if (newLocale === locale) return;
+
+    // next-intl handles the URL segments. We just need to replace the locale part.
+    // pathname looks like "/en/about" or "/zh/community"
+    const segments = pathname.split('/');
+    segments[1] = newLocale;
+    const newPathname = segments.join('/');
+
+    startTransition(() => {
+      router.replace(newPathname);
+    });
+  };
+
   // Helper to get the path without the locale prefix
   const getRelativePath = (path: string) => {
     if (!path) return '';
@@ -118,6 +137,25 @@ export default function MainMenu() {
               Admin
             </Link>
           )}
+
+          {/* Language Switcher */}
+          <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-full border border-gray-200">
+            {languages.map((lang) => (
+              <button
+                key={lang.code}
+                onClick={() => toggleLanguage(lang.code)}
+                disabled={isPending}
+                className={clsx(
+                  'px-3 py-1 rounded-full text-xs font-bold transition-all',
+                  locale === lang.code
+                    ? 'bg-white text-emerald-600 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700',
+                )}
+              >
+                {lang.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Mobile menu */}
@@ -129,6 +167,36 @@ export default function MainMenu() {
               </MenubarTrigger>
 
               <MenubarContent className="bg-white w-screen left-0 mt-3 p-4 space-y-2 border-t border-gray-100">
+                {/* Language Switcher at the TOP of mobile menu */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50 mb-2">
+                  <span className="text-sm font-semibold text-gray-500">
+                    {t('language')}
+                  </span>
+                  <div className="flex gap-2 bg-gray-100 p-1 rounded-xl">
+                    <button
+                      onClick={() => toggleLanguage('en')}
+                      className={clsx(
+                        'px-4 py-2 rounded-lg text-sm font-bold transition-all',
+                        locale === 'en'
+                          ? 'bg-white text-emerald-600 shadow-sm'
+                          : 'text-gray-400',
+                      )}
+                    >
+                      EN
+                    </button>
+                    <button
+                      onClick={() => toggleLanguage('zh')}
+                      className={clsx(
+                        'px-4 py-2 rounded-lg text-sm font-bold transition-all',
+                        locale === 'zh'
+                          ? 'bg-white text-emerald-600 shadow-sm'
+                          : 'text-gray-400',
+                      )}
+                    >
+                      中文
+                    </button>
+                  </div>
+                </div>
                 {links.map(({ label, href }) => (
                   <MenubarItem
                     key={href}

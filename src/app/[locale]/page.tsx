@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { PROGRAMS, programTeachers } from '@/lib/packages';
 import { getTranslations } from 'next-intl/server';
 import { Metadata } from 'next';
+import { headers, cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 // Corrected Metadata Generation for Next.js 15
 export async function generateMetadata({
@@ -18,6 +20,26 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const headerList = await headers();
+  const cookieStore = await cookies();
+
+  // 1. Check if user already has a language preference cookie
+  const hasLocaleCookie = cookieStore.has('NEXT_LOCALE');
+
+  // 2. Detect Browser/Device Language and Physical Location
+  const acceptLanguage = headerList.get('accept-language') || '';
+  const country = headerList.get('x-vercel-ip-country');
+
+  // 🌍 AUTO-SWITCH LOGIC (Only for first-time visitors on /en)
+  if (locale === 'en' && !hasLocaleCookie) {
+    const isChineseDevice = acceptLanguage.toLowerCase().includes('zh');
+    const isInChina = country === 'CN';
+
+    if (isChineseDevice || isInChina) {
+      redirect('/zh');
+    }
+  }
+
   const t = await getTranslations({ locale, namespace: 'Home.Metadata' });
 
   return {
@@ -59,11 +81,6 @@ export default async function HomePage({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'Home' });
   const tPrograms = await getTranslations({ locale, namespace: 'Programs' });
-  console.log(
-    '🏠 [HomePage] Sample translation:',
-    t('Hero.title').substring(0, 20),
-  );
-
   const supabase = createClient();
 
   // Data fetching
