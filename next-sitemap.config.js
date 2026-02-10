@@ -2,20 +2,20 @@
 module.exports = {
   siteUrl: 'https://www.oneclass.yoga',
   generateRobotsTxt: true,
-  exclude: ['/dashboard', '/dashboard/*', '/auth/*', '/login', '/api/*'],
+  exclude: ['/dashboard', '/dashboard/*', '/community/*', '/auth/*', '/login', '/api/*'],
   
-  // The transform function runs for every page found during the build
   transform: async (config, path) => {
-    // 1. Remove the existing locale prefix from the path to get the "raw" route
-    // Example: "/en/teachers/jane" becomes "/teachers/jane"
-    const rawPath = path.replace(/^\/(en|zh)/, '') || '';
+    // 1. Identify if the path already has a locale or is a base path
+    // This helps prevent double-prefixing like /en/en/about
+    const localeMatch = path.match(/^\/(en|zh)/);
+    const rawPath = localeMatch ? path.replace(/^\/(en|zh)/, '') : path;
 
     return {
-      loc: path, // The current page being processed
+      loc: path, 
       changefreq: 'daily',
       priority: 0.7,
       lastmod: new Date().toISOString(),
-      // 2. Dynamically create the alternate language links for this specific path
+      // 2. This creates the localized alternates for Google
       alternateRefs: [
         {
           href: `${config.siteUrl}/en${rawPath}`,
@@ -26,7 +26,7 @@ module.exports = {
           hreflang: 'zh',
         },
         {
-          href: `${config.siteUrl}/en${rawPath}`, // Default to English
+          href: `${config.siteUrl}/en${rawPath}`,
           hreflang: 'x-default',
         },
       ],
