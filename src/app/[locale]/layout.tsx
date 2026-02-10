@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import MainMenu from '@/components/MainMenu';
 import { Footer } from '@/components/Footer';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
+import CookieBanner from '@/components/CookieBanner';
 
 export default async function LocaleLayout({
   children,
@@ -24,6 +25,7 @@ export default async function LocaleLayout({
       <div className="flex flex-col min-h-screen">
         <MainMenu />
         <main className="flex-grow">{children}</main>
+        <CookieBanner />
         <Footer locale={locale} />
       </div>
     </NextIntlClientProvider>

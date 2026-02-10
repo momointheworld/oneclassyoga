@@ -120,6 +120,13 @@
       "secure": "Secure payments • SSL encrypted"
     },
     "copyright": "© {year} OneClass Yoga. All rights reserved."
-  }
+  },
+  
+  "CookieBanner": {
+    "description": "We use cookies to improve your experience on our site.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "policy": "Privacy Policy"
+}
 }
  

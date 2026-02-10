@@ -1,49 +1,57 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 
 export default function CookieBanner() {
+  const [mounted, setMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const t = useTranslations('Home.CookieBanner');
+  const locale = useLocale();
 
   useEffect(() => {
-    // Check if user has already accepted
+    setMounted(true); // 1. Signal that we are now on the client
     const consent = localStorage.getItem('cookie-consent');
     if (!consent) {
-      setIsVisible(true);
+      setIsVisible(true); // 2. Only then check visibility
     }
   }, []);
+  // 3. If we aren't mounted yet, return null to avoid hydration mismatch
+  if (!mounted || !isVisible) return null;
 
-  const acceptCookies = () => {
-    localStorage.setItem('cookie-consent', 'true');
+  const handleChoice = (choice: 'accepted' | 'declined') => {
+    localStorage.setItem('cookie-consent', choice);
     setIsVisible(false);
+    // If you have analytics scripts (like GA), you can trigger them here
   };
 
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 sm:p-6">
-      <div className="max-w-4xl mx-auto bg-white border border-gray-100 shadow-2xl rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="text-center sm:text-left">
-          <p className="text-gray-700 text-sm sm:text-base">
-            I use cookies to improve your experience on this site. By continuing
-            to browse, you agree to my use of cookies.
-            <Link
-              href="/privacy"
-              className="ml-1 text-emerald-600 underline hover:text-emerald-700"
-            >
-              Learn more
-            </Link>
-          </p>
-        </div>
-        <div className="flex gap-3 shrink-0">
-          <button
-            onClick={acceptCookies}
-            className="bg-emerald-600 text-white px-6 py-2 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm"
-          >
-            Accept
-          </button>
-        </div>
+    <div className="fixed bottom-4 left-4 right-4 z-50 flex flex-col md:flex-row items-center justify-between gap-4 p-4 bg-white border border-gray-200 shadow-xl rounded-2xl md:max-w-4xl mx-auto">
+      <div className="text-sm text-gray-600">
+        {t('description')}{' '}
+        <Link
+          href={`/${locale}/privacy`}
+          className="underline hover:text-black"
+        >
+          {t('policy')}
+        </Link>
+      </div>
+      <div className="flex gap-2 w-full md:w-auto">
+        <button
+          onClick={() => handleChoice('declined')}
+          className="flex-1 md:flex-none px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+        >
+          {t('decline')}
+        </button>
+        <button
+          onClick={() => handleChoice('accepted')}
+          className="flex-1 md:flex-none px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-800 rounded-lg transition"
+        >
+          {t('accept')}
+        </button>
       </div>
     </div>
   );

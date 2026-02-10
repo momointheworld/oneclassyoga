@@ -118,5 +118,13 @@
       "secure": "安全支付 • SSL加密"
     },
     "copyright": "© {year} OneClass Yoga。保留所有权利。"
+  },
+ 
+  "CookieBanner": {
+    "description": "我们使用 Cookie 来改善您在我们网站上的体验。",
+    "accept": "接受",
+    "decline": "拒绝",
+    "policy": "隐私政策"
   }
+ 
 }
