@@ -1,0 +1,98 @@
+{
+  "TermsPage": {
+    "metadata": {
+      "title": "Terms of Service",
+      "description": "Read the Terms of Service for OneClass — including booking, payments, cancellations, rescheduling, class locations, and equipment policies."
+    },
+    "title": "Terms of Service",
+    "intro": "Please read these Terms of Service (\"Terms\") carefully before using our website and services.",
+    "sections": {
+      "acceptance": {
+        "title": "Acceptance of Terms",
+        "content": "By accessing or using our services, you agree to be bound by these Terms. If you do not agree, please do not use our site."
+      },
+      "payments": {
+        "title": "Booking and Payments",
+        "content1": "All bookings and payments are processed securely through Stripe. You agree to provide accurate information during checkout.",
+        "content2": "Payment confirmation is required to secure your booking slot. We are not responsible for missed sessions due to payment issues.",
+        "includedBold": "Studio, yoga mat, and props",
+        "includedText": "are included in your payment."
+      },
+      "policy": {
+        "title": "Cancellation and Rescheduling Policy",
+        "intro": "All bookings are <bold>non-refundable</bold>. However, you may reschedule or transfer your class to another person under the conditions below.",
+        "bullet1": "Rescheduling is allowed up to <bold>24 hours before</bold> the class.",
+        "bullet2": "You may transfer your booking to another person with prior notice.",
+        "bullet3Bold": "No rescheduling or transfers",
+        "bullet3Text": "are allowed for late cancellations, no-shows, or arrivals more than 30 minutes late."
+      },
+      "conduct": {
+        "title": "User Conduct",
+        "content": "You agree to use the services responsibly and respectfully. Any abusive, harmful, or illegal behavior may result in termination of service without refund."
+      },
+      "liability": {
+        "title": "Limitation of Liability",
+        "content": "We provide services \"as is\" and are not liable for any indirect, incidental, or consequential damages arising from your use of the site."
+      },
+      "changes": {
+        "title": "Changes to Terms",
+        "content": "We may update these Terms periodically. Continued use of the site after changes means you accept the updated Terms."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "content": "If you have questions about these Terms, please <link>contact us</link>."
+      }
+    }
+  },
+  "PrivacyPage": {
+    "metadata": {
+      "title": "Privacy Policy",
+      "description": "Read the Privacy Policy for OneClass — learn how we collect, use, and protect your personal information."
+    },
+    "title": "Privacy Policy",
+    "intro": "Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your personal information when you use our website and services.",
+    "sections": {
+      "collect": {
+        "title": "Information We Collect",
+        "content": "When you book a session or make a purchase, we collect the following information:",
+        "items": ["Email address", "Full name", "Billing address"]
+      },
+      "usage": {
+        "title": "How We Use Your Information",
+        "content": "We use your information to:",
+        "items": [
+          "Process your payment securely via Stripe",
+          "Schedule and manage your booked sessions",
+          "Send you booking confirmations and related communications",
+          "Provide customer support"
+        ]
+      },
+      "protection": {
+        "title": "How We Protect Your Information",
+        "content": "We take your privacy seriously and use industry-standard security measures to protect your data. All payment processing is handled securely by Stripe, a trusted payment processor."
+      },
+      "sharing": {
+        "title": "Sharing Your Information",
+        "content": "We do not sell, trade, or rent your personal information to others. Your data is only shared with trusted third parties necessary to provide our services (such as Stripe)."
+      },
+      "rights": {
+        "title": "Your Rights",
+        "content": "You have the right to:",
+        "items": [
+          "Access your personal information",
+          "Request correction or deletion of your data",
+          "Opt out of marketing communications"
+        ],
+        "footer": "To exercise these rights, please <link>contact us</link>."
+      },
+      "changes": {
+        "title": "Changes to This Policy",
+        "content": "We may update this Privacy Policy from time to time. We encourage you to review it periodically."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "content": "If you have questions or concerns about your privacy, please <link>contact us</link>."
+      }
+    }
+  }
+}

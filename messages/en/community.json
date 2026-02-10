@@ -1,0 +1,23 @@
+{
+    "metadata": {
+      "title": "Asana Journal | OneClass Yoga Community 🧘‍♀️",
+      "description": "Explore the yoga life in Chiang Mai: Q&A, practice insights, upcoming events, and mindful reflections shared by our community."
+    },
+    "ui": {
+      "title": "Asana Journal",
+      "allCategories": "All Posts",
+      "greeting": "👋 Hello, {name}",
+      "welcome": "✨ Welcome to the Community",
+      "createPost": "✍️ Share an Update",
+      "signOut": "Sign Out",
+      "loadMore": "Load More Posts",
+      "noPosts": "No posts found in this category."
+    },
+    "categories": {
+      "Q&A": "Q&A",
+      "Experiences": "Insights",
+      "Events": "What's On",
+      "General": "General",
+      "Random": "Reflections"
+    }
+}

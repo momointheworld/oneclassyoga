@@ -1,0 +1,188 @@
+{
+  "Metadata": {
+    "title": "Yoga Teachers & Private Programs in Chiang Mai",
+    "description": "Learn from expert teachers through focused private yoga programs in Chiang Mai. Specialized 1-on-1 training for all levels, from therapeutic recovery to advanced practice. Share a session with a friend.",
+    "ogAlt": "Expert yoga teachers leading focused private programs in Chiang Mai"
+  },
+ 
+    "UI": {
+    "pageTitle":"Chiang Mai Yoga Teachers: Private Classes",
+    "mostPopular": "Most Popular",
+    "featuredTitle": "Featured Teacher",
+    "from": "From",
+    "priceSuffix": "฿",
+    "perSession": " / session",
+    "strengthLabel": "Strengths:",
+    "viewProfile": "View Profile",
+    "explorePrograms": "Explore Programs",
+    "loading": "Redirecting..."
+  },
+    "levels": { 
+    "Beginner": "Beginner",
+    "Intermediate": "Intermediate",
+    "Advanced": "Advanced"
+  },
+  "Styles": {
+    "Aerial": "Aerial",
+    "Anusara": "Anusara",
+    "Anusaranga": "Anusaranga",
+    "Ashtanga": "Ashtanga",
+    "Bikram": "Bikram",
+    "Chair": "Chair",
+    "Hatha": "Hatha",
+    "Iyengar": "Iyengar",
+    "Karma": "Karma",
+    "Kundalini": "Kundalini",
+    "Power": "Power",
+    "Restorative": "Restorative",
+    "Sivananda": "Sivananda",
+    "Vinyasa": "Vinyasa",
+    "Yin": "Yin"
+  },
+    "strengthCategories": {
+    "Movement": "Movement",
+    "Mind & Body": "Mind & Body",
+    "Connection": "Connection"
+  },
+  "Strengths": {
+    "Movement": {
+      "Backbends": "Backbends",
+      "Arm Balances": "Arm Balances",
+      "Inversions": "Inversions",
+      "Twists": "Twists",
+      "Stretching and Mobility": "Stretching and Mobility",
+      "Strength Building": "Strength Building",
+      "Flexibility": "Flexibility",
+      "Core Stability": "Core Stability",
+      "Alignment": "Alignment",
+      "Balance": "Balance",
+      "Endurance": "Endurance",
+      "Flow Sequencing": "Flow Sequencing",
+      "Breathwork": "Breathwork",
+      "Therapy": "Therapy",
+      "Restorative Yoga": "Restorative Yoga",
+      "Physical Conditioning": "Physical Conditioning",
+      "Functional Movement": "Functional Movement",
+      "Posture Correction": "Posture Correction",
+      "Proprioception": "Proprioception",
+      "Dynamic Flow": "Dynamic Flow"
+    },
+    "Mind & Body": {
+      "Mindfulness": "Mindfulness",
+      "Meditation": "Meditation",
+      "Relaxation": "Relaxation",
+      "Focus": "Focus",
+      "Healing": "Healing",
+      "Visualization": "Visualization",
+      "Stress Relief": "Stress Relief",
+      "Energy Work": "Energy Work",
+      "Emotional Awareness": "Emotional Awareness",
+      "Self-Reflection": "Self-Reflection",
+      "Pranayama": "Pranayama",
+      "Breath Awareness": "Breath Awareness",
+      "Body Scan": "Body Scan",
+      "Chakra Work": "Chakra Work",
+      "Inner Strength": "Inner Strength"
+    },
+    "Connection": {
+      "Patience": "Patience",
+      "Motivation": "Motivation",
+      "Compassion": "Compassion",
+      "Adaptability": "Adaptability",
+      "Clear Communication": "Clear Communication",
+      "Confidence Building": "Confidence Building",
+      "Encouragement": "Encouragement",
+      "Dynamic": "Dynamic",
+      "Empathy": "Empathy",
+      "Active Listening": "Active Listening",
+      "Supportive Guidance": "Supportive Guidance",
+      "Positive Reinforcement": "Positive Reinforcement",
+      "Personalized Instruction": "Personalized Instruction",
+      "Mentorship": "Mentorship",
+      "Inspiring Presence": "Inspiring Presence"
+    }
+  },
+  "TeacherProfile": {
+    "metadata": {
+      "title": "{name} | Private Yoga Teacher in Chiang Mai",
+      "description": "Learn yoga in Chiang Mai with {name}, specializing in {strengths}. Offering private 1-on-1 classes and structured programs.",
+      "ogAlt": "Yoga session with {name} in Chiang Mai",
+      "notFoundTitle": "Yoga Teacher Not Found | OneClass Yoga",
+      "notFoundDescription": "This yoga teacher profile could not be found in Chiang Mai."
+    },
+    "labels": {
+    "strengths": "Strengths:",
+    "levels": "Levels:",
+    "styles": "Styles:"
+    },
+    "programData": {
+      "single": {
+        "title": "Single Trial Session",
+        "duration": "90 Min • Personal Consultation"
+      },
+      "foundations-3": {
+        "title": "Yoga Foundations Intensive",
+        "duration": "3 Sessions • 90 Min Each"
+      },
+      "mobility-3": {
+        "title": "Core & Mobility Series",
+        "duration": "3 Sessions • 90 Min Each"
+      },
+      "inversions-3": {
+        "title": "The Art of Inversion",
+        "duration": "3 Sessions • 90 Min Each"
+      },
+      "arm-balance-3": {
+        "title": "Arm Balances & Twists",
+        "duration": "3 Sessions • 90 Min Each"
+      }
+    },
+    "programs": {
+      "sectionTitle": "Select Your Program",
+      "extraParticipantNote": "Add a Friend for {rate}฿ more only!",
+      "singleTitle": "Single Trial Session",
+      "singleSubtitle": "90 Min • Personal Consultation"
+    },
+    "video": {
+      "title": "{name} on Yoga, Teaching, and Practice"
+    },
+    "calendar": {
+      "defaultTitle": "Choose Your Date & Time",
+      "bundleNote": "(Rest of sessions scheduled with your teacher.)",
+      "label": "Choose a date",
+      "placeholder": "Pick a date",
+      "format": "PPP",
+        "timeSlot": {
+          "label": "Select a time",
+          "noSlots": "No slots available for this date",
+          "booked": "Booked",
+          "notAvailable": "Not available"
+        },
+    "participants": {
+          "label": "Invite a Friend",
+          "alone":"Just Me",
+          "friend":"With a friend"
+        },
+      "summary": {
+        "selectedDate": "Selected Date:",
+        "selectedTime": "Selected Time:",
+        "rate": "Rate:",
+        "notSelected": "Not selected"
+      }
+    },
+    "reviews": {
+      "title": "Student Reviews",
+      "subtitle": "Real experiences from those who’ve practiced with {teacherName}."
+    },
+    "footer": {
+      "tosAgreement": "I agree to the",
+      "tosLink": "Terms of Service",
+      "bookButton": "Book Now"
+    },
+    "errors": {
+      "selectPackage": "Please select a package.",
+      "selectDateTime": "Please select a date and time slot before booking."
+    }
+  }
+ 
+}

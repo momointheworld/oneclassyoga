@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { getTranslations } from 'next-intl/server';
 
 const paymentMethods = [
   { src: '/payments/mastercard.svg', alt: 'Master Card' },
@@ -24,7 +25,6 @@ export function PaymentIcons() {
             style={{ objectFit: 'contain' }}
             className="opacity-80"
           />
-          {/* Tooltip */}
           <span
             className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 
                        whitespace-nowrap px-2 py-1 text-xs rounded bg-gray-800 
@@ -38,122 +38,123 @@ export function PaymentIcons() {
   );
 }
 
-export function Footer() {
+export async function Footer({ locale }: { locale: string }) {
+  // Use getLocale() and getTranslations() for Server Components
+  const t = await getTranslations({ locale, namespace: 'Home.Footer' });
+
   return (
     <footer className="bg-gray-900 py-10 text-gray-300 text-sm px-2 sm:px-8 lg:px-10">
       <div className="max-w-7xl mx-auto">
-        {/* Main Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           {/* Left: Logo + Social */}
           <div className="flex flex-col items-center md:items-start gap-4">
-            {/* Logo & Site Name */}
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gray-900">
-                {' '}
+              <div className="w-8 h-8">
                 <Image
                   src="/images/oneclass-logo-gray.svg"
                   alt="OneClass Yoga"
                   width={50}
                   height={50}
                   priority
-                  className=""
                 />
               </div>
-              <span className="font-semibold text-lg">OneClass Yoga</span>
+              <span className="font-semibold text-lg text-white">
+                OneClass Yoga
+              </span>
             </div>
 
-            {/* Social Icons */}
             <div className="flex space-x-6 items-center">
-              <a
-                href="https://www.facebook.com/oneclassyoga"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                className="transition hover:opacity-80"
-              >
-                <Image
-                  key="facebook"
-                  src="/images/fb.svg"
-                  alt="facebook"
-                  width={30}
-                  height={30}
-                />
-              </a>
-              <a
-                href="https://www.instagram.com/oneclassyoga/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="transition hover:opacity-80"
-              >
-                <Image
-                  key="instagram"
-                  src="/images/ig.svg"
-                  alt="instagram"
-                  width={30}
-                  height={30}
-                />
-              </a>
-              <a
-                href="https://www.youtube.com/@oneclassyoga"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="YouTube"
-                className="transition hover:opacity-80"
-              >
-                <Image
-                  key="youtube"
-                  src="/images/ytb.svg"
-                  alt="youtube"
-                  width={30}
-                  height={30}
-                />
-              </a>
+              {[
+                {
+                  id: 'fb',
+                  url: 'https://www.facebook.com/oneclassyoga',
+                  img: '/images/fb.svg',
+                },
+                {
+                  id: 'ig',
+                  url: 'https://www.instagram.com/oneclassyoga/',
+                  img: '/images/ig.svg',
+                },
+                {
+                  id: 'yt',
+                  url: 'https://www.youtube.com/@oneclassyoga',
+                  img: '/images/ytb.svg',
+                },
+              ].map((social) => (
+                <a
+                  key={social.id}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition hover:opacity-70"
+                >
+                  <Image
+                    src={social.img}
+                    alt={social.id}
+                    width={30}
+                    height={30}
+                  />
+                </a>
+              ))}
             </div>
           </div>
 
           {/* Right: Navigation */}
           <div className="flex flex-col items-center md:items-end gap-6 w-full">
-            {/* Navigation Columns */}
             <div className="grid grid-cols-2 gap-8 w-full md:w-auto">
               {/* Explore */}
-              <div className="flex flex-col items-center text-gray-500 md:items-start gap-2">
+              <div className="flex flex-col items-center md:items-start gap-2">
                 <span className="font-semibold text-gray-200 text-lg">
-                  Explore
+                  {t('explore.title')}
                 </span>
-                <Link href="/programs" className="hover:text-white transition">
-                  Programs
+                <Link
+                  href={`/${locale}/programs`}
+                  className="text-gray-500 hover:text-white transition"
+                >
+                  {t('explore.programs')}
                 </Link>
-                <Link href="/teachers" className="hover:text-white transition">
-                  Teachers
+                <Link
+                  href={`/${locale}/teachers`}
+                  className="text-gray-500 hover:text-white transition"
+                >
+                  {t('explore.teachers')}
                 </Link>
-                <Link href="/about" className="hover:text-white transition">
-                  About
+                <Link
+                  href={`/${locale}/about`}
+                  className="text-gray-500 hover:text-white transition"
+                >
+                  {t('explore.about')}
                 </Link>
-                <Link href="/location" className="hover:text-white transition">
-                  Location
+                <Link
+                  href={`/${locale}/location`}
+                  className="text-gray-500 hover:text-white transition"
+                >
+                  {t('explore.location')}
                 </Link>
               </div>
 
               {/* Legal */}
-              <div className="flex flex-col text-gray-500 items-center md:items-start gap-2">
+              <div className="flex flex-col items-center md:items-start gap-2">
                 <span className="font-semibold text-gray-200 text-lg">
-                  Legal
+                  {t('legal.title')}
                 </span>
                 <Link
-                  href="/privacy"
-                  className="hover:text-gray-400 transition"
+                  href={`/${locale}/privacy`}
+                  className="text-gray-500 hover:text-white transition"
                 >
-                  Privacy Policy
-                </Link>
-                <Link href="/tos" className="hover:text-gray-400 transition">
-                  Terms of Service
+                  {t('legal.privacy')}
                 </Link>
                 <Link
-                  href="/contact"
-                  className="hover:text-gray-400 transition"
+                  href={`/${locale}/tos`}
+                  className="text-gray-500 hover:text-white transition"
                 >
-                  Contact
+                  {t('legal.tos')}
+                </Link>
+                <Link
+                  href={`/${locale}/contact`}
+                  className="text-gray-500 hover:text-white transition"
+                >
+                  {t('legal.contact')}
                 </Link>
               </div>
             </div>
@@ -161,23 +162,20 @@ export function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="border-t border-gray-700 mt-8 pt-6 flex flex-col items-center gap-4">
-          {/* Payment Icons */}
+        <div className="border-t border-gray-800 mt-8 pt-6 flex flex-col items-center gap-4">
           <div className="flex flex-col sm:flex-row items-center gap-4">
-            <span className="text-gray-400 text-xs font-medium">
-              We accept:
+            <span className="text-gray-500 text-xs font-medium">
+              {t('payments.accept')}
             </span>
             <PaymentIcons />
           </div>
 
-          {/* SSL Note */}
-          <p className="text-xs text-gray-500 text-center">
-            Secure payments • SSL encrypted
+          <p className="text-xs text-gray-600 text-center">
+            {t('payments.secure')}
           </p>
 
-          {/* Copyright */}
-          <p className="text-gray-400 text-xs text-center">
-            © {new Date().getFullYear()} OneClass Yoga. All rights reserved.
+          <p className="text-gray-500 text-xs text-center">
+            {t('copyright', { year: new Date().getFullYear() })}
           </p>
         </div>
       </div>

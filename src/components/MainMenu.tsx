@@ -1,6 +1,9 @@
 'use client';
-import { useState, useEffect, useTransition } from 'react';
+
+import { useTransition } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
+import { LayoutDashboard } from 'lucide-react';
 import clsx from 'clsx';
 import Link from 'next/link';
 import {
@@ -13,110 +16,199 @@ import {
 import { Menu } from 'lucide-react';
 import Image from 'next/image';
 
-const links = [
-  { label: 'Home', href: '/' },
-  { label: 'Programs', href: '/programs' },
-  { label: 'Teachers', href: '/teachers' },
-  { label: 'About', href: '/about' },
-  { label: 'Contact', href: '/contact' },
-  { label: 'Community', href: '/community' },
-];
-
 export default function MainMenu() {
+  const t = useTranslations('Home.Nav');
   const pathname = usePathname();
+  const locale = useLocale();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [progress, setProgress] = useState(0);
 
-  const handleNavigate = (href: string) => {
+  const languages = [
+    { code: 'en', label: 'EN', flag: '🇺🇸' },
+    { code: 'zh', label: '中文', flag: '🇨🇳' },
+  ];
+
+  const toggleLanguage = (newLocale: string) => {
+    if (newLocale === locale) return;
+
+    // next-intl handles the URL segments. We just need to replace the locale part.
+    // pathname looks like "/en/about" or "/zh/community"
+    const segments = pathname.split('/');
+    segments[1] = newLocale;
+    const newPathname = segments.join('/');
+
     startTransition(() => {
-      router.push(href);
+      router.replace(newPathname);
     });
   };
 
-  // Smooth "NProgress-style" animation
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-
-    const step = () => {
-      setProgress((prev) => {
-        if (!isPending) return prev; // stop if not pending
-        // Move faster at start, slower near 90%
-        const diff = 90 - prev;
-        const increment = Math.max(0.5, diff * 0.1);
-        return Math.min(prev + increment, 90);
-      });
-      timer = setTimeout(step, 100);
-    };
-
-    if (isPending) step();
-    else if (progress > 0) {
-      setProgress(100);
-      const finishTimeout = setTimeout(() => setProgress(0), 300);
-      return () => clearTimeout(finishTimeout);
+  // Helper to get the path without the locale prefix
+  const getRelativePath = (path: string) => {
+    if (!path) return '';
+    // Handle the dashboard specifically since it has no locale prefix
+    if (path.startsWith('/dashboard')) return path;
+    const segments = path.split('/');
+    // If the first segment is the current locale, remove it
+    if (segments[1] === locale) {
+      const relative = '/' + segments.slice(2).join('/');
+      return relative === '//' ? '/' : relative; // Fix for home page
     }
+    return path;
+  };
 
-    return () => clearTimeout(timer);
-  }, [isPending, progress]);
+  const relativePathname = getRelativePath(pathname);
+
+  const links = [
+    { label: t('home'), href: '/' },
+    { label: t('programs'), href: '/programs' },
+    { label: t('teachers'), href: '/teachers' },
+    { label: t('about'), href: '/about' },
+    { label: t('contact'), href: '/contact' },
+    { label: t('community'), href: '/community' },
+  ];
 
   const isActiveLink = (href: string) => {
-    if (href === '/') return pathname === '/';
-    return pathname === href || pathname.startsWith(`${href}/`);
+    if (href === '/') return relativePathname === '/';
+    return relativePathname === href || relativePathname.startsWith(href);
   };
+
+  const handleNavigate = (href: string) => {
+    // Check if the link is the dashboard (root-level) or a localized link
+    const localizedHref = href.startsWith('/dashboard')
+      ? href
+      : `/${locale}${href === '/' ? '' : href}`;
+    startTransition(() => {
+      router.push(localizedHref);
+    });
+  };
+
+  // --- REMOVED THE NAKED LINKS.MAP FROM HERE ---
 
   return (
     <div className="w-full shadow-sm bg-white z-50 relative">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        {/* Logo */}
         <div className="text-lg font-semibold">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href={`/${locale}`} className="flex items-center gap-2">
             <Image
-              src="/images/oneclass-logo.svg"
-              alt="OneClass Yoga"
+              src="../../images/oneclass-logo.svg"
+              alt="Logo"
               width={50}
               height={50}
-              priority
             />
             <span className="inline text-lg font-semibold">OneClass Yoga</span>
           </Link>
         </div>
 
+        {/* Desktop Links */}
         <div className="hidden md:flex gap-6">
-          {links.map(({ label, href }) => (
+          {links.map(({ label, href }) => {
+            const finalHref = `/${locale}${href === '/' ? '' : href}`;
+            const active = isActiveLink(href);
+
+            return (
+              <Link
+                key={href}
+                href={finalHref}
+                onClick={(e) => {
+                  if (active) return;
+                  e.preventDefault();
+                  handleNavigate(href);
+                }}
+                className={clsx(
+                  'text-md font-medium transition-all duration-200 relative py-2 px-1',
+                  active
+                    ? 'text-emerald-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-emerald-600'
+                    : 'text-gray-800 hover:text-emerald-500',
+                )}
+              >
+                {label}
+              </Link>
+            );
+          })}
+
+          {/* HIDDEN DASHBOARD LINK: Only visible when active or via manual check */}
+          {relativePathname.startsWith('/dashboard') && (
             <Link
-              key={href}
-              href={href}
-              onClick={(e) => {
-                e.preventDefault();
-                handleNavigate(href);
-              }}
-              className={clsx(
-                'text-md font-medium hover:underline transition-colors duration-150',
-                isActiveLink(href) && 'text-emerald-600'
-              )}
+              href="/dashboard"
+              className="ml-4 flex items-center gap-1 text-sm font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100"
             >
-              {label}
+              <LayoutDashboard className="w-4 h-4" />
+              Admin
             </Link>
-          ))}
+          )}
+
+          {/* Language Switcher */}
+          <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-full border border-gray-200">
+            {languages.map((lang) => (
+              <button
+                key={lang.code}
+                onClick={() => toggleLanguage(lang.code)}
+                disabled={isPending}
+                className={clsx(
+                  'px-3 py-1 rounded-full text-xs font-bold transition-all',
+                  locale === lang.code
+                    ? 'bg-white text-emerald-600 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700',
+                )}
+              >
+                {lang.label}
+              </button>
+            ))}
+          </div>
         </div>
 
+        {/* Mobile menu */}
         <div className="md:hidden">
-          <Menubar>
+          <Menubar className="border-none bg-transparent shadow-none">
             <MenubarMenu>
-              <MenubarTrigger className="p-2">
-                <Menu className="w-5 h-5" />
+              <MenubarTrigger className="p-2 cursor-pointer">
+                <Menu className="w-6 h-6" />
               </MenubarTrigger>
 
-              <MenubarContent className="bg-white w-screen left-0">
+              <MenubarContent className="bg-white w-screen left-0 mt-3 p-4 space-y-2 border-t border-gray-100">
+                {/* Language Switcher at the TOP of mobile menu */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50 mb-2">
+                  <span className="text-sm font-semibold text-gray-500">
+                    {t('language')}
+                  </span>
+                  <div className="flex gap-2 bg-gray-100 p-1 rounded-xl">
+                    <button
+                      onClick={() => toggleLanguage('en')}
+                      className={clsx(
+                        'px-4 py-2 rounded-lg text-sm font-bold transition-all',
+                        locale === 'en'
+                          ? 'bg-white text-emerald-600 shadow-sm'
+                          : 'text-gray-400',
+                      )}
+                    >
+                      EN
+                    </button>
+                    <button
+                      onClick={() => toggleLanguage('zh')}
+                      className={clsx(
+                        'px-4 py-2 rounded-lg text-sm font-bold transition-all',
+                        locale === 'zh'
+                          ? 'bg-white text-emerald-600 shadow-sm'
+                          : 'text-gray-400',
+                      )}
+                    >
+                      中文
+                    </button>
+                  </div>
+                </div>
                 {links.map(({ label, href }) => (
                   <MenubarItem
                     key={href}
-                    className="focus:outline-none focus:ring-0"
+                    className="focus:outline-none focus:ring-0 p-0"
                   >
                     <button
                       onClick={() => handleNavigate(href)}
                       className={clsx(
-                        'w-full px-4 py-2 text-left text-md font-medium hover:bg-gray-100 transition-colors',
-                        isActiveLink(href) && 'text-emerald-600'
+                        'w-full px-6 py-4 text-left text-lg font-medium rounded-xl transition-colors',
+                        isActiveLink(href)
+                          ? 'bg-emerald-50 text-emerald-600'
+                          : 'hover:bg-gray-50 text-gray-700',
                       )}
                     >
                       {label}
@@ -129,11 +221,8 @@ export default function MainMenu() {
         </div>
       </div>
 
-      {progress > 0 && (
-        <div
-          className="h-1 bg-emerald-500 absolute top-full left-0 transition-all duration-100 ease-out"
-          style={{ width: `${progress}%` }}
-        />
+      {isPending && (
+        <div className="h-0.5 bg-emerald-500 absolute top-full left-0 w-full animate-pulse z-50" />
       )}
     </div>
   );

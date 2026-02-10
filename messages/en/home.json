@@ -1,0 +1,125 @@
+{
+  "Nav": {
+    "home": "Home",
+    "programs": "Programs",
+    "teachers": "Teachers",
+    "about": "About",
+    "contact": "Contact",
+    "community": "Community",
+    "language": "Language"
+  },
+ "Metadata": {
+    "title": "Master Yoga Skills: Private Programs in Chiang Mai",
+    "description": "Accelerate your progress with private, one-on-one yoga programs built around the specific strengths of Chiang Mai's best teachers.",
+    "ogTitle": "Master Yoga Skills: Private Programs in Chiang Mai",
+    "ogDescription": "Personalized one-on-one yoga programs tailored to your needs. Learn from handpicked expert teachers in Chiang Mai.",
+    "ogAlt": "OneClass Yoga - Private Yoga Programs in Chiang Mai"
+  },
+  "Hero": {
+    "title": "Master Yoga Skills: \nPrivate Programs in Chiang Mai",
+    "description": "I am a longtime practitioner in Chiang Mai and I’ve followed a lot of teachers over the years, learning their skills in different areas. I created this to help these teachers gain the exposure they deserve by putting together private, one-on-one programs built around their specific strengths. This allows students to progress with much more focus than a group class, with every session tailored to exactly what they need."
+  },
+  "Process": {
+    "title": "How it works",
+    "steps": {
+      "step1": {
+        "title": "Pick your path",
+        "desc": "Choose a program I’ve built around a teacher’s specific mastery. Whether it’s inversions or foundations, I’ve picked the path that matches your goal."
+      },
+      "step2": {
+        "title": "Book your specialist",
+        "desc": "Go straight to my recommended teacher’s calendar to start. You can always bring a friend to share the practice (and the cost) with you."
+      },
+      "step3": {
+        "title": "Practice one-on-one",
+        "desc": "We focus on 90-minute sessions tailored to your body. You’ll actually master the skill instead of just following a random group flow."
+      }
+    },
+    "schema": {
+      "name": "How to Book a Yoga Program in Chiang Mai",
+      "description": "Follow these steps to select a structured yoga program and book private sessions with expert instructors in Chiang Mai."
+    }
+  },
+
+  "Trust": {
+    "title": "Built for Mastery",
+    "items": {
+      "progress": {
+        "title": "Designed for Your Progress",
+        "desc": "After 10 years in group classes, I realized following a flow isn't the same as improving. I built these programs to give you a structured path to actually master new skills."
+      },
+      "trust": {
+        "title": "Teachers I Personally Trust",
+        "desc": "I only list teachers I have practiced with myself. I’ve seen their technical depth and care for safety firsthand, so I only recommend those I trust with my own practice."
+      },
+      "savings": {
+        "title": "Grow Together, Save Together",
+        "desc": "Private yoga is a big investment, so I created the 'Share with a Friend' model. It makes expert, 1-on-1 coaching more affordable and a lot more fun."
+      }
+    }
+  },
+  "Reviews": {
+    "title": "Student Reviews",
+    "subtitle": "Real experiences from those who’ve practiced with our teachers"
+  },
+
+  "FAQ": {
+    "title": "Common Questions",
+    "footerText": "Still curious about our programs?",
+    "communityLink": "Join the conversation in our <link>Community Q&A</link>",
+    "communityLabel": "Community Q&A",
+    "questions": {
+      "beginners": {
+        "q": "Are these programs suitable for beginners?",
+        "a": "Absolutely. We have programs specifically designed for foundations (Yoga Foundations Intensive), while our more technical programs like \"The Art of Inversion\" are tailored for those looking to progress. Your teacher adapts every session within the program to your specific level and pace.",
+        "aSchema": "Absolutely. We have programs specifically designed for foundations, while technical programs are for progression. Teachers adapt every session to your specific level and pace."
+      },
+      "location": {
+        "q": "Where do the program sessions take place?",
+        "a": "All sessions are held at our <location>Old Town studio</location> in Chiang Mai. It’s a dedicated, quiet space designed for focused, private practice, ensuring you get the most out of your structured program.",
+        "aSchema": "All sessions are held at our Old Town studio in Chiang Mai, a dedicated space for focused private practice."
+      },
+      "selection": {
+        "q": "How are the teachers for these programs selected?",
+        "a": "Every teacher is handpicked based on their technical expertise and ability to teach structured curriculums. They are all certified professionals with deep experience in their specific niche, ensuring that your program is safe, progressive, and effective.",
+        "aSchema": "Teachers are handpicked based on technical expertise and ability to teach structured curriculums. All are certified professionals with deep experience."
+      },
+      "friend": {
+        "q": "Can I share a program with a friend?",
+        "a": "Yes! You can book any program and bring a friend to join you. It’s a great way to stay motivated and share the cost. There is only a small additional fee per session for the extra person, which you can select during the booking process.",
+        "aSchema": "Yes, you can share any program with a friend for a small additional fee per session, selectable during booking."
+      },
+      "timing": {
+        "q": "How far in advance should I book my program?",
+        "a": "Programs can be booked 7 to 30 days in advance. Since these are multi-session paths, booking ahead ensures your preferred teacher and our studio space are available for your entire journey.",
+        "aSchema": "Programs can be booked 7 to 30 days in advance to ensure teacher and studio availability for the multi-session path."
+      }
+    }
+  },
+  "Contact": {
+    "title": "Have Questions?",
+    "description": "We're happy to help. Reach out anytime.",
+    "button": "Contact us"
+  },
+  "Footer": {
+    "explore": {
+      "title": "Explore",
+      "programs": "Programs",
+      "teachers": "Teachers",
+      "about": "About",
+      "location": "Location"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Privacy Policy",
+      "tos": "Terms of Service",
+      "contact": "Contact"
+    },
+    "payments": {
+      "accept": "We accept:",
+      "secure": "Secure payments • SSL encrypted"
+    },
+    "copyright": "© {year} OneClass Yoga. All rights reserved."
+  }
+}
+ 

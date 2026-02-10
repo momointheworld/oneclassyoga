@@ -1,0 +1,41 @@
+{ 
+    "metadata": {
+      "title": "About | Focused Programs & My Yoga Journey",
+      "description": "Discover the story behind OneClass Yoga — created to help yogis in Chiang Mai find the right teachers, support local instructors, and grow a connected yoga community.",
+      "ogAlt": "About OneClass Yoga — community-driven yoga teachers in Chiang Mai"
+    },
+    "hero": {
+      "title": "Focused Programs & My Yoga Journey",
+      "subtitle": "A project created by a longtime practitioner in Chiang Mai to help you progress through one-on-one programs built around each teacher’s unique strengths."
+    },
+    "profile": {
+      "name": "Lifen Li",
+      "bio1": "I took my first yoga class in <b>2015</b>. Nearly a decade later, yoga remains the most grounding part of my life. Over these 10 years in Chiang Mai, I’ve followed many different teachers, learning their specific skills and seeing firsthand how they help students grow.",
+      "bio2": "What I noticed was that while Chiang Mai has amazing teachers, it can be hard to find a clear path to get better at a specific skill. I created this site to turn the 'random group class' experience into <b>focused, one-on-one programs</b>. This helps talented teachers get the exposure they deserve while giving you the personal attention needed to actually see progress."
+    },
+    "mission": {
+      "title": "Why I Built These Programs",
+      "p1": "I’ve seen students spend years in group classes without ever really mastering the skills they want, like inversions or a solid foundation. At the same time, I know teachers who are absolute experts in these areas but don't have a way to share that deep knowledge in a busy studio.",
+      "p2": "I decided to work directly with these teachers to package their best skills into structured programs. This way, you aren't just \"doing yoga\"—you are following a clear path designed by an expert, just for you."
+    },
+    "features": {
+      "goal": {
+        "label": "Goal-Oriented",
+        "desc": "Every program has a clear focus, so you know exactly what skill you are building."
+      },
+      "personal": {
+        "label": "One-on-One",
+        "desc": "Private sessions mean the teacher is focused entirely on your body and your safety."
+      },
+      "structure": {
+        "label": "Structured Path",
+        "desc": "Sessions build on each other, unlike drop-in classes that start from scratch every time."
+      }
+    },
+    "invite": {
+      "title": "Ready to start your path?",
+      "subtitle": "Whether you want to nail your first handstand or just learn the basics correctly, there is a focused program waiting for you.",
+      "button": "Explore Focused Programs"
+    }
+   
+}

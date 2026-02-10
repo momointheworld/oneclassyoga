@@ -13,14 +13,15 @@ import {
   strengthsOptions,
 } from '@/lib/constants';
 import { Loader2 } from 'lucide-react';
-import { createClient } from '@/utils/supabase/supabaseClient';
 import TipTapEditor from '@/components/TipTapEditor';
 import { BreadcrumbTrail } from '@/components/BreadCrumbTrail';
 import { TeacherRates } from '@/types/teacher';
+import { Label } from '@/components/ui/label';
 
 export default function NewTeacherPage() {
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
+  const [zhBio, setZhBio] = useState('');
   const [styles, setStyles] = useState<string[]>([]);
   const [levels, setLevels] = useState<string[]>([]);
   const [strengths, setStrengths] = useState<Record<string, string[]>>({});
@@ -31,7 +32,6 @@ export default function NewTeacherPage() {
   const router = useRouter();
   const [isActive, setIsActive] = useState(true);
   const [isFeatured, setIsFeatured] = useState(false);
-  const supabase = createClient();
   const [stripeProductId, setStripeProductId] = useState('');
   const [weeklySchedule, setWeeklySchedule] = useState<{
     [key: string]: string[];
@@ -55,14 +55,15 @@ export default function NewTeacherPage() {
     'Friday',
     'Saturday',
   ];
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setButtonLoading(true);
 
-    const { error } = await supabase.from('teachers').insert({
+    // 1. Prepare the payload (match what your API expects)
+    const payload = {
       name,
       bio,
+      bio_zh: zhBio,
       styles,
       levels,
       isActive,
@@ -70,20 +71,30 @@ export default function NewTeacherPage() {
       videoUrl,
       photo: profilePhoto,
       gallery: galleryUrls,
-      slug: name.toLowerCase().replace(/\s+/g, '-'), // add slug here
       weekly_schedule: weeklySchedule,
-      rates: rates,
+      rates,
       stripe_product_id: stripeProductId,
       strengths,
-    });
+    };
 
-    setButtonLoading(false);
+    try {
+      // 2. Call your API route instead of Supabase directly
+      const response = await fetch('/api/teachers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-    if (error) {
-      console.error('Insert failed:', error.message);
-      alert('Failed to create teacher.');
-    } else {
+      if (!response.ok) {
+        throw new Error('Failed to save via API');
+      }
+
       router.push('/dashboard/teachers');
+    } catch (error) {
+      console.error('Insert failed:', error);
+      alert('Failed to create teacher.');
+    } finally {
+      setButtonLoading(false);
     }
   };
 
@@ -106,10 +117,20 @@ export default function NewTeacherPage() {
           onChange={(e) => setName(e.target.value)}
           required
         />
-        <TipTapEditor
-          initialContent={bio}
-          onChange={(html: SetStateAction<string>) => setBio(html)}
-        />
+        <Label className="block mb-2">
+          Bio (English)
+          <TipTapEditor
+            initialContent={bio}
+            onChange={(html: SetStateAction<string>) => setBio(html)}
+          />
+        </Label>
+        <Label className="block mb-2">
+          Bio (Chinese)
+          <TipTapEditor
+            initialContent={zhBio}
+            onChange={(html: SetStateAction<string>) => setZhBio(html)}
+          />
+        </Label>
         <Input
           placeholder="Optional YouTube Video URL"
           value={videoUrl}
@@ -213,7 +234,7 @@ export default function NewTeacherPage() {
                           });
                         } else {
                           const updated = (strengths[category] ?? []).filter(
-                            (s) => s !== strength
+                            (s) => s !== strength,
                           );
                           const newStrengths = { ...strengths };
                           if (updated.length > 0)
@@ -249,7 +270,7 @@ export default function NewTeacherPage() {
                         const newSlots = e.target.checked
                           ? [...(weeklySchedule[day] || []), timeSlot]
                           : (weeklySchedule[day] || []).filter(
-                              (s) => s !== timeSlot
+                              (s) => s !== timeSlot,
                             );
 
                         setWeeklySchedule({

@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "title": "联系我们",
+    "description": "关于清迈的1对1私教、朋友共享课程或套餐价格有疑问？✨ 通过我们的联系表单找到OneClass Yoga，宝藏老师将快速回应你的蜕变之旅！🧘‍♂️ 告别迷茫，开启身心合一的精准私教体验。",
+    "ogAlt": "联系OneClass Yoga，开启清迈理疗修复与蜕变之旅"
+  },
+  "header": {
+    "title": "联系我们",
+    "subtitle": "有问题或需要帮助？🌿 填写下方表单，我们将尽快回复你，助你告别传统团课，拥抱精准私教！"
+  },
+  "form": {
+    "labels": {
+      "name": "姓名",
+      "email": "邮箱",
+      "message": "留言"
+    },
+    "placeholders": {
+      "name": "你的姓名",
+      "email": "you@example.com",
+      "message": "你想咨询或分享什么？✨ 无论是流瑜伽私教、工作坊还是理疗修复，我们都在这里倾听！"
+    },
+    "buttons": {
+      "send": "发送留言",
+      "sending": "发送中...",
+      "verifying": "验证中..."
+    },
+    "success": {
+      "title": "感谢！",
+      "message": "你的留言已发送。🧘‍♂️ 我们将尽快回复，助你开启清迈的蜕变之旅！"
+    },
+    "errors": {
+      "verify": "请完成人机验证。",
+      "general": "出了点问题。请稍后再试。"
+    }
+  }
+}
