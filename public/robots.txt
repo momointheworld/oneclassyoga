@@ -1,9 +1,6 @@
 # *
 User-agent: *
 Allow: /
-Disallow: /dashboard
-Disallow: /auth
-Disallow: /api
 
 # Host
 Host: https://www.oneclass.yoga
