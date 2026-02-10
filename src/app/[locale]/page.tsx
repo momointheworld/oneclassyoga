@@ -171,7 +171,12 @@ export default async function HomePage({
                                 {i + 1}.
                               </span>
                               <span className="line-clamp-2">
-                                {typeof item === 'string' ? item : item.title}
+                                {
+                                  (typeof item === 'string'
+                                    ? item
+                                    : (item as Record<string, unknown>)
+                                        .title) as React.ReactNode
+                                }
                               </span>
                             </li>
                           ))}

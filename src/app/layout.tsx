@@ -27,16 +27,15 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
   const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-  const { locale } = await params;
+  // const { locale } = await params;
 
   return (
-    <html lang={locale}>
+    <html>
       <head>
         {GA_ID && (
           <>
