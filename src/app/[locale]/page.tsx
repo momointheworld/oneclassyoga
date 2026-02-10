@@ -160,19 +160,21 @@ export default async function HomePage({
                         {tPrograms('UI.home.syllabusLabel')}
                       </p>
                       <ul className="space-y-2">
-                        {syllabus.slice(0, 3).map((item: any, i: number) => (
-                          <li
-                            key={i}
-                            className="flex items-start gap-3 text-sm text-gray-600"
-                          >
-                            <span className="text-emerald-500 font-bold">
-                              {i + 1}.
-                            </span>
-                            <span className="line-clamp-2">
-                              {typeof item === 'string' ? item : item.title}
-                            </span>
-                          </li>
-                        ))}
+                        {syllabus
+                          .slice(0, 3)
+                          .map((item: unknown, i: number) => (
+                            <li
+                              key={i}
+                              className="flex items-start gap-3 text-sm text-gray-600"
+                            >
+                              <span className="text-emerald-500 font-bold">
+                                {i + 1}.
+                              </span>
+                              <span className="line-clamp-2">
+                                {typeof item === 'string' ? item : item.title}
+                              </span>
+                            </li>
+                          ))}
                       </ul>
                     </div>
                   </div>

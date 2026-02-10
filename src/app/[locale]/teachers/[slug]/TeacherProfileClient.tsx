@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import Image from 'next/image';
@@ -49,6 +50,7 @@ export default function TeacherProfileClient({
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
   const [participants, setParticipants] = useState<number>(1);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [rate, setRate] = useState<number | null>(null);
   const [bookingTitle, setBookingTitle] = useState<string>(
     tProfile('calendar.defaultTitle'),

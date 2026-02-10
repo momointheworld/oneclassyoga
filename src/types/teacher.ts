@@ -14,6 +14,7 @@ export type Teacher = {
   name: string;
   photo: string;
   bio: string;
+  bio_zh: string;
   styles: string[];
   levels: string[];
   strengths: Record<string, string[]>; // e.g., { Movement: ["Backbends", "Twists"], ... }

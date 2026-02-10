@@ -50,6 +50,7 @@ export async function PATCH(
     const { id } = await params;
     const data = await req.json();
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function slugify(name: string, p0: { lower: boolean; strict: boolean }) {
       return name
         .toLowerCase()
