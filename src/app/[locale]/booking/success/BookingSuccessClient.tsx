@@ -5,8 +5,13 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { useTranslations, useFormatter, useLocale } from 'next-intl';
 
 export default function BookingSuccessClient() {
+  const t = useTranslations('Booking.BookingSuccess');
+  const format = useFormatter();
+  const locale = useLocale();
+
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const teacherSlug = searchParams.get('teacher');
@@ -21,6 +26,7 @@ export default function BookingSuccessClient() {
   const [emailSent, setEmailSent] = useState(false);
   const [emailError, setEmailError] = useState(false);
 
+  // Capitalization logic remains same but used for display
   const teacherName = teacherSlug
     ? teacherSlug
         .replace(/-/g, ' ')
@@ -37,7 +43,6 @@ export default function BookingSuccessClient() {
     }
   };
 
-  // Manual resend email
   const handleResendEmail = async () => {
     if (!sessionId) return;
     setLoading(true);
@@ -66,20 +71,34 @@ export default function BookingSuccessClient() {
 
   useEffect(() => {
     if (!sessionId) return;
-
     handleResendEmail();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId]);
+
+  // Guard Clause: If there is no session OR no details, show the error state
+  if (!sessionId || !hasBookingDetails) {
+    return (
+      <div className="max-w-2xl mx-auto p-16 text-center">
+        <h1 className="text-2xl font-bold mb-4">{t('noBookingTitle')}</h1>
+        <p className="text-gray-600 mb-8">{t('noBookingDesc')}</p>
+        <Link
+          href={`/${locale}/programs`}
+          className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          {t('backToPrograms')}
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto p-8 text-center">
-      <h1 className="text-3xl font-bold mb-4">🎉 Booking Confirmed!</h1>
-      <p className="text-lg text-gray-700 mb-4">Your payment was successful.</p>
+      <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+      <p className="text-lg text-gray-700 mb-4">{t('subtitle')}</p>
 
       {/* Booking Reference */}
       {sessionId && (
         <div className="mb-6">
-          <p className="text-gray-700 text-sm mb-2">Booking Reference:</p>
+          <p className="text-gray-700 text-sm mb-2">{t('referenceLabel')}</p>
           <div className="flex items-center justify-center gap-2">
             <span className="font-mono bg-gray-100 px-2 py-1 rounded">
               {sessionId.slice(0, 16)}...
@@ -88,7 +107,7 @@ export default function BookingSuccessClient() {
               onClick={copyToClipboard}
               className="text-sm text-blue-500 hover:text-blue-700"
             >
-              {copied ? 'Copied!' : 'Copy Full ID'}
+              {copied ? t('copied') : t('copy')}
             </button>
           </div>
         </div>
@@ -99,22 +118,18 @@ export default function BookingSuccessClient() {
         <div className="mb-6">
           <Button
             onClick={handleResendEmail}
-            variant="destructive"
+            variant="outline"
             disabled={loading}
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50"
+            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 border-none"
           >
-            {loading ? 'Sending...' : 'Resend Confirmation Email'}
+            {loading ? t('sending') : t('resendButton')}
           </Button>
 
           {emailSent && (
-            <p className="text-sm text-green-600 mt-2">
-              Confirmation email sent! 📧
-            </p>
+            <p className="text-sm text-green-600 mt-2">{t('emailSent')}</p>
           )}
           {emailError && (
-            <p className="text-sm text-red-600 mt-2">
-              Failed to send email. Please contact support.
-            </p>
+            <p className="text-sm text-red-600 mt-2">{t('emailError')}</p>
           )}
         </div>
       )}
@@ -122,26 +137,29 @@ export default function BookingSuccessClient() {
       {hasBookingDetails ? (
         <div className="bg-white shadow-md p-6 rounded-xl mb-8 text-left border border-gray-100">
           <h2 className="text-xl font-semibold mb-4 text-gray-800">
-            {isBundle ? 'Program Details' : 'Class Details'}
+            {t('detailsTitle', { isBundle: isBundle.toString() })}
           </h2>
           <ul className="list-disc pl-5 space-y-2 text-gray-700">
             {packageTitle && (
               <li>
-                <span className="font-medium">Program:</span> {packageTitle}
+                <span className="font-medium">{t('program')}:</span>{' '}
+                {packageTitle}
               </li>
             )}
             {teacherName && (
               <li>
-                <span className="font-medium">Teacher:</span> {teacherName}
+                <span className="font-medium">{t('teacher')}:</span>{' '}
+                {teacherName}
               </li>
             )}
 
             {date && (
               <li>
                 <span className="font-medium">
-                  {isBundle ? 'First Class Date:' : 'Date:'}
+                  {t('dateLabel', { isBundle: isBundle.toString() })}
                 </span>{' '}
-                {new Date(date).toLocaleDateString('en-US', {
+                {/* Localized Date Formatting */}
+                {format.dateTime(new Date(date), {
                   month: 'long',
                   day: 'numeric',
                   year: 'numeric',
@@ -151,74 +169,62 @@ export default function BookingSuccessClient() {
             )}
             {time && (
               <li>
-                <span className="font-medium">Time:</span> {time}
+                <span className="font-medium">{t('time')}:</span> {time}
               </li>
             )}
             {participants && (
               <li>
-                <span className="font-medium">Participants:</span>{' '}
-                {participants}{' '}
-                {Number(participants) === 1 ? 'person' : 'people'}
+                <span className="font-medium">{t('participants')}:</span>{' '}
+                {t('person', { count: Number(participants) })}
               </li>
             )}
           </ul>
 
           {isBundle && (
-            <p className="mt-4 text-emerald-700 text-sm">
-              The rest of your classes will be scheduled together with your
-              teacher.
-            </p>
+            <p className="mt-4 text-emerald-700 text-sm">{t('bundleNote')}</p>
           )}
         </div>
       ) : (
         <div className="bg-white text-emerald-700 my-5">
-          <p>
-            Thank you for your purchase! We will contact you to arrange the
-            classes.
-          </p>
+          <p>{t('noDetailsNote')}</p>
         </div>
       )}
 
       {/* Contact Info */}
       <div className="bg-gray-50 border border-gray-100 text-gray-500 p-5 rounded-lg text-left text-sm">
         <h3 className="text-base font-semibold text-gray-600 mb-4">
-          Have questions?
+          {t('contactTitle')}
         </h3>
 
-        {/* QR codes section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6 justify-items-center">
-          {/* Line */}
           <div className="flex flex-col items-center">
             <p className="mb-2 font-semibold text-gray-600">Line</p>
             <Image
               src="/images/line.JPG"
-              alt="Line QR Code"
-              width={250}
-              height={250}
-              className="w-24 h-24 rounded-md border"
+              alt="Line"
+              width={100}
+              height={100}
+              className="rounded-md border"
             />
           </div>
-
-          {/* WhatsApp */}
           <div className="flex flex-col items-center">
             <p className="mb-2 font-semibold text-gray-600">WhatsApp</p>
             <Image
               src="/images/whatsapp.JPG"
-              alt="WhatsApp QR Code"
-              width={250}
-              height={250}
-              className="w-24 h-24 rounded-md border"
+              alt="WhatsApp"
+              width={100}
+              height={100}
+              className="rounded-md border"
             />
           </div>
         </div>
 
-        {/* WeChat and Email */}
         <div className="flex flex-col sm:items-center gap-4 justify-center text-center">
           <p>
-            <strong>WeChat ID:</strong> OneClassYoga
+            <strong>{t('wechat')}:</strong> OneClassYoga
           </p>
           <p>
-            📧 <strong>Email:</strong> support@oneclass.yoga
+            📧 <strong>{t('email')}:</strong> support@oneclass.yoga
           </p>
         </div>
       </div>
@@ -228,7 +234,7 @@ export default function BookingSuccessClient() {
           href="/programs"
           className="text-blue-600 hover:text-blue-800 hover:underline"
         >
-          Check out other programs
+          {t('otherPrograms')}
         </Link>
       </div>
     </div>

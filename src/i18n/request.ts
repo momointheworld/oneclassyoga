@@ -16,6 +16,8 @@ export default getRequestConfig(async ({ locale }) => {
       community,
       policies,
       location,
+      review,
+      booking,
     ] = await Promise.all([
       import(`../../messages/${validLocale}/home.json`),
       import(`../../messages/${validLocale}/programs.json`),
@@ -25,6 +27,8 @@ export default getRequestConfig(async ({ locale }) => {
       import(`../../messages/${validLocale}/community.json`),
       import(`../../messages/${validLocale}/policies.json`),
       import(`../../messages/${validLocale}/location.json`),
+      import(`../../messages/${validLocale}/review.json`),
+      import(`../../messages/${validLocale}/booking.json`),
     ]);
 
     return {
@@ -38,6 +42,8 @@ export default getRequestConfig(async ({ locale }) => {
         Community: community.default,
         Policies: policies.default,
         Location: location.default,
+        Review: review.default,
+        Booking: booking.default,
       },
     };
   } catch (error) {

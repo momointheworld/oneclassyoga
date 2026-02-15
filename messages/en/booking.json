@@ -1,0 +1,29 @@
+{
+  "BookingSuccess": {
+    "noBookingTitle": "No Booking Found",
+   "noBookingDesc": "We couldn't find your booking details. If you think this is an error, please contact us.",
+   "backToPrograms": "Return to Programs",
+    "title": "🎉 Booking Confirmed!",
+    "subtitle": "Your payment was successful.",
+    "referenceLabel": "Booking Reference:",
+    "copy": "Copy Full ID",
+    "copied": "Copied!",
+    "resendButton": "Resend Confirmation Email",
+    "sending": "Sending...",
+    "emailSent": "Confirmation email sent! 📧",
+    "emailError": "Failed to send email. Please contact us.",
+    "detailsTitle": "{isBundle, select, true {Program Details} other {Class Details}}",
+    "program": "Program",
+    "teacher": "Teacher",
+    "dateLabel": "{isBundle, select, true {First Class Date:} other {Date:}}",
+    "time": "Time",
+    "participants": "Participants",
+    "person": "{count, plural, =1 {# person} other {# people}}",
+    "bundleNote": "The rest of your classes will be scheduled together with your teacher.",
+    "noDetailsNote": "Thank you for your purchase! We will contact you to arrange the classes.",
+    "contactTitle": "Have questions?",
+    "wechat": "WeChat ID",
+    "email": "Email",
+    "otherPrograms": "Check out other programs"
+  }
+}

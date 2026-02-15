@@ -1,0 +1,19 @@
+{
+    "loading": "Loading review...",
+    "invalidLink": "No review available, please check your review link.",
+    "title": "How was your class with {teacher}?",
+    "thankYou": "Thank you for sharing your review for {teacher}!",
+    "ratingLabel": "Rating",
+    "reviewLabel": "Review",
+    "placeholder": "Write your review (optional)",
+    "submit": "Submit Review",
+    "submitting": "Submitting...",
+    "status": "Status: {status}",
+    "error": "Error submitting review, please try again.",
+    "ratingAlert": "Please select a rating",
+    "toastSuccess": "Review submitted successfully!",
+    "toastSuccessDescription": "Thank you for your feedback.",
+    "toastError": "Submission failed",
+    "toastErrorDescription": "Error submitting review, please try again."
+  
+}

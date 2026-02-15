@@ -1,0 +1,20 @@
+{
+    
+    "loading": "正在加载评价...",
+    "invalidLink": "没有可用的评价，请检查您的评价链接。",
+    "title": "{teacher} 的课程您感觉如何？",
+    "thankYou": "感谢您分享对 {teacher} 的评价！",
+    "ratingLabel": "评分",
+    "reviewLabel": "评价内容",
+    "placeholder": "写下您的评价（可选）",
+    "submit": "提交评价",
+    "submitting": "提交中...",
+    "status": "状态: {status}",
+    "error": "提交评价时出错，请重试。",
+    "ratingAlert": "请选择评分",
+    "toastSuccess": "评价提交成功！",
+    "toastSuccessDescription": "感谢您的反馈。",
+    "toastError": "提交失败",
+    "toastErrorDescription": "提交评价时出错，请重试。"
+
+}

@@ -5,6 +5,7 @@ import MainMenu from '@/components/MainMenu';
 import { Footer } from '@/components/Footer';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
 import CookieBanner from '@/components/CookieBanner';
+import { Toaster } from 'sonner';
 
 export default async function LocaleLayout({
   children,
@@ -24,7 +25,10 @@ export default async function LocaleLayout({
       <AnalyticsTracker />
       <div className="flex flex-col min-h-screen">
         <MainMenu />
-        <main className="flex-grow">{children}</main>
+        <main className="flex-grow">
+          {children}
+          <Toaster position="top-center" richColors />
+        </main>
         <CookieBanner />
         <Footer locale={locale} />
       </div>
