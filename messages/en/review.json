@@ -1,4 +1,9 @@
 {
+    "metaData": {
+      "title": "Review Your Class",
+      "description": "Share your feedback about your yoga class experience. Your review helps us improve and helps others find the right class for them.",    
+        "ogAlt": "Review your yoga class on OneClass Yoga"
+    },
     "loading": "Loading review...",
     "invalidLink": "No review available, please check your review link.",
     "title": "How was your class with {teacher}?",

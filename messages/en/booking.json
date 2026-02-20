@@ -1,5 +1,16 @@
 {
+  "Checkout": {
+ "checkoutRedirecting": "Please hold on, we are directing you to our checkout page...",
+ "backToTeachers": "Back to Teachers",
+ "preparing": "Preparing your checkout..."
+  },
   "BookingSuccess": {
+    "metaData": {
+      "title": "Booking Confirmed",
+      "description": "Your booking has been successfully confirmed! View your booking details and next steps.",
+      "ogAlt": "Booking confirmed with OneClass Yoga"
+    },
+    "redirecting": "Redirecting...",
     "noBookingTitle": "No Booking Found",
    "noBookingDesc": "We couldn't find your booking details. If you think this is an error, please contact us.",
    "backToPrograms": "Return to Programs",

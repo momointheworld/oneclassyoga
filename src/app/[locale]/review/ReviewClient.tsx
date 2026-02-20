@@ -7,7 +7,6 @@ import { Star } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-import { ca } from 'date-fns/locale';
 
 export default function ReviewClient() {
   const t = useTranslations('Review');

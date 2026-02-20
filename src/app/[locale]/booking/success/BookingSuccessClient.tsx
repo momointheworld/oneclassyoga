@@ -92,12 +92,11 @@ export default function BookingSuccessClient() {
 
   return (
     <div className="max-w-2xl mx-auto p-8 text-center">
-      <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
-      <p className="text-lg text-gray-700 mb-4">{t('subtitle')}</p>
-
       {/* Booking Reference */}
-      {sessionId && (
+      {sessionId && hasBookingDetails && (
         <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+          <p className="text-lg text-gray-700 mb-4">{t('subtitle')}</p>
           <p className="text-gray-700 text-sm mb-2">{t('referenceLabel')}</p>
           <div className="flex items-center justify-center gap-2">
             <span className="font-mono bg-gray-100 px-2 py-1 rounded">
@@ -114,7 +113,7 @@ export default function BookingSuccessClient() {
       )}
 
       {/* Resend button */}
-      {sessionId && (
+      {sessionId && hasBookingDetails && (
         <div className="mb-6">
           <Button
             onClick={handleResendEmail}
@@ -231,7 +230,7 @@ export default function BookingSuccessClient() {
 
       <div className="mt-8 text-center">
         <Link
-          href="/programs"
+          href={`/${locale}/programs`}
           className="text-blue-600 hover:text-blue-800 hover:underline"
         >
           {t('otherPrograms')}

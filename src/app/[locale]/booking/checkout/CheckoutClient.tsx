@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
 export default function CheckoutPage() {
@@ -15,6 +16,7 @@ export default function CheckoutPage() {
   const date = searchParams.get('date');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const t = useTranslations('Booking.Checkout');
 
   useEffect(() => {
     async function createCheckout() {
@@ -61,14 +63,14 @@ export default function CheckoutPage() {
       {loading && !error && (
         <>
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <p>Please hold on, we are directing you to our checkout page...</p>
+          <p className="text-gray-600">{t('checkoutRedirecting')}</p>
         </>
       )}
       {error && (
         <>
           <p className="text-red-500 max-w-md text-center">{error}</p>
           <Link href="/teachers" className="text-blue-600 hover:underline mt-4">
-            Back to Teachers
+            {t('backToTeachers')}
           </Link>
         </>
       )}

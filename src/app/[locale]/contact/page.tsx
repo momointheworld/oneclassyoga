@@ -20,13 +20,13 @@ export async function generateMetadata({
       siteName: 'OneClass Yoga',
       images: [
         {
-          url: '/images/ogs/contact-og.jpeg',
+          url: '/images/ogs/home-og.jpeg',
           width: 1200,
           height: 630,
           alt: t('ogAlt'),
         },
       ],
-      locale: 'en_US',
+      locale: locale === 'en' ? 'en_US' : locale === 'zh' ? 'zh_CN' : 'en_US',
       type: 'website',
     },
   };

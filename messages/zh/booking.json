@@ -1,5 +1,17 @@
 {
+  "Checkout": {
+     "checkoutRedirecting": "请稍候，我们正在转到结账页面...",
+     "backToTeachers": "返回教师列表",
+      "preparing": "准备结账中..."
+  },
+
   "BookingSuccess": {
+    "metaData": {
+      "title": "预订确认",
+      "description": "您的预订已成功确认！查看您的预订详情和下一步操作",
+      "ogAlt": "与 OneClass Yoga 的预订已确认"
+    },
+    "redirecting": "正在跳转...",
     "noBookingTitle": "未找到预订信息",
    "noBookingDesc": "我们无法找到您的预订信息。如果您已经支付，请联系我们。",
    "backToPrograms": "返回课程页面",
