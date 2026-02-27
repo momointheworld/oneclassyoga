@@ -72,6 +72,7 @@ export default function BookingSuccessClient() {
   useEffect(() => {
     if (!sessionId) return;
     handleResendEmail();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId]);
 
   // Guard Clause: If there is no session OR no details, show the error state

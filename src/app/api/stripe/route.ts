@@ -2,8 +2,6 @@ import { format } from 'date-fns';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
-import { labelCaption } from 'react-day-picker';
-// import { formatInTimeZone } from 'date-fns-tz';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
