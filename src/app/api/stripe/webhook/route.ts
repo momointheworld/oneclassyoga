@@ -47,6 +47,7 @@ export async function POST(req: Request) {
       const time_slot = metadata.time_slot || null;
       const participants = metadata.participants || null;
       const package_title = metadata.package_title || null;
+      const locale = metadata.locale || null;
       let bundleSize: number | null = null;
       if (metadata.booking_type?.startsWith('bundle')) {
         bundleSize = parseInt(metadata.booking_type.replace('bundle', ''), 10);
@@ -86,6 +87,7 @@ export async function POST(req: Request) {
         bundle_size: bundleSize,
         participants: parseInt(participants || '1', 10),
         payment_intent: session.payment_intent as string,
+        locale: locale || '',
         amount_total: session.amount_total ? session.amount_total / 100 : 0,
         createdAt: new Date().toISOString(),
         bundle_id: bundleSize ? session.id : null, // Use session ID as bundle_id for bundles

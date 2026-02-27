@@ -74,7 +74,7 @@ export default function TeacherProfileClient({
         onSelectProgram(
           program.id,
           program.bundleType as PackageType,
-          t(`programData.${program.id}.title`),
+          tProfile(`programData.${program.id}.title`),
         );
         scrollToPrograms();
       }

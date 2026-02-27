@@ -4,9 +4,11 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { useLocale } from 'next-intl';
 
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
+  const locale = useLocale();
   const teacherSlug = searchParams.get('teacher');
   // const priceId = searchParams.get('priceId');
   const timeSlot = searchParams.get('timeSlot');
@@ -37,6 +39,7 @@ export default function CheckoutPage() {
             participants: parseInt(participants || '1', 10), // Default to 1 if not provided
             booking_type,
             package_title,
+            locale,
           }),
         });
 
@@ -56,7 +59,15 @@ export default function CheckoutPage() {
     }
 
     createCheckout();
-  }, [teacherSlug, timeSlot, date, participants, booking_type, package_title]); // More specific dependencies
+  }, [
+    teacherSlug,
+    timeSlot,
+    date,
+    participants,
+    booking_type,
+    package_title,
+    locale,
+  ]); // More specific dependencies
 
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-4">

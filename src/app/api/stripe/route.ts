@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { labelCaption } from 'react-day-picker';
 // import { formatInTimeZone } from 'date-fns-tz';
 
 const supabase = createClient(
@@ -23,6 +24,7 @@ export async function POST(req: Request) {
     participants,
     booking_type,
     package_title,
+    locale,
   } = body;
 
   if (!booking_type) {
@@ -102,9 +104,6 @@ export async function POST(req: Request) {
     }
 
     const formattedDate = date ? format(new Date(date), 'MMMM d, yyyy') : '';
-    // const formattedDate = date
-    //   ? formatInTimeZone(new Date(date), 'Asia/Bangkok', 'MMMM d, yyyy')
-    //   : '';
 
     async function convertThbToHkd(amountInTHBCents: number) {
       try {
@@ -174,6 +173,7 @@ export async function POST(req: Request) {
       booking_type,
       quantity: booking_type === 'single' ? 'dynamic' : '1',
       package_title: package_title || '',
+      locale: locale || '',
     };
 
     // Custom fields (visible in checkout page)
